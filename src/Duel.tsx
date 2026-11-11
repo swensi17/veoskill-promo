@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
 import { Confetti } from "./Lesson";
-import { NAVY, BLUE, GREEN, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer } from "./Scenes9";
+import { NAVY, BLUE, GREEN, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer, TopLine } from "./Scenes9";
 
 // Play against another learner (veoskill.uz/hub/duels; the word itself is kept out of frame, see docs/RULES.md):
 // matchmaking with speed streaks and VS, then a timed question with 4 coloured answers, then the win card.
@@ -124,10 +124,7 @@ export const Duel: React.FC = () => {
       ) : null}
 
       {/* caption, top left, white panel so it reads on both backgrounds */}
-      <div key={cap[0]} style={{ position: "absolute", left: f < SEARCH_END ? 80 : 0, right: f < SEARCH_END ? undefined : 0, top: f < SEARCH_END ? 50 : 28, width: f < SEARCH_END ? 600 : undefined, zIndex: 40, display: "flex", flexDirection: f < SEARCH_END ? "column" : "row", justifyContent: "center", columnGap: 18 }}>
-        <Cap text={cap[1]} at={cap[0]} size={f < SEARCH_END ? 64 : 56} color={f < SEARCH_END ? NAVY : "#fff"} />
-        <Cap text={cap[2]} at={cap[0] + 8} size={f < SEARCH_END ? 64 : 56} color={f < SEARCH_END ? NAVY : "#fff"} accent={cap[2]} accentColor={f < SEARCH_END ? BLUE : "#ffe27a"} />
-      </div>
+      <TopLine key={cap[0]} a={cap[1]} b={cap[2]} at={cap[0]} dark={f >= SEARCH_END} size={f < SEARCH_END ? 66 : 54} band={f >= SEARCH_END ? "rgba(150,120,170,0.0)" : undefined} />
       <Confetti at={RES + 4} />
       {f >= SEARCH_END + 10 && f < RES - 10 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={press(f, CLICK)} op={lin(f, SEARCH_END + 10, SEARCH_END + 22) * (1 - lin(f, RES - 24, RES - 10))} /></div> : null}
     </AbsoluteFill>
