@@ -13,7 +13,7 @@ _SJ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../out/scenes.js
 DURS = json.load(open(_SJ)) if os.path.exists(_SJ) else [240,180,300,420,160,410,300,390,228,110,360,300,90,330,240,80,200,420,300,240,240,360]
 STARTS = [sum(DURS[:i]) for i in range(len(DURS))]
 def F(sc, lf): return STARTS[sc] + lf
-STING = STARTS[21] / FPS + 2.33
+STING = STARTS[-1] / FPS + 2.33
 DUR = sum(DURS) / FPS
 
 def load(path):
@@ -51,7 +51,7 @@ def seg(src_from, src_to, at, fi=0.01, fo=0.012, g=0.0):
     return x
 BEAT = 0.48
 HIT = 96.019                                # the track's final hit (source seconds, on a downbeat)
-JUMP = STARTS[21] / FPS                     # cut on the beat at the start of S11
+JUMP = STARTS[-1] / FPS                     # cut on the beat at the start of S11
 seg(0.0, JUMP - MUS_OFF + 0.006, MUS_OFF, fi=0.02, fo=0.006)
 # from S11 on, jump by a whole number of beats (back = repeat, forward = skip) so the final hit lands ~2.4 s into S11 (logo + QR)
 _shift = round(((JUMP - MUS_OFF) + (HIT - (JUMP - MUS_OFF)) - (JUMP + 2.4 - MUS_OFF)) / BEAT) * BEAT
@@ -82,19 +82,21 @@ def at(x, frame, g, lead=0.0):
     put(x, frame / FPS - onset(x) / SR - lead, g)
 clicks = [(5,300),(5,356),(7,238),(16,132),(17,64),(17,162),(17,204),(17,330)]
 clicks += [(3, 30 * k) for k in range(1, 10)]   # S4 carousel steps
-clicks += [(8,114),(19,50)]                     # G3 "wrong" stamp, Langs start of the language run
+clicks += [(8,114),(20,50)]                     # G3 "wrong" stamp, Langs start of the language run
 for sc, lf in clicks: at(CL, F(sc, lf), -16)
-pops = [(0,112),(5,303),(6,100),(6,128),(6,156),(6,184),(11,70),(11,116),(11,162),(11,208),(17,348),(18,76),(18,112),(18,160),(19,2),(19,8),(19,14),(19,20),(21,10),(21,60)]
+pops = [(0,112),(5,303),(6,100),(6,128),(6,156),(6,184),(11,70),(11,116),(11,162),(11,208),(17,348),(19,76),(19,112),(19,160),(20,2),(20,8),(20,14),(20,20),(22,10),(22,60)]
 pops += [(10, 60 + 30 * k) for k in range(6)]
 # Table: 8 rows on half-beats (see rowAt in V11.tsx)
-pops += [(20, round(28.8 + 14.4 * k)) for k in range(8)]
+pops += [(21, round(28.8 + 14.4 * k)) for k in range(8)]
 # LexScene: 5 red points, then they flip to green (see LexRow in V11.tsx)
 pops += [(14, round(86.4 + 14.4 * k)) for k in range(5)]
 # kinetic word cuts, on the beat grid (Words per= in V11.tsx)
 pops += [(1, round(43.2 * k)) for k in range(4)] + [(4, round(43.2 * k)) for k in range(4)]
 pops += [(9, 0), (9, 58), (12, 43), (15, 0), (15, 43)]
+# AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
+pops += [(18, 0), (18, 29)]
 # other entrances found in the scene code
-pops += [(2,180),(6,16),(7,4),(7,18),(7,202),(8,12),(8,216),(10,6),(17,122),(18,4)]
+pops += [(2,180),(6,16),(7,4),(7,18),(7,202),(8,12),(8,216),(10,6),(17,122),(19,4)]
 for sc, lf in pops: at(POP, F(sc, lf), -15)
 for sc, lf in [(6,198),(7,238),(13,250),(17,348),(8,63),(8,170),(10,250),(14,202)]: at(CH, F(sc, lf), -17)
 for sc, lf in [(5,6),(5,200),(5,370),(7,378),(8,190),(12,0),(13,0),(14,0),(16,0),(16,180),(2,0),(3,300),(11,0),(14,50)]:

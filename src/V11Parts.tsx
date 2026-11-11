@@ -296,6 +296,26 @@ const EXPL: [string, string, string, boolean][] = [
   ["document.svg", "ПРОСТЫМИ СЛОВАМИ", "Эта статья закрепляет главные правила жизни страны. Узбекистан полностью независим во внутренних делах и внешней политике, а его руководство избирается гражданами на определенный срок. Государство действует строго по закону, ставит интересы человека на первое место и заботится о нуждающихся. Вы можете использовать названия Узбекистан и Республика Узбекистан как абсолютно равные.", false],
   ["customer-file.svg", "ПРИМЕР ИЗ ЖИЗНИ", "Дилшод заполняет документы для открытия мастерской в Ташкенте. В одном бланке он написал «Узбекистан», а в другом «Республика Узбекистан». Специалист центра государственных услуг без замечаний принял оба документа: закон гарантирует, что оба названия равнозначны.", false],
 ];
+/** AI mark: a friendly robot head (antenna, eyes that blink, smile); `spin` tilts it a little. */
+export const AiIcon: React.FC<{ size: number; color?: string; spin?: number; blink?: number }> = ({ size, color = "#1cb0f6", spin = 0, blink = 0 }) => {
+  const face = color === "#fff" ? "#1cb0f6" : "#fff";
+  const eyeH = 7 * (1 - 0.85 * blink);
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" style={{ transform: `rotate(${spin}deg)` }}>
+      <line x1="24" y1="4.5" x2="24" y2="11" stroke={color} strokeWidth="2.6" strokeLinecap="round" />
+      <circle cx="24" cy="4.5" r="3.2" fill={color} />
+      <rect x="2.5" y="21" width="5" height="11" rx="2.5" fill={color} />
+      <rect x="40.5" y="21" width="5" height="11" rx="2.5" fill={color} />
+      <rect x="7" y="11" width="34" height="30" rx="10" fill={color} />
+      <rect x="11.5" y="16" width="25" height="16" rx="6" fill={face} />
+      <rect x="16" y={24 - eyeH / 2} width="5" height={eyeH} rx="2.5" fill={color} />
+      <rect x="27" y={24 - eyeH / 2} width="5" height={eyeH} rx="2.5" fill={color} />
+      <path d="M19 36.5c2.8 2 7.2 2 10 0" stroke={face} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+};
+/** blink pulse: 1 for a few frames every ~1.6 s */
+export const blinkAt = (f: number) => { const m = f % 96; return m < 6 ? Math.sin((m / 6) * Math.PI) : 0; };
 export const AIReal: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
@@ -316,7 +336,10 @@ export const AIReal: React.FC = () => {
       <AbsoluteFill style={{ transformOrigin: "0 0", transform: `translate(${960 - c.s * c.x}px, ${560 - c.s * c.y}px) scale(${c.s})` }}>
         <div style={{ position: "absolute", left: MX, top: MY, width: MW, minHeight: 820, borderRadius: 24, background: "#fff", boxShadow: "0 40px 120px rgba(13,22,48,0.35)", padding: "36px 44px 40px", boxSizing: "border-box", fontFamily: UI, color: "#3c3c3c", opacity: Math.min(1, open * 1.5), transform: `translateY(${(1 - open) * 60}px) scale(${0.94 + 0.06 * open})` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ fontWeight: 800, fontSize: 36, letterSpacing: "-0.01em" }}>Объяснение статьи (Статья 1)</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+              <div style={{ fontWeight: 800, fontSize: 36, letterSpacing: "-0.01em" }}>Объяснение статьи (Статья 1)</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px 8px 12px", borderRadius: 999, background: "#e3f4fd", color: "#1cb0f6", fontWeight: 900, fontSize: 20, letterSpacing: "0.04em" }}><AiIcon size={30} blink={blinkAt(f)} />ИИ</div>
+            </div>
             <div style={{ display: "flex", gap: 14 }}>
               <div style={{ width: 54, height: 54, borderRadius: 14, background: "#ddf4ff", color: "#1cb0f6", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 28 }}>?</div>
               <div style={{ width: 54, height: 54, borderRadius: 14, background: "#1cb0f6", boxShadow: "0 4px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg></div>
@@ -324,9 +347,11 @@ export const AIReal: React.FC = () => {
           </div>
           {load > 0.01 ? (
             <div style={{ position: "absolute", left: 0, right: 0, top: 250, display: "flex", flexDirection: "column", alignItems: "center", opacity: load }}>
-              <Img src={staticFile("site/document.svg")} style={{ width: 120, height: 120, opacity: 0.55 + 0.45 * Math.abs(Math.sin(f / 12)), transform: `scale(${0.96 + 0.04 * Math.sin(f / 12)})` }} />
-              <div style={{ marginTop: 18, fontWeight: 800, fontSize: 30 }}>Разбираю статью</div>
-              <div style={{ marginTop: 8, fontWeight: 600, fontSize: 22, color: "#8a8f98" }}>Это займёт несколько секунд</div>
+              <div style={{ width: 150, height: 150, borderRadius: "50%", background: `radial-gradient(closest-side, rgba(28,176,246,${0.18 + 0.1 * Math.sin(f / 7)}), transparent)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <AiIcon size={110} spin={Math.sin(f / 9) * 6} blink={blinkAt(f + 40)} />
+              </div>
+              <div style={{ marginTop: 14, fontWeight: 800, fontSize: 30 }}>Искусственный интеллект разбирает статью{".".repeat(1 + (Math.floor(f / 8) % 3))}</div>
+              <div style={{ marginTop: 8, fontWeight: 600, fontSize: 22, color: "#8a8f98" }}>Ответ генерируется</div>
             </div>
           ) : null}
           <div style={{ marginTop: 30, display: "flex", flexDirection: "column", gap: 34 }}>
@@ -334,7 +359,6 @@ export const AIReal: React.FC = () => {
               const at = BL[i];
               const e = sp(at, 15, 170);
               const line = lin(f, at + 6, at + 40, 0, 1, OUTE);
-              const reveal = lin(f, at + 4, at + 46, 0, 1, Easing.bezier(0.3, 0, 0.3, 1));
               return (
                 <div key={title} style={{ display: "flex", gap: 22, opacity: f >= at ? 1 : 0 }}>
                   <div style={{ width: 44, display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
@@ -343,7 +367,17 @@ export const AIReal: React.FC = () => {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ height: 44, display: "flex", alignItems: "center", fontWeight: 800, fontSize: 18, letterSpacing: "0.08em", color: "#8a8f98", opacity: e, transform: `translateX(${(1 - e) * 20}px)` }}>{title}</div>
-                    <div style={{ marginTop: 8, fontWeight: bold ? 700 : 600, fontSize: 24, lineHeight: 1.62, textAlign: "justify", hyphens: "auto", WebkitMaskImage: `linear-gradient(180deg, #000 ${reveal * 100}%, transparent ${reveal * 100 + 14}%)`, maskImage: `linear-gradient(180deg, #000 ${reveal * 100}%, transparent ${reveal * 100 + 14}%)` }} lang="ru">{text}</div>
+                    <div style={{ marginTop: 8, fontWeight: bold ? 700 : 600, fontSize: 24, lineHeight: 1.62, textAlign: "justify", hyphens: "auto" }} lang="ru">
+                      {(() => {
+                        const n = Math.round(lin(f, at + 4, at + 44, 0, text.length, Easing.linear));
+                        const typing = f >= at + 4 && f < at + 54;
+                        return (<>
+                          {text.slice(0, n)}
+                          {typing ? <span style={{ display: "inline-block", width: 12, height: 26, marginLeft: 3, verticalAlign: "-4px", borderRadius: 3, background: "#1cb0f6", opacity: Math.floor(f / 8) % 2 === 0 ? 1 : 0.25 }} /> : null}
+                          <span style={{ color: "transparent" }}>{text.slice(n)}</span>
+                        </>);
+                      })()}
+                    </div>
                   </div>
                 </div>
               );
@@ -352,7 +386,7 @@ export const AIReal: React.FC = () => {
         </div>
       </AbsoluteFill>
       <div style={{ opacity: 1 - capOut }}>
-        <TopCap lines={["Непонятная статья?", "ИИ объяснит простыми словами."]} at={8} accent="простыми словами." />
+        <TopCap lines={["Непонятная статья?", "Объяснит искусственный интеллект."]} at={8} accent="искусственный интеллект." />
       </div>
       <div style={{ opacity: 1 - capOut }}><Top /></div>
     </AbsoluteFill>

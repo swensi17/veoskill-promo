@@ -3,7 +3,7 @@ import { AbsoluteFill, Easing, Img, Sequence, interpolate, spring, staticFile, u
 import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
-import { IntroMosaic, Wall, Counter, LawsHome, Reader, AIReal, Langs, PhraseBank } from "./V11Parts";
+import { IntroMosaic, Wall, Counter, LawsHome, Reader, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
 import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
 // veoskill v10: Maverick-style reel after review. Lessons as a camera flight over the lesson path, three games
@@ -365,6 +365,26 @@ const G3: React.FC = () => {
 // ================= S7 kinetic words between sections =================
 const S7: React.FC = () => <Words per={57.6} items={[["ИГРАЕШЬ.", "#e7ffd6", GLIP], ["ЗАПОМИНАЕШЬ.", BLUE, "#fff"]]} />;
 const S9: React.FC = () => <Words per={43.2} items={[["А ТЕПЕРЬ", BG, NAVY], ["ЗАКОНЫ.", NAVY, "#fff"]]} />;
+/** Word cut before the AI window: "А ТЕПЕРЬ" (1 beat), then a blue card with the AI mark (2 beats). */
+const AiWords: React.FC = () => {
+  const f = useCurrentFrame();
+  const sp = useSp();
+  const B1 = 28.8;
+  if (f < B1) return <Words per={B1} items={[["А ТЕПЕРЬ", BG, NAVY]]} />;
+  const lf = f - B1;
+  const ic = sp(B1, 12, 170);
+  const s = 1.05 - lin(lf, 0, 57, 0, 0.05, Easing.out(Easing.quad));
+  return (
+    <AbsoluteFill style={{ background: BLUE, alignItems: "center", justifyContent: "center" }}>
+      <Top dark />
+      <div style={{ transform: `scale(${s})`, width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ transform: `scale(${ic}) rotate(${(1 - ic) * -90}deg)`, opacity: Math.min(1, ic * 1.5), marginBottom: 6 }}><AiIcon size={170} color="#fff" spin={Math.sin(f / 10) * 5} blink={blinkAt(f - 10)} /></div>
+        <Kin text="ИСКУССТВЕННЫЙ" at={B1 + 2} size={170} color="#fff" />
+        <div style={{ marginTop: -30 }}><Kin text="ИНТЕЛЛЕКТ." at={B1 + 8} size={170} color="#fff" /></div>
+      </div>
+    </AbsoluteFill>
+  );
+};
 
 // ================= S10 lex.uz vs veoskill, function by function =================
 const LINES = ["Узбекистан: суверенное,", "демократическое, правовое,", "социальное и светское", "государство.", "Названия «Республика", "Узбекистан» и «Узбекистан»", "равнозначны."];
@@ -734,6 +754,7 @@ const SCENES: { C: React.FC; d: number; xo?: number }[] = [
   { C: OurWords, d: 86 },
   { C: LawsHome, d: 202 },
   { C: Reader, d: 432 },
+  { C: AiWords, d: 86 },
   { C: AIReal, d: 316, xo: 16 },
   { C: Langs, d: 231, xo: 10 },
   { C: Table, d: 288, xo: 16 },
