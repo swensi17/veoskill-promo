@@ -61,6 +61,21 @@ export const Cap: React.FC<{ text: string; at: number; size?: number; color?: st
     </div>
   );
 };
+/** One-line caption across the top with a soft fade band behind it (for older viewers: big, one line, easy to read). */
+export const TopLine: React.FC<{ a: string; b?: string; at: number; dark?: boolean; band?: string; size?: number; accentColor?: string }> = ({ a, b, at, dark, band, size, accentColor }) => {
+  const chars = a.length + (b ? b.length + 1 : 0);
+  const fs = size ?? Math.min(72, Math.round(1680 / (chars * 0.56)));
+  const bg = band ?? (dark ? "rgba(30,24,60,0.55)" : "rgba(255,255,255,0.97)");
+  return (
+    <>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: fs + 120, background: `linear-gradient(180deg, ${bg} 0%, ${bg} 55%, transparent 100%)`, zIndex: 85, pointerEvents: "none" }} />
+      <div style={{ position: "absolute", left: 0, right: 0, top: 26, zIndex: 86, display: "flex", justifyContent: "center", columnGap: Math.round(fs * 0.3) }}>
+        <Cap text={a} at={at} size={fs} color={dark ? "#fff" : NAVY} />
+        {b ? <Cap text={b} at={at + 8} size={fs} accent={b} accentColor={accentColor ?? (dark ? "#ffe27a" : BLUE)} /> : null}
+      </div>
+    </>
+  );
+};
 export const Pointer: React.FC<{ x: number; y: number; down?: number; op?: number }> = ({ x, y, down = 0, op = 1 }) => (
   <div style={{ position: "absolute", left: x, top: y, zIndex: 80, opacity: op }}>
     {/* click ripple (Telegram-like): a soft disc and a ring grow out of the tip while the press releases */}
@@ -424,14 +439,9 @@ export const S7b: React.FC = () => {
   const silver = sp(T0 + 6 * B + 10, 12, 160);
   return (
     <AbsoluteFill style={{ background: BG }}>
-      <Chrome />
-      <div style={{ position: "absolute", left: 120, top: 380 }}>
-        <Cap text="+15 XP за урок." at={0} size={72} accent="+15 XP" accentColor="#e0a800" />
-        <Cap text="Поднимайся в лиге." at={18} size={72} />
-        <div style={{ marginTop: 18, fontFamily: HEAD, fontWeight: 500, fontSize: 30, color: "#5d6470", opacity: lin(f, 36, 56) }}>Топ 15 переходят в следующую лигу</div>
-      </div>
+      <TopLine a="+15 XP за урок." b="Поднимайся в лиге." at={0} size={66} accentColor={BLUE} />
       {/* league badges like the site */}
-      <div style={{ position: "absolute", left: 1000, top: 110, display: "flex", alignItems: "center", gap: 22 }}>
+      <div style={{ position: "absolute", left: 960 - 380, top: 170, display: "flex", alignItems: "center", gap: 22 }}>
         <Img src={staticFile("real/bronze.webp")} style={{ width: 110, transform: `scale(${sp(4, 12, 170)})` }} />
         {[0, 1, 2, 3, 4, 5].map((i) => (
           <div key={i} style={{ position: "relative", width: 76, height: 86, transform: `scale(${sp(8 + i * 3, 12, 170)})` }}>
@@ -440,9 +450,9 @@ export const S7b: React.FC = () => {
           </div>
         ))}
       </div>
-      <div style={{ position: "absolute", left: 1000, top: 236, fontFamily: UI, fontWeight: 900, fontSize: 40, color: INK }}>{silver > 0.5 ? "Серебряная лига" : "Бронзовая лига"}</div>
+      <div style={{ position: "absolute", left: 960 - 380, top: 290, fontFamily: UI, fontWeight: 900, fontSize: 40, color: INK }}>{silver > 0.5 ? "Серебряная лига" : "Бронзовая лига"}</div>
       {/* table */}
-      <div style={{ position: "absolute", left: 980, top: 320, width: 760, height: ROWH * 6 + 30, borderRadius: 34, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.12)", opacity: sp(0, 14, 150), transform: `translateY(${(1 - sp(0, 14, 150)) * 60}px)` }}>
+      <div style={{ position: "absolute", left: 960 - 380, top: 360, width: 760, height: ROWH * 6 + 30, borderRadius: 34, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.12)", opacity: sp(0, 14, 150), transform: `translateY(${(1 - sp(0, 14, 150)) * 60}px)` }}>
         {(() => {
           const cs = PEOPLE.map((p) => Math.min(1, Math.max(0, (p[2] - mineXp) / 8 + 0.5)));
           // the "Ты" row glides: its place is averaged over +-20 frames so each climb is one soft move

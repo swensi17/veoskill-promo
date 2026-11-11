@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, random, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { fit, textWidth } from "./Kit7";
 import { ART } from "./Laws7";
-import { BG, NAVY, BLUE, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer } from "./Scenes9";
+import { BG, NAVY, BLUE, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer, TopLine } from "./Scenes9";
 
 // v11 parts: intro mosaic, wall of screens, live counter, real-screenshot law scenes, languages, word-bank game.
 const LOGO = "#3db7f4";
@@ -101,9 +101,9 @@ export const Wall: React.FC = () => {
         </div>
       </AbsoluteFill>
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(243,242,238,0) 58%, rgba(243,242,238,0.96) 78%)" }} />
-      <div style={{ position: "absolute", left: 0, right: 0, top: 830, display: "flex", flexDirection: "column", alignItems: "center", opacity: 1 - out }}>
-        <Cap text="Уроки, игры и законы." at={14} size={64} />
-        <Cap text="Всё в одном месте." at={26} size={64} accent="в одном месте." />
+      <div style={{ position: "absolute", left: 0, right: 0, top: 880, display: "flex", justifyContent: "center", columnGap: 20, opacity: 1 - out }}>
+        <Cap text="Уроки, игры и законы." at={14} size={66} />
+        <Cap text="Всё в одном месте." at={22} size={66} accent="в одном месте." />
       </div>
     </AbsoluteFill>
   );
@@ -223,13 +223,14 @@ const Plane: React.FC<{ keys: CK[]; layers: Layer[]; cy?: number; children?: Rea
 const TopCap: React.FC<{ lines: [string, string?]; at: number; accent?: string; hold?: number }> = ({ lines, at, accent, hold = 210 }) => {
   const f = useFrame();
   const out = lin(f, at + hold, at + hold + 26, 0, 1, Easing.bezier(0.5, 0, 0.75, 0));
+  const capSize = Math.min(78, Math.round(1700 / ((lines[0].length + (lines[1]?.length ?? 0) + 1) * 0.56)));
   if (out >= 1) return null;
   return (
     <>
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(243,242,238,1) 0%, rgba(243,242,238,1) 25%, rgba(243,242,238,0) 38%)", zIndex: 40, opacity: 1 - out }} />
-      <div style={{ position: "absolute", left: 100, right: 100, top: 70, zIndex: 45, display: "flex", flexWrap: "wrap", columnGap: 22, rowGap: 0, alignItems: "baseline", opacity: 1 - out, transform: `translateY(${-out * 70}px)` }}>
-        <Cap text={lines[0]} at={at} size={78} />
-        {lines[1] ? <Cap text={lines[1]} at={at + 10} size={78} accent={accent} /> : null}
+      <div style={{ position: "absolute", left: 100, right: 100, top: 70, zIndex: 45, display: "flex", flexWrap: "nowrap", columnGap: 22, rowGap: 0, alignItems: "baseline", opacity: 1 - out, transform: `translateY(${-out * 70}px)` }}>
+        <Cap text={lines[0]} at={at} size={capSize} />
+        {lines[1] ? <Cap text={lines[1]} at={at + 10} size={capSize} accent={accent} /> : null}
       </div>
     </>
   );
@@ -570,20 +571,15 @@ export const Collect: React.FC = () => {
       {/* the friend opens the link on a phone */}
       {f >= PHONE - 10 ? (
         <AbsoluteFill style={{ background: "#ffffff" }}>
-          <Top />
+          <TopLine a="Друг откроет" b="всё в одном месте." at={PHONE + 4} size={72} />
           {/* after the collection has opened, move in on the phone so the articles can be read */}
-          <AbsoluteFill style={{ transformOrigin: "1415px 120px", transform: `translateX(${-455 * lin(f, PHONE + 168, PHONE + 206)}px) scale(${1 + 0.62 * lin(f, PHONE + 168, PHONE + 206)})` }}>
-          <div style={{ position: "absolute", left: 150, top: 380, opacity: 1 - lin(f, PHONE + 168, PHONE + 190) }}>
-            <Cap text="Друг откроет" at={PHONE + 4} size={84} />
-            <Cap text="всё в одном месте." at={PHONE + 14} size={84} accent="всё в одном месте." />
-            <div style={{ marginTop: 16, fontFamily: HEAD, fontWeight: 600, fontSize: 34, color: "#6f7682", opacity: lin(f, PHONE + 30, PHONE + 46) }}>Удобно для учёбы и преподавателей.</div>
-          </div>
+          <AbsoluteFill style={{ transformOrigin: "960px 150px", transform: `scale(${1 + 0.5 * lin(f, PHONE + 168, PHONE + 206)})` }}>
           {/* paper plane: the link flies from the text to the phone along a curve, leaving a dotted trail, then "Отправлено" */}
           {(() => {
             const T0 = PHONE + 10, T1 = PHONE + 82;
             if (f < T0) return null;
             const t = lin(f, T0, T1, 0, 1, Easing.bezier(0.4, 0, 0.25, 1));
-            const S = [560, 960], C = [1120, 960], E = [1400, 330];
+            const S = [220, 900], C = [520, 880], E = [880, 420];
             const P = (u: number) => [(1 - u) ** 2 * S[0] + 2 * (1 - u) * u * C[0] + u * u * E[0], (1 - u) ** 2 * S[1] + 2 * (1 - u) * u * C[1] + u * u * E[1]];
             const D = (u: number) => [2 * (1 - u) * (C[0] - S[0]) + 2 * u * (E[0] - C[0]), 2 * (1 - u) * (C[1] - S[1]) + 2 * u * (E[1] - C[1])];
             const [x, y] = P(t), [dx, dy] = D(t);
@@ -603,14 +599,14 @@ export const Collect: React.FC = () => {
                   </div>
                 ) : null}
                 {f >= T1 ? (
-                  <div style={{ position: "absolute", left: 1415, top: 236, transform: `translate(-50%, 0) scale(${land})`, padding: "14px 26px", borderRadius: 30, background: "#58cc02", boxShadow: "0 5px 0 #46a302, 0 18px 40px rgba(70,163,2,0.35)", color: "#fff", fontFamily: UI, fontWeight: 900, fontSize: 30, display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap", zIndex: 5, opacity: 1 - lin(f, T1 + 70, T1 + 86) }}>
+                  <div style={{ position: "absolute", left: 960, top: 330, transform: `translate(-50%, 0) scale(${land})`, padding: "14px 26px", borderRadius: 30, background: "#58cc02", boxShadow: "0 5px 0 #46a302, 0 18px 40px rgba(70,163,2,0.35)", color: "#fff", fontFamily: UI, fontWeight: 900, fontSize: 30, display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap", zIndex: 5, opacity: 1 - lin(f, T1 + 70, T1 + 86) }}>
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Отправлено другу
                   </div>
                 ) : null}
               </>
             );
           })()}
-          <div style={{ position: "absolute", left: 1180, top: 60, width: 470, height: 960, borderRadius: 64, background: "#0d1630", padding: 14, boxSizing: "border-box", boxShadow: "0 50px 120px rgba(13,22,48,0.3)", transform: `translateY(${(1 - phone) * 300}px) rotate(${(1 - phone) * 6}deg)`, opacity: Math.min(1, phone * 1.5) }}>
+          <div style={{ position: "absolute", left: 960 - 235, top: 140, width: 470, height: 960, borderRadius: 64, background: "#0d1630", padding: 14, boxSizing: "border-box", boxShadow: "0 50px 120px rgba(13,22,48,0.3)", transformOrigin: "50% 0", transform: `translateY(${(1 - phone) * 300}px) rotate(${(1 - phone) * 6}deg) scale(0.94)`, opacity: Math.min(1, phone * 1.5) }}>
             <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 52, background: "#fff", overflow: "hidden", fontFamily: UI }}>
               <div style={{ height: 40, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 30px", fontWeight: 800, fontSize: 16, color: INK }}><span>9:41</span><span style={{ width: 110, height: 28, borderRadius: 14, background: "#0d1630" }} /><span>5G</span></div>
               {/* site header, mobile layout */}

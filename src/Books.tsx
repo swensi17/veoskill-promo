@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
-import { NAVY, BLUE, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer } from "./Scenes9";
+import { NAVY, BLUE, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer, TopLine } from "./Scenes9";
 
 // The book library (veoskill.uz/hub/materials): shelf page, open a book, the two-page reader,
 // select a fragment -> colour + share link, page turn, reader settings (theme, mode, size), and the phone reader.
@@ -269,7 +269,7 @@ export const Books: React.FC = () => {
       {/* ===== phone */}
       {f >= T.PHONE - 20 ? (
         <AbsoluteFill style={{ background: "#fff", opacity: lin(f, T.PHONE - 20, T.PHONE) }}>
-          <div style={{ position: "absolute", left: 1150, top: 40, width: 480, height: 1000, borderRadius: 66, background: "#0d1630", padding: 14, boxSizing: "border-box", boxShadow: "0 50px 120px rgba(13,22,48,0.3)", transform: `translateY(${(1 - phone) * 320}px) rotate(${(1 - phone) * 5}deg)`, opacity: Math.min(1, phone * 1.5) }}>
+          <div style={{ position: "absolute", left: 960 - 240, top: 136, width: 480, height: 1000, borderRadius: 66, background: "#0d1630", padding: 14, boxSizing: "border-box", boxShadow: "0 50px 120px rgba(13,22,48,0.3)", transformOrigin: "50% 0", transform: `translateY(${(1 - phone) * 320}px) rotate(${(1 - phone) * 5}deg) scale(0.9)`, opacity: Math.min(1, phone * 1.5) }}>
             <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 54, background: "#fdf3e1", overflow: "hidden" }}>
               <div style={{ height: 44, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 34px", fontWeight: 800, fontSize: 16, color: NAVY }}><span>9:41</span><span style={{ width: 110, height: 28, borderRadius: 14, background: "#0d1630" }} /><span>5G</span></div>
               <div style={{ height: 50, display: "flex", alignItems: "center", gap: 22, padding: "0 22px", borderBottom: "1px solid #eadfca", fontSize: 22, color: "#2b2b2b" }}><span style={{ flex: 1 }}>‹</span><span>≡</span><span>▤</span><span>⚙</span><span>🔖</span></div>
@@ -291,11 +291,7 @@ export const Books: React.FC = () => {
       ) : null}
 
       {/* captions, left (white band in the library and reader so they read over the page) */}
-      <div key={ci} style={{ position: "absolute", left: 0, top: 0, right: 0, height: f >= T.PHONE - 10 ? 0 : 118, background: "#fff", zIndex: 70 }} />
-      <div key={"c" + ci} style={{ position: "absolute", left: 70, top: f >= T.PHONE - 10 ? 420 : 22, zIndex: 71, display: "flex", flexDirection: f >= T.PHONE - 10 ? "column" : "row", columnGap: 20, alignItems: f >= T.PHONE - 10 ? "flex-start" : "baseline" }}>
-        <Cap text={caps[ci][1]} at={caps[ci][0] + 2} size={f >= T.PHONE - 10 ? 84 : 64} color={NAVY} />
-        <Cap text={caps[ci][2]} at={caps[ci][0] + 10} size={f >= T.PHONE - 10 ? 84 : 64} accent={caps[ci][2]} />
-      </div>
+      <TopLine key={ci} a={caps[ci][1]} b={caps[ci][2]} at={caps[ci][0] + 2} size={64} />
       {void HEAD}
     </AbsoluteFill>
   );

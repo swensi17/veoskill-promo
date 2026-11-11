@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
-import { NAVY, BLUE, GREEN, GLIP, RED, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer } from "./Scenes9";
+import { NAVY, BLUE, GREEN, GLIP, RED, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer, TopLine } from "./Scenes9";
 import { ART } from "./Laws7";
 
 // A whole lesson as on veoskill.uz/exercise: intro list, theory (with the Constitution side panel), find the sound,
@@ -109,10 +109,7 @@ export const Lesson: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
       {/* caption column */}
-      <div key={ci} style={{ position: "absolute", left: 80, top: 400, width: 520, opacity: capO }}>
-        <Cap text={CAPS[ci][1]} at={CAPS[ci][0] + 4} size={64} color={NAVY} />
-        {CAPS[ci][2] ? <Cap text={CAPS[ci][2]!} at={CAPS[ci][0] + 12} size={64} accent={CAPS[ci][3]} /> : null}
-      </div>
+      <AbsoluteFill style={{ transformOrigin: "50% 0", transform: "translateY(104px) scale(0.9)" }}>
       {/* top bar: close, progress, hearts */}
       <svg style={{ position: "absolute", left: CX - 4, top: 46 }} width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#afafaf" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
       <div style={{ position: "absolute", left: CX + 64, top: 56, width: CW - 160, height: 22, borderRadius: 11, background: "#e5e5e5", overflow: "hidden" }}>
@@ -292,6 +289,8 @@ export const Lesson: React.FC = () => {
       {/* coming out of the green "НАЧАТЬ" flood of the lesson path */}
       <AbsoluteFill style={{ background: GREEN, opacity: 1 - lin(f, 0, 18), pointerEvents: "none" }} />
       {f >= 14 && f < S.END - 20 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, 14, 26) * (1 - lin(f, S.END - 34, S.END - 20))} /></div> : null}
+      </AbsoluteFill>
+      <TopLine key={ci} a={CAPS[ci][1]} b={CAPS[ci][2] || undefined} at={CAPS[ci][0] + 4} />
     </AbsoluteFill>
   );
 };
@@ -338,10 +337,7 @@ export const LessonMore: React.FC = () => {
   const sent = f < READ0 || f > READ1 ? -1 : Math.min(CASE.length + 2, Math.floor(lin(f, READ0, READ1, 0, CASE.length + 3, Easing.linear)));
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
-      <div key={ci} style={{ position: "absolute", left: 80, top: 400, width: 520, opacity: (1 - lin(f, capEnd - 10, capEnd)) * (1 - 0.85 * lin(Math.abs(cs - 1), 0, 0.2)), zIndex: 60 }}>
-        <Cap text={CAPS[ci][1]} at={CAPS[ci][0] + 4} size={64} color={NAVY} />
-        <Cap text={CAPS[ci][2]} at={CAPS[ci][0] + 12} size={64} accent={CAPS[ci][2]} />
-      </div>
+      <AbsoluteFill style={{ transformOrigin: "50% 0", transform: "translateY(104px) scale(0.9)" }}>
       <AbsoluteFill style={{ transformOrigin: "0 0", transform: `translate(${960 - cs * cx}px, ${540 - cs * cy}px) scale(${cs})` }}>
       <svg style={{ position: "absolute", left: CX - 4, top: 46 }} width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#afafaf" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
       <div style={{ position: "absolute", left: CX + 64, top: 56, width: CW - 160, height: 22, borderRadius: 11, background: "#e5e5e5", overflow: "hidden" }}>
@@ -410,6 +406,8 @@ export const LessonMore: React.FC = () => {
       </AbsoluteFill>
       <Confetti at={CHK1 + 2} />
       <Confetti at={OK2} />
+      </AbsoluteFill>
+      <TopLine key={ci} a={CAPS[ci][1]} b={CAPS[ci][2] || undefined} at={CAPS[ci][0] + 4} />
     </AbsoluteFill>
   );
 };
