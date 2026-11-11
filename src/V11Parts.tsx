@@ -115,82 +115,90 @@ const Digit: React.FC<{ d: number; size: number; color: string; dim: boolean; bl
     <div style={{ width: size * 0.6, textAlign: "center", color, display: dim ? "none" : "inline-block", filter: blur > 0.4 ? `blur(${blur}px)` : undefined, }}>{d}</div>
   );
 };
+/** Stat card drawn at 1920x1080 and scaled into a tile: caps label, big blue value, several lines rising together. */
+const StatCard: React.FC<{ label: string; value: React.ReactNode; at: number; dur?: number; seed: number; vs?: number }> = ({ label, value, at, dur = 150, seed, vs = 300 }) => {
+  const f = useFrame();
+  const p = lin(f, at, at + dur, 0, 1, Easing.bezier(0.25, 0.6, 0.25, 1));
+  const cols = ["#0d8fd0", "#1cb0f6", "#3db7f4", "#84d8ff", "#bfe9ff"];
+  const lines = cols.map((c, k) => {
+    const pts = Array.from({ length: 48 }, (_, i) => {
+      const x = i / 47;
+      const g = Math.pow(x, 1.6 + k * 0.25) * (0.95 - k * 0.12) + Math.sin(x * 9 + k * 2 + seed) * 0.025 * x;
+      return [90 + x * 1740, 1000 - g * 430] as [number, number];
+    });
+    const n = Math.max(2, Math.round(p * pts.length));
+    const d = pts.slice(0, n).map((q, i) => `${i ? "L" : "M"}${q[0].toFixed(1)} ${q[1].toFixed(1)}`).join(" ");
+    return { c, d, tip: pts[n - 1], k };
+  });
+  return (
+    <AbsoluteFill style={{ background: "#fff", overflow: "hidden" }}>
+      <svg style={{ position: "absolute", left: 0, top: 0 }} width="1920" height="1080">
+        {lines.slice().reverse().map(({ c, d, tip, k }) => (
+          <g key={k}>
+            {k === 0 ? <path d={`${d} L${tip[0]} 1080 L90 1080 Z`} fill={c} opacity={0.08} /> : null}
+            <path d={d} fill="none" stroke={c} strokeWidth={k === 0 ? 9 : 6} strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx={tip[0]} cy={tip[1]} r={k === 0 ? 14 : 9} fill={c} />
+          </g>
+        ))}
+      </svg>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 150, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 64, letterSpacing: "0.14em", color: "#0d8fd0", opacity: lin(f, at - 20, at) }}>{label}</div>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 250, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: vs, lineHeight: 1, letterSpacing: "-0.04em", color: LOGO, fontVariantNumeric: "tabular-nums", opacity: lin(f, at - 16, at + 4), transform: `scale(${0.9 + 0.1 * lin(f, at - 16, at + 10, 0, 1, OUTE)})` }}>{value}</div>
+    </AbsoluteFill>
+  );
+};
 export const Counter: React.FC = () => {
   const f = useFrame();
-  const sp = useSp();
   const TARGET = 1608;
-  // part 1: "Сегодня в базе" with screens flashing behind
-  const p1 = f < 92;
-  const flash = WALL[Math.floor(f / 6) % WALL.length];
-  const t1 = lin(f, 0, 20, 0, 1, OUTE), t2 = lin(f, 16, 38, 0, 1, OUTE);
-  const out1 = lin(f, 80, 92, 0, 1);
-  // part 2: odometer
-  const c = lin(f, 92, 250, 0, 1, Easing.bezier(0.2, 0.6, 0.25, 1));
-  const v = TARGET * c;
-  const done = f >= 250;
-  const burst = lin(f, 250, 300, 0, 1, OUTE);
-  const SIZE = 230;
-  const vi = Math.round(v);
-  const vPrev = TARGET * lin(f - 1, 92, 250, 0, 1, Easing.bezier(0.2, 0.6, 0.25, 1));
-  const speed = Math.abs(v - vPrev);
-  const dg = String(vi).padStart(4, "0").split("").map(Number);
-  const lead = (k: number) => vi < [1000, 100, 10, 1][k] && !done && k < 3;
-  const bl = (k: number) => Math.min(9, speed / [1000, 100, 10, 1][k] * 6);
-  const chart = Array.from({ length: 40 }, (_, i) => {
-    const x = i / 39;
-    const y = Math.pow(x, 2.2) * 0.85 + (random(`ch${i}`) - 0.5) * 0.05 * x;
-    return [80 + x * 1500, 1040 - y * 360] as [number, number];
-  });
-  const shown = Math.max(2, Math.round(c * chart.length));
-  const path = chart.slice(0, shown).map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" ");
-  const tip = chart[shown - 1];
+  const W0 = 86, C0 = 100, C1 = 250, PULL0 = 330, PULL1 = 378, END = 518;
+  const c = lin(f, C0, C1, 0, 1, Easing.bezier(0.2, 0.6, 0.25, 1));
+  const vi = Math.round(TARGET * c);
+  const pull = lin(f, PULL0, PULL1, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
+  // 3 x 2 tiles (16:9), the counter becomes the first one
+  const TW = 560, TH = 315, GX = 30, GY = 34, L = (1920 - 3 * TW - 2 * GX) / 2, T = 230;
+  const slot = (i: number) => [L + (i % 3) * (TW + GX), T + Math.floor(i / 3) * (TH + GY)];
+  const k = TW / 1920;
+  const [sx, sy] = slot(0);
+  const ms = 1 + (k - 1) * pull, mx = sx * pull, my = sy * pull;
+  const TILES: [string, string, number][] = [["ЯЗЫКОВ", "99+", 300], ["АВТООБНОВЛЕНИЕ", "каждый день", 190], ["СОРТИРОВКА", "по годам и видам", 150], ["ПОИСК", "по всей базе", 180], ["СТАТУС", "«Действует»", 180]];
+  const word = lin(f, W0 - 10, W0 + 4);
   return (
-    <AbsoluteFill style={{ background: "#07090f", overflow: "hidden" }}>
-      {p1 ? (
-        <>
-          <AbsoluteFill style={{ opacity: 0.22 * lin(f, 4, 14) * (1 - out1) }}>
-            <Img src={W(flash)} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "blur(2px)" }} />
+    <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
+      {/* 1. blue caps cut, like the other section cuts */}
+      {f < W0 + 6 ? (
+        <AbsoluteFill style={{ background: BLUE, alignItems: "center", justifyContent: "center", opacity: 1 - word, zIndex: 20 }}>
+          <AbsoluteFill style={{ transform: "rotate(-10deg) scale(1.3)", opacity: 0.16 }}>
+            {Array.from({ length: 8 }, (_, r) => <div key={r} style={{ position: "absolute", left: -1400, top: -120 + r * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, color: "#fff", transform: `translateX(${(f * (r % 2 ? 2 : -2)) % 1300 + (r % 2 ? -650 : 0)}px)` }}>{"ЗАКОНЫ • КОДЕКСЫ • УКАЗЫ • ".repeat(6)}</div>)}
           </AbsoluteFill>
-          <AbsoluteFill style={{ background: "radial-gradient(60% 50% at 50% 50%, rgba(7,9,15,0.2), rgba(7,9,15,0.9))" }} />
-          <div style={{ position: "absolute", left: 0, right: 0, top: 440, display: "flex", justifyContent: "center", alignItems: "baseline", gap: 26, opacity: 1 - out1, filter: out1 > 0 ? `blur(${out1 * 8}px)` : undefined }}>
-            <span style={{ fontFamily: HEAD, fontWeight: 300, fontSize: 130, letterSpacing: "-0.03em", color: LOGO, opacity: t1, transform: `translateY(${(1 - t1) * 30}px)`, display: "inline-block" }}>Сегодня</span>
-            <span style={{ fontFamily: HEAD, fontWeight: 800, fontSize: 130, letterSpacing: "-0.03em", color: "#fff", opacity: t2, transform: `translateY(${(1 - t2) * 30}px)`, display: "inline-block" }}>в базе</span>
+          <div style={{ display: "flex", columnGap: 50 }}>
+            <Cap text="СЕГОДНЯ" at={4} size={190} color="#fff" weight={900} />
+            <Cap text="В БАЗЕ" at={14} size={190} color={NAVY} weight={900} />
           </div>
-        </>
-      ) : (
-        <>
-          <svg style={{ position: "absolute", left: 0, top: 0 }} width="1920" height="1080">
-            <defs><linearGradient id="cg" x1="0" x2="1"><stop offset="0" stopColor="#84d8ff" /><stop offset="1" stopColor={LOGO} /></linearGradient></defs>
-            <path d={`${path} L${tip[0]} 1080 L80 1080 Z`} fill="url(#cg)" opacity={0.12} />
-            <path d={path} fill="none" stroke="url(#cg)" strokeWidth="4" />
-            <circle cx={tip[0]} cy={tip[1]} r={9} fill="#fff" opacity={0.9} />
-          </svg>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 250, display: "flex", justifyContent: "center", opacity: lin(f, 92, 110, 0, 1, OUTE), transform: `translateY(${(1 - lin(f, 92, 116, 0, 1, OUTE)) * 18}px)` }}>
-            <div style={{ fontFamily: HEAD, fontWeight: 800, fontSize: 34, letterSpacing: "0.16em", color: "#fff" }}>ЗАКОНЫ И КОДЕКСЫ</div>
-          </div>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 330, display: "flex", justifyContent: "center", fontFamily: HEAD, fontWeight: 800, fontSize: SIZE, letterSpacing: "-0.04em", transform: `scale(${1 + burst * 0.04})` }}>
-            <div style={{ display: "flex", filter: `drop-shadow(0 0 ${done ? 34 * (1 - burst * 0.4) : 14}px rgba(61,183,244,0.5))` }}>
-              <Digit k="a" d={dg[0]} size={SIZE} color={LOGO} dim={lead(0)} blur={bl(0)} />
-              {vi >= 1000 ? <div style={{ width: SIZE * 0.22 }} /> : null}
-              <Digit k="bb" d={dg[1]} size={SIZE} color={LOGO} dim={lead(1)} blur={bl(1)} />
-              <Digit k="ccc" d={dg[2]} size={SIZE} color={LOGO} dim={lead(2)} blur={bl(2)} />
-              <Digit k="dddd" d={dg[3]} size={SIZE} color={LOGO} dim={false} blur={bl(3)} />
-            </div>
-          </div>
-          {done ? (
-            <>
-              <div style={{ position: "absolute", left: 960 - 420, top: 450 - 420, width: 840, height: 840, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.25)", transform: `scale(${0.4 + burst * 0.7})`, opacity: 1 - burst }} />
-              {Array.from({ length: 46 }, (_, k) => {
-                const a = random(`b${k}`) * Math.PI * 2, d = (120 + random(`d${k}`) * 520) * burst;
-                return <div key={k} style={{ position: "absolute", left: 960 + Math.cos(a) * d, top: 470 + Math.sin(a) * d * 0.7 + burst * burst * 120, width: 10, height: 6 + random(`h${k}`) * 10, borderRadius: 2, background: [LOGO, "#84d8ff", "#fff", LOGO][k % 4], opacity: 1 - lin(f, 280, 320), transform: `rotate(${k * 37 + f * 4}deg)` }} />;
-              })}
-            </>
-          ) : null}
-          <div style={{ position: "absolute", left: 0, right: 0, top: 610, display: "flex", justifyContent: "center", opacity: sp(254, 15, 150), transform: `translateY(${(1 - sp(254, 15, 150)) * 24}px)` }}>
-            <span style={{ fontFamily: HEAD, fontWeight: 600, fontSize: 52, color: "rgba(255,255,255,0.85)" }}>законов и кодексов <span style={{ color: LOGO }}>в одном месте</span></span>
-          </div>
-        </>
-      )}
+        </AbsoluteFill>
+      ) : null}
+      {/* 2. other tiles appear around after the pull back */}
+      {TILES.map(([lb, v, vs], i) => { const [x, y] = slot(i + 1); const e = lin(f, PULL1 - 16 + i * 6, PULL1 + 8 + i * 6, 0, 1, OUTE); if (e <= 0) return null; return (
+        <div key={lb} style={{ position: "absolute", left: x, top: y, width: 1920, height: 1080, transformOrigin: "0 0", transform: `scale(${k}) translateY(${(1 - e) * 200}px)`, opacity: e, borderRadius: 70, overflow: "hidden", boxShadow: "0 40px 120px rgba(13,22,48,0.18)" }}>
+          <StatCard label={lb} value={v} at={PULL1 + i * 6} dur={110} seed={i + 2} vs={vs} />
+        </div>); })}
+      {/* 3. the main counter: full screen, then shrinks into the first tile */}
+      <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, transformOrigin: "0 0", transform: `translate(${mx}px, ${my}px) scale(${ms})`, borderRadius: 70 * pull, overflow: "hidden", boxShadow: pull > 0 ? `0 40px 120px rgba(13,22,48,${0.18 * pull})` : undefined }}>
+        <StatCard label="ЗАКОНОВ И КОДЕКСОВ" value={vi.toLocaleString("ru-RU")} at={C0} dur={C1 - C0} seed={0} />
+      </div>
+      {/* 4. big blue confetti when the count lands */}
+      {f >= C1 && f < C1 + 150 ? (
+        <AbsoluteFill style={{ pointerEvents: "none" }}>
+          {Array.from({ length: 150 }, (_, i) => {
+            const r = (q: number) => { const v = Math.sin(i * q) * 43758.5453; return v - Math.floor(v); };
+            const t = (f - C1) / 60;
+            const a = r(12.9) * Math.PI * 2, sp0 = 500 + r(78.2) * 900;
+            const x = 960 + Math.cos(a) * sp0 * t, y = 400 + Math.sin(a) * sp0 * t * 0.8 - 300 * t + 900 * t * t;
+            const w = 12 + r(4.4) * 16, h = 18 + r(9.1) * 18;
+            return <div key={i} style={{ position: "absolute", left: x, top: y, width: w, height: h, borderRadius: r(2.2) > 0.6 ? w : 4, background: ["#0d8fd0", "#1cb0f6", "#3db7f4", "#84d8ff", "#bfe9ff", "#ffffff"][i % 6], boxShadow: "0 2px 6px rgba(13,90,150,0.2)", transform: `rotate(${(r(3.3) * 720 + f * (6 + r(5.5) * 12)) % 360}deg) scaleX(${Math.cos(f / (4 + r(7.7) * 6))})`, opacity: 1 - lin(t, 1.7, 2.5) }} />;
+          })}
+        </AbsoluteFill>
+      ) : null}
+      {f >= PULL1 - 10 ? <TopLine a="Законы всегда" b="актуальны." at={PULL1 - 6} size={66} /> : null}
+      {void END}
     </AbsoluteFill>
   );
 };
