@@ -6,6 +6,7 @@ import { LessonPath } from "./V12Path";
 import { Lesson, LessonMore } from "./Lesson";
 import { Duel } from "./Duel";
 import { Books } from "./Books";
+import { Profile, Premium } from "./Profile";
 import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, ArticleActions, Collect, Search, AiPick, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
 import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
@@ -364,6 +365,8 @@ const G3: React.FC = () => {
 const S7: React.FC = () => <Words per={57.6} items={[["ИГРАЕШЬ.", "#e7ffd6", GLIP], ["ЗАПОМИНАЕШЬ.", BLUE, "#fff"], ["РАСТЁШЬ В ЛИГЕ.", BG, NAVY, "В ЛИГЕ."]]} />;
 /** Blue section cuts before each new part of the site. */
 const DuelWords: React.FC = () => <Words per={57.6} items={[["А ТЕПЕРЬ", BG, NAVY], ["СОРЕВНОВАНИЯ.", BLUE, "#fff"]]} />;
+const ProfWords: React.FC = () => <Words per={57.6} items={[["А ЕЩЁ", BG, NAVY], ["ТВОЯ СТРАНИЦА.", BLUE, "#fff"]]} />;
+const PremWords: React.FC = () => <Words per={57.6} items={[["И, КОНЕЧНО,", BG, NAVY], ["PREMIUM.", NAVY, "#fff"]]} />;
 const LibWords: React.FC = () => <Words per={57.6} items={[["А ТАКЖЕ", BG, NAVY], ["СВОЯ БИБЛИОТЕКА.", BLUE, "#fff"]]} />;
 const S9: React.FC = () => <Words per={57.6} items={[["А ТЕПЕРЬ", BG, NAVY], ["ЗАКОНЫ.", NAVY, "#fff"]]} />;
 /** Word cut before the AI window: "А ТЕПЕРЬ" (1 beat), then a blue card with the AI mark (2 beats). */
@@ -780,6 +783,10 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: Langs, d: 231, xo: 10 },
   { C: LibWords, d: 115 },
   { C: Books, d: 1210 },
+  { C: ProfWords, d: 115 },
+  { C: Profile, d: 720, k: 1.3, xo: 16 },
+  { C: PremWords, d: 115 },
+  { C: Premium, d: 346, xo: 16 },
   { C: Table, d: 288, xo: 16 },
   { C: S11, d: 720 },
 ];

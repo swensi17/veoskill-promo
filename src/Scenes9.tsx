@@ -69,7 +69,7 @@ export const TopLine: React.FC<{ a: string; b?: string; at: number; dark?: boole
   return (
     <>
       <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: fs + 120, background: `linear-gradient(180deg, ${bg} 0%, ${bg} 55%, transparent 100%)`, zIndex: 85, pointerEvents: "none" }} />
-      <div style={{ position: "absolute", left: 0, right: 0, top: 26, zIndex: 86, display: "flex", justifyContent: "center", columnGap: Math.round(fs * 0.3) }}>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 26, zIndex: 86, display: "flex", justifyContent: "center", columnGap: Math.round(fs * 0.3), filter: dark ? "drop-shadow(0 3px 12px rgba(0,0,0,0.35))" : undefined }}>
         <Cap text={a} at={at} size={fs} color={dark ? "#fff" : NAVY} />
         {b ? <Cap text={b} at={at + 8} size={fs} accent={b} accentColor={accentColor ?? (dark ? "#ffe27a" : BLUE)} /> : null}
       </div>
