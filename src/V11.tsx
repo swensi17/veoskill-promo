@@ -82,7 +82,7 @@ export const S1: React.FC = () => {
     </AbsoluteFill>
   );
 };
-const S2: React.FC = () => <Words per={45} items={[["ЗУБРИШЬ.", NAVY, "#fff"], ["ЗАБЫВАЕШЬ.", BLUE, "#fff"], ["СКУЧНО.", "#fff", NAVY], ["ЗНАКОМО?", BG, NAVY, "?"]]} />;
+const S2: React.FC = () => <Words per={43.2} items={[["ЗУБРИШЬ.", NAVY, "#fff"], ["ЗАБЫВАЕШЬ.", BLUE, "#fff"], ["СКУЧНО.", "#fff", NAVY], ["ЗНАКОМО?", BG, NAVY, "?"]]} />;
 
 // ================= S3 the turn: a slower text cylinder =================
 const BAND = "УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ • ";
@@ -363,8 +363,8 @@ const G3: React.FC = () => {
 };
 
 // ================= S7 kinetic words between sections =================
-const S7: React.FC = () => <Words per={55} items={[["ИГРАЕШЬ.", "#e7ffd6", GLIP], ["ЗАПОМИНАЕШЬ.", BLUE, "#fff"]]} />;
-const S9: React.FC = () => <Words per={45} items={[["А ТЕПЕРЬ", BG, NAVY], ["ЗАКОНЫ.", NAVY, "#fff"]]} />;
+const S7: React.FC = () => <Words per={57.6} items={[["ИГРАЕШЬ.", "#e7ffd6", GLIP], ["ЗАПОМИНАЕШЬ.", BLUE, "#fff"]]} />;
+const S9: React.FC = () => <Words per={43.2} items={[["А ТЕПЕРЬ", BG, NAVY], ["ЗАКОНЫ.", NAVY, "#fff"]]} />;
 
 // ================= S10 lex.uz vs veoskill, function by function =================
 const LINES = ["Узбекистан: суверенное,", "демократическое, правовое,", "социальное и светское", "государство.", "Названия «Республика", "Узбекистан» и «Узбекистан»", "равнозначны."];
@@ -543,9 +543,9 @@ const S11: React.FC = () => {
 
 
 // ================= laws, desktop: lex.uz first, then ours =================
-const LessonWords: React.FC = () => <Words per={40} items={[["КОРОТКИЕ", GREEN, "#fff"], ["УРОКИ.", BG, NAVY, "УРОКИ."], ["ШАГ", NAVY, "#fff"], ["ЗА ШАГОМ.", BLUE, "#fff"]]} />;
+const LessonWords: React.FC = () => <Words per={43.2} items={[["КОРОТКИЕ", GREEN, "#fff"], ["УРОКИ.", BG, NAVY, "УРОКИ."], ["ШАГ", NAVY, "#fff"], ["ЗА ШАГОМ.", BLUE, "#fff"]]} />;
 export const LexWords: React.FC = () => <Words per={40} items={[["ОБЫЧНО", BG, NAVY], ["ЗАКОН", NAVY, "#fff"], ["ВЫГЛЯДИТ", BG, NAVY], ["ТАК.", "#ffe3e3", RED]]} />;
-const OurWords: React.FC = () => <Words per={40} items={[["А У НАС", BLUE, "#fff"], ["ТАК.", "#e7ffd6", GLIP]]} />;
+const OurWords: React.FC = () => <Words per={43.2} items={[["А У НАС", BLUE, "#fff"], ["ТАК.", "#e7ffd6", GLIP]]} />;
 /** A desktop browser window; the page inside is a full 1920x1080 frame scaled down. */
 const Browser: React.FC<{ url: string; x: number; y: number; w: number; enter: number; children: React.ReactNode }> = ({ url, x, y, w, enter, children }) => {
   const f = useCurrentFrame();
@@ -578,17 +578,60 @@ const Badge: React.FC<{ ok: boolean; text: string; at: number; x: number; y: num
     </div>
   );
 };
+const LEX_ROWS: [string, string][] = [
+  ["Нет заметок и выделения", "Заметки и выделение цветом"],
+  ["Нет объяснения простыми словами", "Объяснение простыми словами"],
+  ["Нет примеров из жизни", "Примеры из жизни к статьям"],
+  ["Нет уроков и игр", "Уроки и игры по праву"],
+  ["Нет перевода на 99+ языков", "Законы на 99+ языках"],
+];
+const LEX_FLIP = 196;
+const LexHead: React.FC<{ f: number }> = ({ f }) => {
+  const a = lin(f, 70, 84) * (1 - lin(f, LEX_FLIP - 8, LEX_FLIP)), b = lin(f, LEX_FLIP, LEX_FLIP + 10);
+  const st = { position: "absolute" as const, left: 1290, top: 196, fontFamily: HEAD, fontWeight: 800, fontSize: 30, letterSpacing: "0.12em" };
+  return (
+    <>
+      <div style={{ ...st, color: "#7c8593", opacity: a }}>НА LEX.UZ</div>
+      <div style={{ ...st, color: LOGO, opacity: b, transform: `translateY(${(1 - b) * 12}px)` }}>В VEOSKILL</div>
+    </>
+  );
+};
+const LexRow: React.FC<{ no: string; yes: string; at: number; flip: number; y: number }> = ({ no, yes, at, flip, y }) => {
+  const f = useCurrentFrame();
+  const sp = useSp();
+  const s = sp(at, 13, 210);
+  const g = sp(flip, 12, 220);
+  const k = Math.min(1, Math.max(0, g));
+  if (f < at) return null;
+  const pop = 1 + press(f, flip) * 0.18;
+  return (
+    <div style={{ position: "absolute", left: 1290, top: y, display: "flex", alignItems: "center", gap: 18, transform: `translateX(${(1 - s) * 50}px)`, opacity: Math.min(1, s * 1.4) }}>
+      <div style={{ position: "relative", width: 60, height: 60, flexShrink: 0, transform: `scale(${pop})` }}>
+        {[false, true].map((ok) => (
+          <div key={String(ok)} style={{ position: "absolute", inset: 0, borderRadius: 30, background: ok ? GREEN : RED, boxShadow: `0 5px 0 ${ok ? GLIP : "#c23a3a"}`, display: "flex", alignItems: "center", justifyContent: "center", opacity: ok ? k : 1 - k, transform: `rotate(${ok ? (1 - k) * -90 : k * 90}deg)` }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d={ok ? "M5 12.5l4.5 4.5L19 7.5" : "M6 6l12 12M18 6L6 18"} /></svg>
+          </div>
+        ))}
+      </div>
+      <div style={{ position: "relative", width: 520, height: 80 }}>
+        {[no, yes].map((t, j) => (
+          <div key={j} style={{ position: "absolute", left: 0, top: 0, height: 80, display: "flex", alignItems: "center", fontFamily: HEAD, fontWeight: 800, fontSize: 32, lineHeight: 1.1, color: j ? GLIP : "#c23a3a", opacity: j ? k : 1 - k, transform: `translateY(${(j ? 1 - k : -k) * 16}px)` }}>{t}</div>
+        ))}
+      </div>
+    </div>
+  );
+};
 const LexScene: React.FC = () => {
   const f = useCurrentFrame();
   const enter = lin(f, 0, 40, 0, 1, OUTE);
-  const push = lin(f, 0, 240, 0, 1, Easing.linear);
+  const push = lin(f, 0, 317, 0, 1, Easing.linear);
   const X1 = lin(f, 50, 72, 0, 1, Easing.bezier(0.5, 0, 0.3, 1)), X2 = lin(f, 66, 88, 0, 1, Easing.bezier(0.5, 0, 0.3, 1));
   const cx = 110 + 550, cy = 200 + 370;
   return (
     <AbsoluteFill style={{ background: BG }}>
       <Top />
       <div style={{ position: "absolute", left: 110, top: 96, zIndex: 30 }}><Cap text="Обычно закон выглядит так." at={6} size={56} /></div>
-      <AbsoluteFill style={{ transformOrigin: `${cx}px ${cy}px`, transform: `scale(${1 + push * 0.12})` }}>
+      <AbsoluteFill style={{ transformOrigin: `${cx}px ${cy}px`, transform: `scale(${1 + push * 0.06})` }}>
         <AbsoluteFill style={{ perspective: 2400 }}>
           <div style={{ position: "absolute", left: 110, top: 190, width: 1100, height: 744, borderRadius: 22, overflow: "hidden", boxShadow: "0 50px 120px rgba(13,22,48,0.2)", border: "2px solid #e3e5e9", transform: `translateY(${(1 - enter) * 160}px) rotateX(${(1 - enter) * 14 + 2}deg)`, opacity: enter, background: "#fff" }}>
             <Img src={staticFile("lex/doc-desk.jpg")} style={{ width: 1100, height: 744, objectFit: "cover", objectPosition: "top left", filter: `saturate(${1 - X2 * 0.4}) brightness(${1 - X2 * 0.05})` }} />
@@ -600,8 +643,11 @@ const LexScene: React.FC = () => {
           <path d="M510 90 L90 510" stroke={RED} strokeWidth="44" strokeLinecap="round" strokeDasharray="600" strokeDashoffset={600 * (1 - X2)} />
         </svg>
       </AbsoluteFill>
-      <Badge ok={false} text="Нет заметок и выделения" at={94} x={1290} y={360} />
-      <Badge ok={false} text="Нет объяснения простыми словами" at={112} x={1290} y={520} />
+      {/* 5 red points (lex.uz), then each flips to a green check (veoskill); timed on the 125 BPM grid (1 beat = 28.8 frames) */}
+      <LexHead f={f} />
+      {LEX_ROWS.map((r, i) => (
+        <LexRow key={i} no={r[0]} yes={r[1]} at={Math.round(86.4 + i * 14.4)} flip={Math.round(201.6 + i * 7.2)} y={262 + i * 128} />
+      ))}
     </AbsoluteFill>
   );
 };
@@ -627,26 +673,37 @@ export const OurAI: React.FC = () => <OurScene kind="ai" />;
 const Table: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
-  const ROWS = ["Объяснение простыми словами", "Заметки и выделение цветом", "Пример из жизни к статье", "Уроки и игры по праву"];
-  const push = lin(f, 0, 240, 0, 1, Easing.linear);
+  const ROWS = [
+    "Объяснение статьи простыми словами",
+    "Пример из жизни к статье",
+    "Заметки и выделение цветом",
+    "Короткие уроки шаг за шагом",
+    "Игры по праву",
+    "Очки опыта и лига",
+    "Законы на 99+ языках",
+    "Уроки, игры и законы в одном месте",
+  ];
+  // rows land on half-beats of the 125 BPM track (the scene starts on a beat; 1 beat = 28.8 frames)
+  const rowAt = (i: number) => Math.round(28.8 + i * 14.4);
+  const push = lin(f, 0, 288, 0, 1, Easing.linear);
   return (
     <AbsoluteFill style={{ background: BG }}>
       <Top />
-      <AbsoluteFill style={{ transform: `scale(${1.02 + push * 0.05})` }}>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 150, display: "flex", justifyContent: "center" }}><Cap text="Чем мы удобнее" at={6} size={76} /></div>
-      <div style={{ position: "absolute", left: 260, top: 330, width: 1400 }}>
-        <div style={{ display: "flex", alignItems: "center", height: 70, fontFamily: HEAD, fontWeight: 800, fontSize: 36, opacity: lin(f, 10, 26) }}>
+      <AbsoluteFill style={{ transform: `scale(${1.0 + push * 0.04})` }}>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 120, display: "flex", justifyContent: "center" }}><Cap text="Чем мы удобнее" at={6} size={68} /></div>
+      <div style={{ position: "absolute", left: 300, top: 252, width: 1320 }}>
+        <div style={{ display: "flex", alignItems: "center", height: 60, fontFamily: HEAD, fontWeight: 800, fontSize: 32, opacity: lin(f, 10, 24) }}>
           <div style={{ flex: 1 }} />
-          <div style={{ width: 220, textAlign: "center", color: "#7c8593" }}>lex.uz</div>
-          <div style={{ width: 220, textAlign: "center", color: LOGO, fontFamily: UI, fontWeight: 900 }}>veoskill</div>
+          <div style={{ width: 200, textAlign: "center", color: "#7c8593" }}>lex.uz</div>
+          <div style={{ width: 200, textAlign: "center", color: LOGO, fontFamily: UI, fontWeight: 900 }}>veoskill</div>
         </div>
         {ROWS.map((r, i) => {
-          const s = sp(24 + i * B, 12, 200);
+          const s = sp(rowAt(i), 14, 220);
           return (
-            <div key={r} style={{ display: "flex", alignItems: "center", height: 122, borderTop: "2px solid #e3e5e9", transform: `translateY(${(1 - s) * 40}px)`, opacity: s }}>
-              <div style={{ flex: 1, fontFamily: UI, fontWeight: 800, fontSize: 42, color: INK }}>{r}</div>
-              <div style={{ width: 220, display: "flex", justifyContent: "center" }}><Mark ok={false} s={56} /></div>
-              <div style={{ width: 220, display: "flex", justifyContent: "center", transform: `scale(${1 + press(f, 36 + i * B) * 0.25})` }}><Mark ok s={56} /></div>
+            <div key={r} style={{ display: "flex", alignItems: "center", height: 84, borderTop: "2px solid #e3e5e9", transform: `translateY(${(1 - s) * 30}px)`, opacity: Math.min(1, s * 1.3) }}>
+              <div style={{ flex: 1, fontFamily: UI, fontWeight: 800, fontSize: 36, color: INK }}>{r}</div>
+              <div style={{ width: 200, display: "flex", justifyContent: "center" }}><Mark ok={false} s={46} /></div>
+              <div style={{ width: 200, display: "flex", justifyContent: "center", transform: `scale(${1 + press(f, rowAt(i) + 7) * 0.25})` }}><Mark ok s={46} /></div>
             </div>
           );
         })}
@@ -673,13 +730,13 @@ const SCENES: { C: React.FC; d: number; xo?: number }[] = [
   { C: Wall, d: 288 },
   { C: S9, d: 87, xo: 12 },
   { C: Counter, d: 345, xo: 16 },
-  { C: LexScene, d: 231 },
+  { C: LexScene, d: 317 },
   { C: OurWords, d: 86 },
   { C: LawsHome, d: 202 },
   { C: Reader, d: 432 },
   { C: AIReal, d: 316, xo: 16 },
   { C: Langs, d: 231, xo: 10 },
-  { C: Table, d: 230, xo: 16 },
+  { C: Table, d: 288, xo: 16 },
   { C: S11, d: 360 },
 ];
 const starts: number[] = [];
