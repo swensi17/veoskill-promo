@@ -572,18 +572,43 @@ export const Collect: React.FC = () => {
         <AbsoluteFill style={{ background: "#ffffff" }}>
           <Top />
           {/* after the collection has opened, move in on the phone so the articles can be read */}
-          <AbsoluteFill style={{ transformOrigin: "1415px 120px", transform: `translateX(${-455 * lin(f, PHONE + 96, PHONE + 140)}px) scale(${1 + 0.62 * lin(f, PHONE + 96, PHONE + 140)})` }}>
-          <div style={{ position: "absolute", left: 150, top: 380, opacity: 1 - lin(f, PHONE + 96, PHONE + 120) }}>
+          <AbsoluteFill style={{ transformOrigin: "1415px 120px", transform: `translateX(${-455 * lin(f, PHONE + 168, PHONE + 206)}px) scale(${1 + 0.62 * lin(f, PHONE + 168, PHONE + 206)})` }}>
+          <div style={{ position: "absolute", left: 150, top: 380, opacity: 1 - lin(f, PHONE + 168, PHONE + 190) }}>
             <Cap text="Друг откроет" at={PHONE + 4} size={84} />
             <Cap text="всё в одном месте." at={PHONE + 14} size={84} accent="всё в одном месте." />
             <div style={{ marginTop: 16, fontFamily: HEAD, fontWeight: 600, fontSize: 34, color: "#6f7682", opacity: lin(f, PHONE + 30, PHONE + 46) }}>Удобно для учёбы и преподавателей.</div>
           </div>
-          {/* paper plane: the link flies from the text to the phone */}
+          {/* paper plane: the link flies from the text to the phone along a curve, leaving a dotted trail, then "Отправлено" */}
           {(() => {
-            const t = lin(f, PHONE + 8, PHONE + 44, 0, 1, Easing.bezier(0.45, 0, 0.3, 1));
-            if (t <= 0 || t >= 1) return null;
-            const x = 560 + (1300 - 560) * t, y = 760 - Math.sin(t * Math.PI) * 260 - 240 * t;
-            return <div style={{ position: "absolute", left: x - 34, top: y - 34, transform: `rotate(${-20 + 30 * t}deg) scale(${1 - 0.3 * t})`, opacity: 1 - lin(t, 0.85, 1) }}><PlaneIc size={68} /></div>;
+            const T0 = PHONE + 10, T1 = PHONE + 82;
+            if (f < T0) return null;
+            const t = lin(f, T0, T1, 0, 1, Easing.bezier(0.4, 0, 0.25, 1));
+            const S = [560, 960], C = [1120, 960], E = [1400, 330];
+            const P = (u: number) => [(1 - u) ** 2 * S[0] + 2 * (1 - u) * u * C[0] + u * u * E[0], (1 - u) ** 2 * S[1] + 2 * (1 - u) * u * C[1] + u * u * E[1]];
+            const D = (u: number) => [2 * (1 - u) * (C[0] - S[0]) + 2 * u * (E[0] - C[0]), 2 * (1 - u) * (C[1] - S[1]) + 2 * u * (E[1] - C[1])];
+            const [x, y] = P(t), [dx, dy] = D(t);
+            const ang = (Math.atan2(dy, dx) * 180) / Math.PI;
+            const trailO = 1 - lin(f, T1 + 10, T1 + 40);
+            const land = sp(T1, 10, 200);
+            return (
+              <>
+                {Array.from({ length: 40 }, (_, k) => { const u = k / 40; if (u > t - 0.03) return null; const [qx, qy] = P(u); return <div key={k} style={{ position: "absolute", left: qx - 4, top: qy - 4, width: 8, height: 8, borderRadius: 4, background: "#1cb0f6", opacity: 0.55 * trailO }} />; })}
+                {t < 1 ? (
+                  <div style={{ position: "absolute", left: x - 48, top: y - 48, width: 96, height: 96, transform: `rotate(${ang + 30}deg) scale(${1 - 0.25 * t})`, filter: "drop-shadow(0 12px 16px rgba(13,90,150,0.3))" }}>
+                    <svg width="96" height="96" viewBox="0 0 64 64">
+                      <path d="M4 30 L60 6 L28 38 Z" fill="#5ccaff" />
+                      <path d="M28 38 L60 6 L38 58 Z" fill="#1cb0f6" />
+                      <path d="M28 38 L24 54 L33 45 Z" fill="#0d8fd0" />
+                    </svg>
+                  </div>
+                ) : null}
+                {f >= T1 ? (
+                  <div style={{ position: "absolute", left: 1415, top: 236, transform: `translate(-50%, 0) scale(${land})`, padding: "14px 26px", borderRadius: 30, background: "#58cc02", boxShadow: "0 5px 0 #46a302, 0 18px 40px rgba(70,163,2,0.35)", color: "#fff", fontFamily: UI, fontWeight: 900, fontSize: 30, display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap", zIndex: 5, opacity: 1 - lin(f, T1 + 70, T1 + 86) }}>
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Отправлено другу
+                  </div>
+                ) : null}
+              </>
+            );
           })()}
           <div style={{ position: "absolute", left: 1180, top: 60, width: 470, height: 960, borderRadius: 64, background: "#0d1630", padding: 14, boxSizing: "border-box", boxShadow: "0 50px 120px rgba(13,22,48,0.3)", transform: `translateY(${(1 - phone) * 300}px) rotate(${(1 - phone) * 6}deg)`, opacity: Math.min(1, phone * 1.5) }}>
             <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 52, background: "#fff", overflow: "hidden", fontFamily: UI }}>
@@ -605,12 +630,12 @@ export const Collect: React.FC = () => {
                 <div style={{ padding: "8px 10px 10px" }}><div style={{ height: 34, background: "#fff", display: "flex", alignItems: "center", gap: 8, padding: "0 10px", color: "#9aa1ab", fontWeight: 600, fontSize: 13 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>Поиск по всей базе законов</div></div>
               </div>
               {/* "sent to you" strip with the paper plane */}
-              <div style={{ margin: "10px 10px 0", borderRadius: 12, background: "#e3f4fd", display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", fontWeight: 800, fontSize: 14, color: "#0d6fa3", opacity: lin(f, PHONE + 40, PHONE + 50), transform: `translateY(${(1 - lin(f, PHONE + 40, PHONE + 52)) * -10}px)` }}>
+              <div style={{ margin: "10px 10px 0", borderRadius: 12, background: "#e3f4fd", display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", fontWeight: 800, fontSize: 14, color: "#0d6fa3", opacity: lin(f, PHONE + 84, PHONE + 96), transform: `translateY(${(1 - lin(f, PHONE + 84, PHONE + 98)) * -10}px)` }}>
                 <PlaneIc size={22} />Вам отправили подборку · 3 статьи
               </div>
               <div style={{ padding: "8px 12px 0" }}>
                 {COL_ARTS.slice(0, 3).map(([n, ps], i) => {
-                  const e = sp(PHONE + 48 + i * 10, 15, 170);
+                  const e = sp(PHONE + 96 + i * 10, 15, 170);
                   return (
                     <div key={n} style={{ marginTop: 6, opacity: Math.min(1, e * 1.4), transform: `translateY(${(1 - e) * 24}px)` }}>
                       <div style={{ height: 34, display: "flex", alignItems: "center", gap: 8 }}><Heart on={0} size={19} /><div style={{ fontWeight: 900, fontSize: 18, color: "#1a237e" }}>Статья {n}.</div></div>
