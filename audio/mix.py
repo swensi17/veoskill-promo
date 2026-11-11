@@ -93,12 +93,12 @@ def at(x, frame, g, lead=0.0):
     put(x, frame / FPS - onset(x) / SR - lead, g)
 clicks = [(5,300),(5,356),(7,238),(16,132),(17,64),(17,162),(17,204),(17,330)]
 clicks += [(3, 30 * k) for k in range(1, 10)]   # S4 carousel steps
-clicks += [(8,114),(22,50)]                     # G3 "wrong" stamp, Langs start of the language run
+clicks += [(8,114),(23,50)]                     # G3 "wrong" stamp, Langs start of the language run
 for sc, lf in clicks: at(CL, F(sc, lf), -16)
-pops = [(0,112),(5,303),(6,100),(6,128),(6,156),(6,184),(11,70),(11,116),(11,162),(11,208),(17,348),(21,100),(21,152),(21,206),(22,2),(22,8),(22,14),(22,20),(24,10),(24,60)]
+pops = [(0,112),(5,303),(6,100),(6,128),(6,156),(6,184),(11,70),(11,116),(11,162),(11,208),(17,348),(22,100),(22,152),(22,206),(23,2),(23,8),(23,14),(23,20),(25,10),(25,60)]
 pops += [(10, 60 + 30 * k) for k in range(6)]
 # Table: 8 rows on half-beats (see rowAt in V11.tsx)
-pops += [(23, round(28.8 + 14.4 * k)) for k in range(8)]
+pops += [(24, round(28.8 + 14.4 * k)) for k in range(8)]
 # LexScene: 5 red points, then they flip to green (see LexRow in V11.tsx)
 pops += [(14, round(86.4 + 14.4 * k)) for k in range(5)]
 # kinetic word cuts, on the beat grid (Words per= in V11.tsx)
@@ -111,10 +111,16 @@ pops += [(18, 52), (18, 184)]
 # Article actions: heart click + folder picker, "⋯" click + menu
 for sc, lf in [(19, 56), (19, 164)]: at(CL, F(sc, lf), -16)
 pops += [(19, 62), (19, 170)]
+# Collect: 3 ticks, download (format, go), share (copy); entrances of bar, modals, phone
+for sc, lf in [(20, 40), (20, 64), (20, 88), (20, 122), (20, 160), (20, 196), (20, 272), (20, 318)]: at(CL, F(sc, lf), -16)
+pops += [(20, 44), (20, 128), (20, 278), (20, 324), (20, 380), (20, 388), (20, 396)]
+for sc, lf in [(20, 202)]: at(CH, F(sc, lf), -17)
+for sc, lf in [(20, 350)]:
+    i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -19)
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
-pops += [(20, 0), (20, 58)]
+pops += [(21, 0), (21, 58)]
 # other entrances found in the scene code
-pops += [(2,180),(6,16),(7,4),(7,18),(7,202),(8,12),(8,216),(10,6),(17,122),(21,4)]
+pops += [(2,180),(6,16),(7,4),(7,18),(7,202),(8,12),(8,216),(10,6),(17,122),(22,4)]
 for sc, lf in pops: at(POP, F(sc, lf), -15)
 for sc, lf in [(6,198),(7,238),(13,250),(17,348),(8,63),(8,170),(10,250),(14,202)]: at(CH, F(sc, lf), -17)
 for sc, lf in [(5,6),(5,200),(5,370),(7,378),(8,190),(12,0),(13,0),(14,0),(16,0),(16,180),(2,0),(3,300),(11,0),(14,50)]:
