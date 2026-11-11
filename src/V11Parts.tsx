@@ -449,6 +449,9 @@ const Tick: React.FC<{ on: number; size?: number }> = ({ on, size = 30 }) => (
     {on > 0.5 ? <svg width={size * 0.7} height={size * 0.7} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : null}
   </div>
 );
+const PlaneIc: React.FC<{ size: number }> = ({ size }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24"><path d="M21.5 3.2L2.8 10.4c-.9.4-.9 1.6 0 1.9l4.6 1.6 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.6 3.4c.7.5 1.7.1 1.9-.7l3-15.2c.2-1-.8-1.8-1.7-1.5z" fill="#1cb0f6" /><path d="M7.4 13.9l11-7.4-8.6 8.7-.3 4.1" fill="#0d8fd0" /></svg>
+);
 const FileIc: React.FC<{ label: string; c: string }> = ({ label, c }) => (
   <svg width="40" height="46" viewBox="0 0 40 46"><path d="M4 3h22l10 10v30H4z" fill="#f4f5f7" stroke="#d5d9df" strokeWidth="1.5" /><path d="M26 3v10h10" fill="#e6e9ee" /><rect x="1" y="22" width="30" height="13" rx="3" fill={c} /><text x="16" y="31.5" textAnchor="middle" fontFamily="Arial" fontWeight="700" fontSize="8.5" fill="#fff">{label}</text></svg>
 );
@@ -496,7 +499,6 @@ export const Collect: React.FC = () => {
               const e = lin(f, 8 + i * 4, 20 + i * 4);
               return (
                 <div key={n} style={{ marginTop: 14, position: "relative" }}>
-                  <div style={{ position: "absolute", left: -24, right: -30, top: -6, bottom: -6, borderRadius: 14, background: "rgba(28,176,246,0.08)", border: "2px solid rgba(28,176,246,0.35)", opacity: Math.min(1, on) }} />
                   <div style={{ position: "relative", height: 48, display: "flex", alignItems: "center", gap: 14 }}>
                     <div style={{ opacity: e, transform: `scale(${0.6 + 0.4 * e})` }}><Tick on={on} /></div>
                     <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>Статья {n}.</div>
@@ -558,33 +560,66 @@ export const Collect: React.FC = () => {
       {f >= PHONE - 10 ? (
         <AbsoluteFill style={{ background: "#ffffff" }}>
           <Top />
-          <div style={{ position: "absolute", left: 150, top: 380 }}>
+          {/* after the collection has opened, move in on the phone so the articles can be read */}
+          <AbsoluteFill style={{ transformOrigin: "1415px 120px", transform: `translateX(${-455 * lin(f, PHONE + 96, PHONE + 140)}px) scale(${1 + 0.62 * lin(f, PHONE + 96, PHONE + 140)})` }}>
+          <div style={{ position: "absolute", left: 150, top: 380, opacity: 1 - lin(f, PHONE + 96, PHONE + 120) }}>
             <Cap text="Друг откроет" at={PHONE + 4} size={84} />
             <Cap text="всё в одном месте." at={PHONE + 14} size={84} accent="всё в одном месте." />
             <div style={{ marginTop: 16, fontFamily: HEAD, fontWeight: 600, fontSize: 34, color: "#6f7682", opacity: lin(f, PHONE + 30, PHONE + 46) }}>Удобно для учёбы и преподавателей.</div>
           </div>
-          <div style={{ position: "absolute", left: 1200, top: 70, width: 470, height: 940, borderRadius: 64, background: "#0d1630", padding: 14, boxSizing: "border-box", boxShadow: "0 50px 120px rgba(13,22,48,0.3)", transform: `translateY(${(1 - phone) * 300}px) rotate(${(1 - phone) * 6}deg)`, opacity: Math.min(1, phone * 1.5) }}>
-            <div style={{ width: "100%", height: "100%", borderRadius: 52, background: "#fff", overflow: "hidden", fontFamily: UI }}>
-              <div style={{ height: 44, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 34px", fontWeight: 800, fontSize: 18, color: INK }}><span>9:41</span><span style={{ width: 120, height: 30, borderRadius: 15, background: "#0d1630" }} /><span>5G</span></div>
-              <div style={{ margin: "8px 18px 0", height: 44, borderRadius: 14, background: "#f1f3f6", display: "flex", alignItems: "center", gap: 8, padding: "0 14px", fontWeight: 700, fontSize: 17, color: "#5d6470" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5d6470" strokeWidth="2.6"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>veoskill.uz/s/k7Qm2
+          {/* paper plane: the link flies from the text to the phone */}
+          {(() => {
+            const t = lin(f, PHONE + 8, PHONE + 44, 0, 1, Easing.bezier(0.45, 0, 0.3, 1));
+            if (t <= 0 || t >= 1) return null;
+            const x = 560 + (1300 - 560) * t, y = 760 - Math.sin(t * Math.PI) * 260 - 240 * t;
+            return <div style={{ position: "absolute", left: x - 34, top: y - 34, transform: `rotate(${-20 + 30 * t}deg) scale(${1 - 0.3 * t})`, opacity: 1 - lin(t, 0.85, 1) }}><PlaneIc size={68} /></div>;
+          })()}
+          <div style={{ position: "absolute", left: 1180, top: 60, width: 470, height: 960, borderRadius: 64, background: "#0d1630", padding: 14, boxSizing: "border-box", boxShadow: "0 50px 120px rgba(13,22,48,0.3)", transform: `translateY(${(1 - phone) * 300}px) rotate(${(1 - phone) * 6}deg)`, opacity: Math.min(1, phone * 1.5) }}>
+            <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 52, background: "#fff", overflow: "hidden", fontFamily: UI }}>
+              <div style={{ height: 40, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 30px", fontWeight: 800, fontSize: 16, color: INK }}><span>9:41</span><span style={{ width: 110, height: 28, borderRadius: 14, background: "#0d1630" }} /><span>5G</span></div>
+              {/* site header, mobile layout */}
+              <div style={{ margin: "4px 6px 0", background: "#1cb0f6", color: "#fff" }}>
+                <div style={{ padding: "10px 14px", display: "flex", alignItems: "center" }}>
+                  <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "0.12em", opacity: 0.85 }}>ПОДБОРКА СТАТЕЙ</div><div style={{ fontWeight: 900, fontSize: 15 }}>Конституция Республики Узбекистан</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>
+                </div>
+                <div style={{ display: "flex", borderTop: "1px solid rgba(255,255,255,0.35)" }}>
+                  <div style={{ flex: 1, padding: "8px 14px", borderRight: "1px solid rgba(255,255,255,0.35)" }}><div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "0.12em", opacity: 0.85 }}>ВЫБРАНО</div><div style={{ fontWeight: 900, fontSize: 15 }}>3 СТАТЬИ</div></div>
+                  {["flag", "doc", "filter", "heart", "set"].map((k) => (
+                    <div key={k} style={{ width: 44, display: "flex", alignItems: "center", justifyContent: "center", borderRight: k === "set" ? undefined : "1px solid rgba(255,255,255,0.35)" }}>
+                      {k === "flag" ? <Img src={staticFile("flags/c-ru.svg")} style={{ width: 22, height: 22, borderRadius: 11, border: "1.5px solid #fff" }} /> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">{k === "doc" ? <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 8h6M9 12h6" /></> : k === "filter" ? <path d="M3 4h18l-7 8v7l-4 2v-9z" /> : k === "heart" ? <path d="M12 20s-7-4.4-8.6-8.8C2.3 8 4.4 5 7.6 5c1.9 0 3.4 1 4.4 2.6C13 6 14.5 5 16.4 5c3.2 0 5.3 3 4.2 6.2C19 15.6 12 20 12 20z" /> : <path d="M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4" />}</svg>}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ padding: "8px 10px 10px" }}><div style={{ height: 34, background: "#fff", display: "flex", alignItems: "center", gap: 8, padding: "0 10px", color: "#9aa1ab", fontWeight: 600, fontSize: 13 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>Поиск по всей базе законов</div></div>
               </div>
-              <div style={{ margin: "16px 18px 0", borderRadius: 22, background: "linear-gradient(90deg, #1cb0f6, #3db7f4)", padding: "20px 22px", color: "#fff" }}>
-                <div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ПОДБОРКА СТАТЕЙ</div>
-                <div style={{ marginTop: 6, fontWeight: 900, fontSize: 25, lineHeight: 1.2 }}>Конституция Республики Узбекистан</div>
-                <div style={{ marginTop: 8, fontWeight: 700, fontSize: 17, opacity: 0.9 }}>3 статьи · RU</div>
+              {/* "sent to you" strip with the paper plane */}
+              <div style={{ margin: "10px 10px 0", borderRadius: 12, background: "#e3f4fd", display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", fontWeight: 800, fontSize: 14, color: "#0d6fa3", opacity: lin(f, PHONE + 40, PHONE + 50), transform: `translateY(${(1 - lin(f, PHONE + 40, PHONE + 52)) * -10}px)` }}>
+                <PlaneIc size={22} />Вам отправили подборку · 3 статьи
               </div>
-              {COL_ARTS.slice(0, 3).map(([n, ps], i) => {
-                const e = sp(PHONE + 18 + i * 8, 15, 170);
-                return (
-                  <div key={n} style={{ margin: "16px 18px 0", borderRadius: 18, border: "2px solid #e6e9ee", padding: "16px 20px", opacity: Math.min(1, e * 1.4), transform: `translateY(${(1 - e) * 30}px)` }}>
-                    <div style={{ fontWeight: 900, fontSize: 23, color: "#1a237e" }}>Статья {n}.</div>
-                    <div style={{ marginTop: 6, fontWeight: 600, fontSize: 18, lineHeight: 1.45, color: "#3c3c3c", display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical" as const, overflow: "hidden" }}>{ps[0]}</div>
+              <div style={{ padding: "8px 12px 0" }}>
+                {COL_ARTS.slice(0, 3).map(([n, ps], i) => {
+                  const e = sp(PHONE + 48 + i * 10, 15, 170);
+                  return (
+                    <div key={n} style={{ marginTop: 6, opacity: Math.min(1, e * 1.4), transform: `translateY(${(1 - e) * 24}px)` }}>
+                      <div style={{ height: 34, display: "flex", alignItems: "center", gap: 8 }}><Heart on={0} size={19} /><div style={{ fontWeight: 900, fontSize: 18, color: "#1a237e" }}>Статья {n}.</div></div>
+                      {ps.map((t, k) => <div key={k} style={{ marginTop: 3, fontWeight: 500, fontSize: 15.5, lineHeight: 1.5, color: "#2b2b2b", textAlign: "justify", textIndent: 22 }}>{t}</div>)}
+                    </div>
+                  );
+                })}
+              </div>
+              {/* bottom tab bar as on the site */}
+              <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 74, background: "#fff", borderTop: "1px solid #eef0f3", display: "flex", alignItems: "center", justifyContent: "space-around", paddingBottom: 8 }}>
+                {[["icons_hub_home.webp", "Кабинет"], ["stickers_module.webp", "Модули"], ["icons_duel_scales.webp", "Законы"], ["icons_hub_forum.webp", "Форум"], ["", "Ещё"]].map(([ic, t]) => (
+                  <div key={t} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, fontWeight: t === "Законы" ? 900 : 600, fontSize: 11, color: t === "Законы" ? INK : "#9aa1ab" }}>
+                    {ic ? <Img src={staticFile(`site/${ic}`)} style={{ width: 30, height: 30, objectFit: "contain" }} /> : <div style={{ width: 28, height: 28, borderRadius: 14, background: "#c86cf0", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M5 7h14M5 12h14M5 17h14" /></svg></div>}
+                    {t}
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
           </div>
+          </AbsoluteFill>
         </AbsoluteFill>
       ) : null}
       {/* toast after copy */}
