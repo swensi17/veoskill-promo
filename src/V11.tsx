@@ -82,7 +82,7 @@ export const S1: React.FC = () => {
     </AbsoluteFill>
   );
 };
-const S2: React.FC = () => <Words per={43.2} items={[["ЗУБРИШЬ.", NAVY, "#fff"], ["ЗАБЫВАЕШЬ.", BLUE, "#fff"], ["СКУЧНО.", "#fff", NAVY], ["ЗНАКОМО?", BG, NAVY, "?"]]} />;
+const S2: React.FC = () => <Words per={57.6} items={[["ЗУБРИШЬ.", NAVY, "#fff"], ["ЗАБЫВАЕШЬ.", BLUE, "#fff"], ["СКУЧНО.", "#fff", NAVY], ["ЗНАКОМО?", BG, NAVY, "?"]]} />;
 
 // ================= S3 the turn: a slower text cylinder =================
 const BAND = "УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ • ";
@@ -364,16 +364,16 @@ const G3: React.FC = () => {
 
 // ================= S7 kinetic words between sections =================
 const S7: React.FC = () => <Words per={57.6} items={[["ИГРАЕШЬ.", "#e7ffd6", GLIP], ["ЗАПОМИНАЕШЬ.", BLUE, "#fff"]]} />;
-const S9: React.FC = () => <Words per={43.2} items={[["А ТЕПЕРЬ", BG, NAVY], ["ЗАКОНЫ.", NAVY, "#fff"]]} />;
+const S9: React.FC = () => <Words per={57.6} items={[["А ТЕПЕРЬ", BG, NAVY], ["ЗАКОНЫ.", NAVY, "#fff"]]} />;
 /** Word cut before the AI window: "А ТЕПЕРЬ" (1 beat), then a blue card with the AI mark (2 beats). */
 const AiWords: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
-  const B1 = 43.2; // 1.5 beats, then the AI card for 3.5 beats (scene = 5 beats = 144 frames)
+  const B1 = 57.6; // 2 beats, then the AI card for 4 beats (scene = 6 beats = 173 frames)
   if (f < B1) return <Words per={B1} items={[["А ТЕПЕРЬ", BG, NAVY]]} />;
   const lf = f - B1;
   const ic = sp(B1, 12, 170);
-  const s = 1.05 - lin(lf, 0, 100, 0, 0.05, Easing.out(Easing.quad));
+  const s = 1.05 - lin(lf, 0, 115, 0, 0.05, Easing.out(Easing.quad));
   return (
     <AbsoluteFill style={{ background: BLUE, alignItems: "center", justifyContent: "center" }}>
       <Top dark />
@@ -563,9 +563,9 @@ const S11: React.FC = () => {
 
 
 // ================= laws, desktop: lex.uz first, then ours =================
-const LessonWords: React.FC = () => <Words per={43.2} items={[["КОРОТКИЕ", GREEN, "#fff"], ["УРОКИ.", BG, NAVY, "УРОКИ."], ["ШАГ", NAVY, "#fff"], ["ЗА ШАГОМ.", BLUE, "#fff"]]} />;
+const LessonWords: React.FC = () => <Words per={57.6} items={[["КОРОТКИЕ", GREEN, "#fff"], ["УРОКИ.", BG, NAVY, "УРОКИ."], ["ШАГ", NAVY, "#fff"], ["ЗА ШАГОМ.", BLUE, "#fff"]]} />;
 export const LexWords: React.FC = () => <Words per={40} items={[["ОБЫЧНО", BG, NAVY], ["ЗАКОН", NAVY, "#fff"], ["ВЫГЛЯДИТ", BG, NAVY], ["ТАК.", "#ffe3e3", RED]]} />;
-const OurWords: React.FC = () => <Words per={43.2} items={[["А У НАС", BLUE, "#fff"], ["ТАК.", "#e7ffd6", GLIP]]} />;
+const OurWords: React.FC = () => <Words per={57.6} items={[["А У НАС", BLUE, "#fff"], ["ТАК.", "#e7ffd6", GLIP]]} />;
 /** A desktop browser window; the page inside is a full 1920x1080 frame scaled down. */
 const Browser: React.FC<{ url: string; x: number; y: number; w: number; enter: number; children: React.ReactNode }> = ({ url, x, y, w, enter, children }) => {
   const f = useCurrentFrame();
@@ -737,10 +737,10 @@ const Table: React.FC = () => {
 // so the next scene builds up underneath instead of appearing on an empty background.
 const SCENES: { C: React.FC; d: number; xo?: number }[] = [
   { C: IntroMosaic, d: 233 },
-  { C: S2, d: 173 },
+  { C: S2, d: 231 },
   { C: S3, d: 288 },
   { C: S4, d: 432 },
-  { C: LessonWords, d: 173 },
+  { C: LessonWords, d: 230 },
   { C: LessonPath, d: 403 },
   { C: PhraseBank, d: 288, xo: 10 },
   { C: G2, d: 403 },
@@ -748,13 +748,13 @@ const SCENES: { C: React.FC; d: number; xo?: number }[] = [
   { C: S7, d: 115 },
   { C: S7b, d: 374, xo: 16 },
   { C: Wall, d: 288 },
-  { C: S9, d: 87, xo: 12 },
+  { C: S9, d: 116, xo: 12 },
   { C: Counter, d: 345, xo: 16 },
   { C: LexScene, d: 317 },
-  { C: OurWords, d: 86 },
+  { C: OurWords, d: 115 },
   { C: LawsHome, d: 202 },
   { C: Reader, d: 432 },
-  { C: AiWords, d: 144 },
+  { C: AiWords, d: 173 },
   { C: AIReal, d: 316, xo: 16 },
   { C: Langs, d: 231, xo: 10 },
   { C: Table, d: 288, xo: 16 },

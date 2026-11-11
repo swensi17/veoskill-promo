@@ -52,10 +52,21 @@ def seg(src_from, src_to, at, fi=0.01, fo=0.012, g=0.0):
 BEAT = 0.48
 HIT = 96.019                                # the track's final hit (source seconds, on a downbeat)
 JUMP = STARTS[-1] / FPS                     # cut on the beat at the start of S11
-seg(0.0, JUMP - MUS_OFF + 0.006, MUS_OFF, fi=0.02, fo=0.006)
+# the film may be longer than the track before its ending: then one 32-beat phrase in the middle is played twice
+PHRASE = 32 * BEAT
+LOOP_SRC = 0.0188 + 96 * BEAT                # a phrase boundary (beat 96, ~46 s)
+_room = 95.0                                 # source time the first pass may reach before the ending starts
+_back = 0.0
+while JUMP - MUS_OFF - _back > _room: _back += PHRASE
+if _back:
+    seg(0.0, LOOP_SRC + 0.006, MUS_OFF, fi=0.02, fo=0.006)
+    seg(LOOP_SRC - _back, JUMP - MUS_OFF - _back + 0.006, LOOP_SRC + MUS_OFF, fi=0.006, fo=0.006)
+else:
+    seg(0.0, JUMP - MUS_OFF + 0.006, MUS_OFF, fi=0.02, fo=0.006)
+_src_jump = JUMP - MUS_OFF - _back
 # from S11 on, jump by a whole number of beats (back = repeat, forward = skip) so the final hit lands ~2.4 s into S11 (logo + QR)
-_shift = round(((JUMP - MUS_OFF) + (HIT - (JUMP - MUS_OFF)) - (JUMP + 2.4 - MUS_OFF)) / BEAT) * BEAT
-seg(JUMP - MUS_OFF + _shift, 101.0, JUMP, fi=0.006, fo=1.6)
+_shift = round((HIT - _src_jump - 2.4) / BEAT) * BEAT
+seg(_src_jump + _shift, 101.0, JUMP, fi=0.006, fo=1.6)
 # opening: low-pass sweep that opens up until the first word cut (S2), a "reveal" feel
 from scipy.signal import butter, sosfilt, sosfilt_zi
 _open = STARTS[1] / FPS
@@ -91,10 +102,10 @@ pops += [(21, round(28.8 + 14.4 * k)) for k in range(8)]
 # LexScene: 5 red points, then they flip to green (see LexRow in V11.tsx)
 pops += [(14, round(86.4 + 14.4 * k)) for k in range(5)]
 # kinetic word cuts, on the beat grid (Words per= in V11.tsx)
-pops += [(1, round(43.2 * k)) for k in range(4)] + [(4, round(43.2 * k)) for k in range(4)]
-pops += [(9, 0), (9, 58), (12, 43), (15, 0), (15, 43)]
+pops += [(1, round(57.6 * k)) for k in range(4)] + [(4, round(57.6 * k)) for k in range(4)]
+pops += [(9, 0), (9, 58), (12, 58), (15, 0), (15, 58)]
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
-pops += [(18, 0), (18, 43)]
+pops += [(18, 0), (18, 58)]
 # other entrances found in the scene code
 pops += [(2,180),(6,16),(7,4),(7,18),(7,202),(8,12),(8,216),(10,6),(17,122),(19,4)]
 for sc, lf in pops: at(POP, F(sc, lf), -15)

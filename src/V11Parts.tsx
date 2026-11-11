@@ -320,19 +320,24 @@ export const AIReal: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
   const MX = 400, MY = 290, MW = 1120;
-  const keys: CK[] = [{ at: 0, x: 960, y: 470, s: 0.96 }, { at: 70, x: 960, y: 480, s: 1.0 }, { at: 112, x: 960, y: 600, s: 1.1 }, { at: 160, x: 960, y: 730, s: 1.12 }, { at: 220, x: 960, y: 880, s: 1.12 }, { at: 300, x: 960, y: 830, s: 1.0 }];
-  const c = useCam(keys);
+  // camera follows the answer as it types: close in on each block and glide down with the typed line,
+  // then pull back to the whole window. The path is piecewise linear and then averaged over +-16 frames,
+  // so the move never stops and starts between keys.
+  const P: [number, number, number][] = [[0, 470, 0.96], [66, 480, 0.96], [100, 470, 1.14], [146, 575, 1.14], [156, 680, 1.14], [198, 860, 1.14], [210, 990, 1.14], [252, 1110, 1.14], [270, 1110, 1.14], [298, 760, 0.86]];
+  const path = (t: number, k: 1 | 2) => interpolate(t, P.map((p) => p[0]), P.map((p) => p[k]), cl);
+  const avg = (k: 1 | 2) => { let a = 0; for (let d = -16; d <= 16; d++) a += path(f + d, k); return a / 33; };
+  const c = { x: 960, y: avg(1), s: avg(2) };
   const open = sp(4, 15, 170);
-  const load = lin(f, 14, 26) * (1 - lin(f, 62, 74));
-  const BL = [76, 112, 160];
+  const load = lin(f, 14, 26) * (1 - lin(f, 88, 98));
+  const BL = [100, 152, 206];
   const capOut = lin(f, 80, 102);
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
       {/* the reader behind, dimmed like the site overlay, slower parallax than the window */}
-      <AbsoluteFill style={{ transform: `translateY(${-(c.y - 640) * 0.25}px) scale(${1.04 + (c.s - 1) * 0.3})` }}>
+      <AbsoluteFill style={{ transformOrigin: "50% 0", transform: `translateY(${-(c.y - 640) * 0.12}px) scale(${1.06 + (c.s - 1) * 0.3})` }}>
         <Img src={SHOT("l-reader")} style={{ width: 1920, height: 1200, objectFit: "cover" }} />
-        <AbsoluteFill style={{ background: "rgba(60,64,72,0.38)" }} />
       </AbsoluteFill>
+      <AbsoluteFill style={{ background: "rgba(60,64,72,0.38)" }} />
       <AbsoluteFill style={{ transformOrigin: "0 0", transform: `translate(${960 - c.s * c.x}px, ${560 - c.s * c.y}px) scale(${c.s})` }}>
         <div style={{ position: "absolute", left: MX, top: MY, width: MW, minHeight: 820, borderRadius: 24, background: "#fff", boxShadow: "0 40px 120px rgba(13,22,48,0.35)", padding: "36px 44px 40px", boxSizing: "border-box", fontFamily: UI, color: "#3c3c3c", opacity: Math.min(1, open * 1.5), transform: `translateY(${(1 - open) * 60}px) scale(${0.94 + 0.06 * open})` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
