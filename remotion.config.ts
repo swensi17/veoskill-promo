@@ -11,3 +11,6 @@ Config.setRspack(true);
 Config.setVideoImageFormat("jpeg");
 Config.setOverwriteOutput(true);
 Config.setDefaultPremountInSeconds(2);
+
+// Локальный браузер (облачная среда без доступа к remotion.media). Задаётся переменной окружения.
+if (process.env.REMOTION_BROWSER) Config.setBrowserExecutable(process.env.REMOTION_BROWSER);
