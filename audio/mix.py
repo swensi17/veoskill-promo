@@ -14,7 +14,10 @@ DURS = json.load(open(_SJ)) if os.path.exists(_SJ) else [240,180,300,420,160,410
 STARTS = [sum(DURS[:i]) for i in range(len(DURS))]
 _KJ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../out/slow.json")
 K = json.load(open(_KJ)) if os.path.exists(_KJ) else [1] * len(DURS)
-def F(sc, lf): return STARTS[sc] + lf * K[sc]   # lf is in the scene's own (unstretched) frames
+_NM = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../out/names.json")
+NAMES = json.load(open(_NM)) if os.path.exists(_NM) else []
+def N(name): return NAMES.index(name) if name in NAMES else -1   # cues refer to scenes by name; a removed scene is skipped
+def F(sc, lf): return -1e9 if sc < 0 else STARTS[sc] + lf * K[sc]   # lf is in the scene's own (unstretched) frames
 STING = STARTS[-1] / FPS + 2.33
 DUR = sum(DURS) / FPS
 
@@ -38,6 +41,7 @@ def fade(x, a, b):
 
 out = np.zeros((int(DUR * SR) + SR, 2))
 def put(x, t, g=0.0):
+    if t < 0: return
     i = int(round(t * SR)); j = min(len(out), i + len(x))
     out[i:j] += x[: j - i] * db(g)
 
@@ -93,53 +97,56 @@ def sh(fr): return fr
 def at(x, frame, g, lead=0.0):
     frame = sh(frame)
     put(x, frame / FPS - onset(x) / SR - lead, g)
-clicks = [(5,300),(5,356),(8,238),(17,132),(18,64),(18,162),(18,204),(18,330)]
-clicks += [(3, 30 * k) for k in range(1, 10)]   # S4 carousel steps
-clicks += [(9,114),(26,50)]                     # G3 "wrong" stamp, Langs start of the language run
+clicks = [(N("LessonPath"),300),(N("LessonPath"),356),(N("G2"),238),(N("LawsHome"),132),(N("Reader"),64),(N("Reader"),162),(N("Reader"),204),(N("Reader"),330)]
+clicks += [(N("S4"), 30 * k) for k in range(1, 10)]   # S4 carousel steps
+clicks += [(N("G3"),114),(N("Langs"),50)]                     # G3 "wrong" stamp, Langs start of the language run
 for sc, lf in clicks: at(CL, F(sc, lf), -16)
-pops = [(0,112),(5,303),(7,100),(7,128),(7,156),(7,184),(12,70),(12,116),(12,162),(12,208),(18,348),(25,100),(25,152),(25,206),(26,2),(26,8),(26,14),(26,20),(28,10),(28,60)]
-pops += [(11, 60 + 30 * k) for k in range(6)]
+pops = [(N("IntroMosaic"),112),(N("LessonPath"),303),(N("PhraseBank"),100),(N("PhraseBank"),128),(N("PhraseBank"),156),(N("PhraseBank"),184),(N("Wall"),70),(N("Wall"),116),(N("Wall"),162),(N("Wall"),208),(N("Reader"),348),(N("AIReal"),100),(N("AIReal"),152),(N("AIReal"),206),(N("Langs"),2),(N("Langs"),8),(N("Langs"),14),(N("Langs"),20),(N("S11"),10),(N("S11"),60)]
+pops += [(N("S7b"), 60 + 30 * k) for k in range(6)]
 # Table: 8 rows on half-beats (see rowAt in V11.tsx)
-pops += [(27, round(28.8 + 14.4 * k)) for k in range(8)]
+pops += [(N("Table"), round(28.8 + 14.4 * k)) for k in range(8)]
 # LexScene: 5 red points, then they flip to green (see LexRow in V11.tsx)
-pops += [(15, round(86.4 + 14.4 * k)) for k in range(5)]
+pops += [(N("LexScene"), round(86.4 + 14.4 * k)) for k in range(5)]
 # kinetic word cuts, on the beat grid (Words per= in V11.tsx)
-pops += [(1, round(57.6 * k)) for k in range(4)] + [(4, round(57.6 * k)) for k in range(4)]
-pops += [(10, 0), (10, 58), (13, 58), (16, 0), (16, 58)]
+pops += [(N("S2"), round(57.6 * k)) for k in range(4)] + [(N("LessonWords"), round(57.6 * k)) for k in range(4)]
+pops += [(N("S7"), 0), (N("S7"), 58), (N("S9"), 58), (N("OurWords"), 0), (N("OurWords"), 58)]
 # Hints: bulb click, "Подсказки" popover, term tooltip
-clicks2 = [(19, 46)]
+clicks2 = [(N("Hints"), 46)]
 for sc, lf in clicks2: at(CL, F(sc, lf), -16)
-pops += [(19, 52), (19, 184)]
+pops += [(N("Hints"), 52), (N("Hints"), 184)]
 # Article actions: heart click + folder picker, "⋯" click + menu
-for sc, lf in [(20, 56), (20, 86), (20, 108), (20, 164)]: at(CL, F(sc, lf), -16)
-pops += [(20, 62), (20, 170)]
+for sc, lf in [(N("ArticleActions"), 56), (N("ArticleActions"), 86), (N("ArticleActions"), 108), (N("ArticleActions"), 164)]: at(CL, F(sc, lf), -16)
+pops += [(N("ArticleActions"), 62), (N("ArticleActions"), 170)]
 # Collect: 3 ticks, download (format, go), share (copy); entrances of bar, modals, phone
-for sc, lf in [(21, 40), (21, 64), (21, 88), (21, 122), (21, 160), (21, 196), (21, 272), (21, 318)]: at(CL, F(sc, lf), -16)
-pops += [(21, 44), (21, 128), (21, 278), (21, 324), (21, 380), (21, 388), (21, 396)]
-for sc, lf in [(21, 202)]: at(CH, F(sc, lf), -17)
-for sc, lf in [(21, 350)]:
+for sc, lf in [(N("Collect"), 40), (N("Collect"), 64), (N("Collect"), 88), (N("Collect"), 122), (N("Collect"), 160), (N("Collect"), 196), (N("Collect"), 272), (N("Collect"), 318)]: at(CL, F(sc, lf), -16)
+pops += [(N("Collect"), 44), (N("Collect"), 128), (N("Collect"), 278), (N("Collect"), 324), (N("Collect"), 380), (N("Collect"), 388), (N("Collect"), 396)]
+for sc, lf in [(N("Collect"), 202)]: at(CH, F(sc, lf), -17)
+for sc, lf in [(N("Collect"), 350)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -19)
 # Search: ФИЛЬТР, НАЙТИ, ВЫБРАТЬ ВСЕ; modal and results appear
-for sc, lf in [(22, 40), (22, 112), (22, 196)]: at(CL, F(sc, lf), -16)
-pops += [(22, 46), (22, 176)]
+for sc, lf in [(N("Search"), 40), (N("Search"), 112), (N("Search"), 196)]: at(CL, F(sc, lf), -16)
+pops += [(N("Search"), 46), (N("Search"), 176)]
 # AiPick: hover tooltip, click on the robot
-for sc, lf in [(24, 128)]: at(CL, F(sc, lf), -16)
-pops += [(24, 92)]
+for sc, lf in [(N("AiPick"), 128)]: at(CL, F(sc, lf), -16)
+pops += [(N("AiPick"), 92)]
 # Lesson (the real lesson page): every click, then correct / wrong chimes
-for lf in [110, 250, 340, 375, 430, 520, 600, 622, 644, 666, 692, 745, 790, 810, 840, 860, 890, 910, 940, 992, 1012, 1066, 1086, 1250, 1275]: at(CL, F(6, lf), -16)
-pops += [(6, 14), (6, 24), (6, 34), (6, 254), (6, 744 + 2)]
-for sc, lf in [(6, 522), (6, 694), (6, 942), (6, 1088), (6, 1277)]: at(CH, F(sc, lf), -17)
+for lf in [110, 250, 340, 375, 430, 520, 600, 622, 644, 666, 692, 745, 790, 810, 840, 860, 890, 910, 940, 992, 1012, 1066, 1086, 1250, 1275]: at(CL, F(N("Lesson"), lf), -16)
+pops += [(N("Lesson"), 14), (N("Lesson"), 24), (N("Lesson"), 34), (N("Lesson"), 254), (N("Lesson"), 744 + 2)]
+for sc, lf in [(N("Lesson"), 522), (N("Lesson"), 694), (N("Lesson"), 942), (N("Lesson"), 1088), (N("Lesson"), 1277)]: at(CH, F(sc, lf), -17)
+# LessonMore: term pick, check, next, answer field, check; AI check and success
+for lf in [110, 142, 192, 300, 500]: at(CL, F(N("LessonMore"), lf), -16)
+for lf in [144, 552]: at(CH, F(N("LessonMore"), lf), -17)
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
-pops += [(23, 0), (23, 58)]
+pops += [(N("AiWords"), 0), (N("AiWords"), 58)]
 # other entrances found in the scene code
-pops += [(2,180),(7,16),(8,4),(8,18),(8,202),(9,12),(9,216),(11,6),(18,122),(25,4)]
+pops += [(N("S3"),180),(N("PhraseBank"),16),(N("G2"),4),(N("G2"),18),(N("G2"),202),(N("G3"),12),(N("G3"),216),(N("S7b"),6),(N("Reader"),122),(N("AIReal"),4)]
 for sc, lf in pops: at(POP, F(sc, lf), -15)
-for sc, lf in [(7,198),(8,238),(14,250),(18,348),(9,63),(9,170),(11,250),(15,202)]: at(CH, F(sc, lf), -17)
-for sc, lf in [(5,6),(5,200),(5,370),(8,378),(9,190),(13,0),(14,0),(15,0),(17,0),(17,180),(2,0),(3,300),(12,0),(15,50)]:
+for sc, lf in [(N("PhraseBank"),198),(N("G2"),238),(N("Counter"),250),(N("Reader"),348),(N("G3"),63),(N("G3"),170),(N("S7b"),250),(N("LexScene"),202)]: at(CH, F(sc, lf), -17)
+for sc, lf in [(N("LessonPath"),6),(N("LessonPath"),200),(N("LessonPath"),370),(N("G2"),378),(N("G3"),190),(N("S9"),0),(N("Counter"),0),(N("LexScene"),0),(N("LawsHome"),0),(N("LawsHome"),180),(N("S3"),0),(N("S4"),300),(N("Wall"),0),(N("LexScene"),50)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -18)
 
 # soft whooshes for G3 card swipes
-for sc, lf in [(9,74),(9,124)]:
+for sc, lf in [(N("G3"),74),(N("G3"),124)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -23)
 
 out = out[: int(DUR * SR)]

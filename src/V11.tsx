@@ -3,7 +3,7 @@ import { AbsoluteFill, Easing, Img, Sequence, interpolate, spring, staticFile, u
 import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
-import { Lesson } from "./Lesson";
+import { Lesson, LessonMore } from "./Lesson";
 import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, ArticleActions, Collect, Search, AiPick, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
 import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
@@ -752,8 +752,7 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: LessonWords, d: 230 },
   { C: LessonPath, d: 403 },
   { C: Lesson, d: 1325 },
-  { C: PhraseBank, d: 288, xo: 10 },
-  { C: G2, d: 403 },
+  { C: LessonMore, d: 634 },
   { C: G3, d: 231 },
   { C: S7, d: 115 },
   { C: S7b, d: 374, xo: 16 },
