@@ -47,13 +47,22 @@ export const IntroMosaic: React.FC = () => {
           })}
         </div>
       </AbsoluteFill>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 360, height: 260, overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "flex-end" }}>
-        {"veoskill".split("").map((ch, i) => {
-          const s = spring({ frame: f - 112 - i * 3, fps, config: { damping: 12, stiffness: 170 } });
-          return <span key={i} style={{ display: "inline-block", fontFamily: UI, fontWeight: 900, fontSize: 240, lineHeight: 0.92, letterSpacing: "-0.01em", color: LOGO, transform: `translateY(${(1 - s) * 110}%)` }}>{ch}</span>;
-        })}
-      </div>
-      <div style={{ position: "absolute", top: 660, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 600, fontSize: 42, color: "#555c68", opacity: sub, transform: `translateY(${(1 - sub) * 20}px)` }}>Самый живой способ учиться</div>
+      {/* logo: slides in from the left, grows, then a soft light sweep runs across it (shimmer like a loading label) */}
+      {(() => {
+        const inT = lin(f, 104, 150, 0, 1, Easing.bezier(0.2, 0.8, 0.2, 1));
+        const grow = lin(f, 140, 178, 0, 1, Easing.bezier(0.3, 0, 0.2, 1));
+        const x = -900 * (1 - inT);
+        const sc = 0.62 + 0.38 * grow;
+        const sweep = ((f - 150) / 48) % 1;
+        const shine = f >= 150 ? `linear-gradient(100deg, transparent ${sweep * 160 - 40}%, rgba(255,255,255,0.85) ${sweep * 160 - 20}%, transparent ${sweep * 160}%)` : "none";
+        return (
+          <div style={{ position: "absolute", left: 960 - 520, top: 540 - 150, width: 1040, height: 260, opacity: lin(f, 104, 120), transform: `translateX(${x}px) scale(${sc})`, filter: inT < 0.98 ? `blur(${(1 - inT) * 10}px)` : undefined }}>
+            <Img src={staticFile("brand/veoskill.webp")} style={{ width: 1040, height: 260, objectFit: "contain" }} />
+            <div style={{ position: "absolute", inset: 0, background: shine, WebkitMaskImage: `url(${staticFile("brand/veoskill.webp")})`, maskImage: `url(${staticFile("brand/veoskill.webp")})`, WebkitMaskSize: "contain", maskSize: "contain", WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat", WebkitMaskPosition: "center", maskPosition: "center" }} />
+          </div>
+        );
+      })()}
+      <div style={{ position: "absolute", top: 690, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 600, fontSize: 42, color: "#555c68", opacity: sub, transform: `translateY(${(1 - sub) * 20}px)` }}>Самый живой способ учиться</div>
     </AbsoluteFill>
   );
 };
