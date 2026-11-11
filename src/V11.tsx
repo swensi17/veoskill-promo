@@ -4,7 +4,7 @@ import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
 import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, ArticleActions, Collect, Search, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
-import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
+import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
 // veoskill v10: Maverick-style reel after review. Lessons as a camera flight over the lesson path, three games
 // (phrase, story, true/false) with cinematic hand-offs, kinetic words between sections, an honest side by side with
@@ -728,7 +728,7 @@ const Table: React.FC = () => {
 
 // xo: the scene keeps playing over the start of the next one for xo frames and dissolves away (push + blur),
 // so the next scene builds up underneath instead of appearing on an empty background.
-const SCENES: { C: React.FC; d: number; xo?: number }[] = [
+const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: IntroMosaic, d: 233 },
   { C: S2, d: 231 },
   { C: S3, d: 288 },
@@ -746,14 +746,14 @@ const SCENES: { C: React.FC; d: number; xo?: number }[] = [
   { C: LexScene, d: 317 },
   { C: OurWords, d: 115 },
   { C: LawsHome, d: 202 },
-  { C: Reader, d: 432, xo: 18 },
-  { C: Hints, d: 288, xo: 16 },
-  { C: ArticleActions, d: 288, xo: 16 },
-  { C: Collect, d: 576, xo: 16 },
-  { C: Search, d: 346 },
+  { C: Reader, d: 605, k: 1.4, xo: 18 },
+  { C: Hints, d: 403, k: 1.4, xo: 16 },
+  { C: ArticleActions, d: 403, k: 1.4, xo: 16 },
+  { C: Collect, d: 806, k: 1.4, xo: 16 },
+  { C: Search, d: 490, k: 1.416667 },
   { C: AiWords, d: 173 },
-  { C: AIReal, d: 316, xo: 16 },
-  { C: Langs, d: 231, xo: 10 },
+  { C: AIReal, d: 317, xo: 16 },
+  { C: Langs, d: 230, xo: 10 },
   { C: Table, d: 288, xo: 16 },
   { C: S11, d: 360 },
 ];
@@ -773,7 +773,7 @@ export const V11: React.FC = () => {
     <AbsoluteFill style={{ background: BG }}>
       {SCENES.map((s, i) => (
         <Sequence key={i} from={starts[i]} durationInFrames={s.d + (s.xo ?? 0)}>
-          <Out d={s.d} xo={s.xo ?? 0}><s.C /></Out>
+          <Out d={s.d} xo={s.xo ?? 0}><SlowCtx.Provider value={s.k ?? 1}><s.C /></SlowCtx.Provider></Out>
         </Sequence>
       ))}
     </AbsoluteFill>

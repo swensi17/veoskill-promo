@@ -12,7 +12,9 @@ _SJ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../out/scenes.js
 # scene durations come from src/V11.tsx via scripts/build.mjs (out/scenes.json); the list is a fallback
 DURS = json.load(open(_SJ)) if os.path.exists(_SJ) else [240,180,300,420,160,410,300,390,228,110,360,300,90,330,240,80,200,420,300,240,240,360]
 STARTS = [sum(DURS[:i]) for i in range(len(DURS))]
-def F(sc, lf): return STARTS[sc] + lf
+_KJ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../out/slow.json")
+K = json.load(open(_KJ)) if os.path.exists(_KJ) else [1] * len(DURS)
+def F(sc, lf): return STARTS[sc] + lf * K[sc]   # lf is in the scene's own (unstretched) frames
 STING = STARTS[-1] / FPS + 2.33
 DUR = sum(DURS) / FPS
 

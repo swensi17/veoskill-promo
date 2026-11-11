@@ -25,8 +25,11 @@ export const IOE = Easing.bezier(0.65, 0, 0.35, 1);
 export const lin = (f: number, a: number, b: number, x = 0, y = 1, e = IOE) => interpolate(f, [a, b], [x, y], { easing: e, ...cl });
 // quick press (2 frames), short hold, soft release over 14 frames: the release drives the click ripple in Pointer
 export const press = (f: number, at: number) => lin(f, at, at + 2) * (1 - lin(f, at + 4, at + 18, 0, 1, Easing.out(Easing.quad)));
+/** Time stretch for a whole scene: inside <SlowCtx.Provider value={k}> every useFrame()/useSp()/Cap runs k times slower. */
+export const SlowCtx = React.createContext(1);
+export const useFrame = () => useCurrentFrame() / React.useContext(SlowCtx);
 export const useSp = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const { fps } = useVideoConfig();
   return (at: number, damping = 13, stiffness = 170) => spring({ frame: f - at, fps, config: { damping, stiffness } });
 };
@@ -46,7 +49,7 @@ export const Chrome: React.FC<{ label?: string; dark?: boolean }> = ({ label, da
   );
 };
 export const Cap: React.FC<{ text: string; at: number; size?: number; color?: string; accent?: string; accentColor?: string; weight?: number; out?: number }> = ({ text, at, size = 56, color = NAVY, accent, accentColor = BLUE, weight = 800, out }) => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const t = lin(f, at, at + 22, 0, 1, OUTE);
   const o = out !== undefined ? lin(f, out, out + 14, 0, 1) : 0;
   const parts = accent && text.includes(accent) ? text.split(accent) : null;
