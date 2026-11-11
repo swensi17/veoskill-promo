@@ -14,7 +14,7 @@ const mix = (a: string, b: string, t: number) => {
 };
 
 /** simple cartoon avatar; hair and background colours are animatable */
-const Avatar: React.FC<{ size: number; hair: string; bg: string; ring?: boolean }> = ({ size, hair, bg, ring }) => (
+const AvatarOld: React.FC<{ size: number; hair: string; bg: string; ring?: boolean }> = ({ size, hair, bg, ring }) => (
   <svg width={size} height={size} viewBox="0 0 200 200" style={{ borderRadius: "50%", boxShadow: ring ? "0 0 0 6px #fff, 0 0 0 10px #c78bff" : undefined }}>
     <circle cx="100" cy="100" r="100" fill={bg} />
     <path d="M40 200 C40 150 65 132 100 132 C135 132 160 150 160 200 Z" fill="#58cc02" />
@@ -26,6 +26,23 @@ const Avatar: React.FC<{ size: number; hair: string; bg: string; ring?: boolean 
     <path d="M86 106 C94 114 106 114 114 106" stroke="#2b2b2b" strokeWidth="4" fill="none" strokeLinecap="round" />
     <circle cx="74" cy="102" r="6" fill="#f7a8a0" opacity="0.6" /><circle cx="126" cy="102" r="6" fill="#f7a8a0" opacity="0.6" />
   </svg>
+);
+/** the site's verified seal: blue scalloped badge with a white check */
+export const Verified: React.FC<{ size: number }> = ({ size }) => {
+  const pts = Array.from({ length: 24 }, (_, i) => { const a = (i / 24) * Math.PI * 2 - Math.PI / 2, r = i % 2 ? 9.2 : 11; return `${(12 + Math.cos(a) * r).toFixed(2)},${(12 + Math.sin(a) * r).toFixed(2)}`; }).join(" ");
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={{ display: "inline-block", verticalAlign: "middle" }}>
+      <defs><linearGradient id="vg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#4aa8ff" /><stop offset="1" stopColor="#1f6fe0" /></linearGradient></defs>
+      <polygon points={pts} fill="url(#vg)" stroke="url(#vg)" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M7.6 12.3l3 3 5.8-6.2" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+};
+/** a real site avatar (av/*.svg) on a coloured circle */
+const AvatarImg: React.FC<{ src: string; bg: string; size: number; ring?: boolean }> = ({ src, bg, size, ring }) => (
+  <div style={{ width: size, height: size, borderRadius: "50%", background: bg, boxShadow: ring ? "0 0 0 6px #fff, 0 0 0 10px #c78bff" : undefined, overflow: "hidden" }}>
+    <Img src={staticFile(`av/nobg/${src}.svg`)} style={{ width: "100%", height: "100%" }} />
+  </div>
 );
 const Medal: React.FC<{ on: number; n: number; size?: number; kind?: "star" | "ribbon" }> = ({ on, n, size = 84, kind = "star" }) => (
   <div style={{ position: "relative", width: size, height: size, transform: `scale(${1 + 0.25 * Math.sin(Math.min(1, on) * Math.PI)})` }}>
@@ -50,13 +67,19 @@ const Modal: React.FC<{ o: number; x: number; y: number; w: number; h: number; t
   </>
 );
 
-const HAIRS = ["#111111", "#3a2418", "#6a4128", "#9a6330", "#d4a73a", "#ead48f", "#c64b16", "#7f7f7f", "#e6e6e6", "#2f4f96", "#b03c8f", "#2e8b57", "#1c1c3a", "#4a3020", "#7a5236", "#a8562c"];
-const BGS = ["#ffe2d1", "#d6f0ff", "#e5dcff", "#dff7d0", "#fff1c2", "#ffd6e0", "#e9ecf2", "#c9f0f0", "#ffd2a6", "#cfe0ff", "#f2d4ff", "#d8f5e3", "#fbe4c8", "#e0e7ff", "#f8d7d7", "#e2f4c5"];
-const T = { GEAR: 60, ED: 66, TAB1: 96, H: 120, TAB2: 150, B: 172, OK: 205, ALL: 260, MED: 266, MCLOSE: 396, FIND: 430, FR: 436, ADD1: 470, ADD2: 494, END: 560 };
+export const _HAIRS = ["#111111", "#3a2418", "#6a4128", "#9a6330", "#d4a73a", "#ead48f", "#c64b16", "#7f7f7f", "#e6e6e6", "#2f4f96", "#b03c8f", "#2e8b57", "#1c1c3a", "#4a3020", "#7a5236", "#a8562c"];
+export const _BGS = ["#ffe2d1", "#d6f0ff", "#e5dcff", "#dff7d0", "#fff1c2", "#ffd6e0", "#e9ecf2", "#c9f0f0", "#ffd2a6", "#cfe0ff", "#f2d4ff", "#d8f5e3", "#fbe4c8", "#e0e7ff", "#f8d7d7", "#e2f4c5"];
+const T = { GEAR: 60, ED: 66, TAB1: 98, H: 126, TAB2: 150, B: 172, OK: 205, ALL: 260, MED: 266, MCLOSE: 396, FIND: 430, FR: 436, ADD1: 470, ADD2: 494, END: 560 };
 // editor geometry
-const EX = 460, EY = 150, EW = 1000, TABY = EY + 96 + 260, TABW = 115, SWY = TABY + 120;
-const tabX = (i: number) => EX + 30 + i * TABW + TABW / 2;
-const swX = (i: number) => EX + 30 + (i % 8) * 116 + 50, swY = (i: number) => SWY + Math.floor(i / 8) * 104 + 44;
+const EX = 460, EY = 120, EW = 1000, EH = 900, BY = EY + 96; // body origin y
+const TABS = ["Персонаж", "Лицо", "Волосы", "Верх", "Очки", "Фон", "Своё фото"];
+const TABW = (EW - 60 - 8) / 7;
+const tabX = (i: number) => EX + 34 + i * TABW + TABW / 2, tabY = BY + 280 + 38;
+const cardX = (i: number) => EX + 30 + (i % 2) * 478 + 231, cardY = (i: number) => BY + 430 + Math.floor(i / 2) * 126 + 55;
+const swX = (i: number) => EX + 30 + (i % 8) * 116 + 50, swY = (i: number) => BY + 430 + Math.floor(i / 8) * 104 + 44;
+const BTN = { dice: EX + EW - 201, ok: EX + EW - 131, close: EX + EW - 61, y: EY + 48 };
+const CARDS: [string, string, string][] = [["Классика", "Знакомый аватар с одеждой и принтами", "p1"], ["Приключение", "Яркий персонаж с выразительными глазами", "me3"], ["Забавный", "Милый герой с большими ушами", "me5"], ["Скетч", "Чёрные линии, 48 причёсок и бороды", "p3"]];
+const BG2 = ["#e2fbc8", "#dff1ff", "#fbe3d3", "#f7d6ef", "#e6e6e6", "#fdf1b8", "#e5dcff", "#ffffff", "#d3efe6", "#c7e3f6", "#f8d3c8", "#f1e5cb", "#d8d6f2", "#f4c9dc", "#c4dcc0", "#4f617f"];
 
 export const Profile: React.FC = () => {
   const f = useFrame();
@@ -65,11 +88,12 @@ export const Profile: React.FC = () => {
   const ed = lin(f, T.ED, T.ED + 14, 0, 1, OUTE) * (1 - lin(f, T.OK + 4, T.OK + 16));
   const med = lin(f, T.MED, T.MED + 14, 0, 1, OUTE) * (1 - lin(f, T.MCLOSE + 4, T.MCLOSE + 16));
   const fr = lin(f, T.FR, T.FR + 14, 0, 1, OUTE);
-  const tab = f < T.TAB1 + 2 ? 0 : f < T.TAB2 + 2 ? 3 : 6;
-  const hair = mix("#3a2418", "#c64b16", lin(f, T.H + 2, T.H + 14));
-  const bg = mix("#ffe2d1", "#d6f0ff", lin(f, T.B + 2, T.B + 14));
+  const tab = f < T.TAB2 + 2 ? 0 : 5;
+  const av = f < T.TAB1 + 2 ? "p1" : f < T.H + 2 ? "me3" : "p3";
+  const card = f < T.TAB1 + 2 ? 0 : f < T.H + 2 ? 1 : 3;
+  const bg = mix("#ffe2d1", "#f7d6ef", lin(f, T.B + 2, T.B + 14));
   const clicks: [number, number, number][] = [
-    [T.GEAR, 1190, 92], [T.TAB1, tabX(3), TABY + 34], [T.H, swX(6), swY(6)], [T.TAB2, tabX(6), TABY + 34], [T.B, swX(1), swY(1)], [T.OK, EX + EW - 136, EY + 48],
+    [T.GEAR, 1190, 92], [T.TAB1, cardX(1), cardY(1)], [T.H, cardX(3), cardY(3)], [T.TAB2, tabX(5), tabY], [T.B, swX(3), swY(3)], [T.OK, BTN.ok, BTN.y],
     [T.ALL, 1206, 712], [T.MCLOSE, 460 + 1000 - 61, 190 + 48], [T.FIND, 1560, 222], [T.ADD1, 510 + 900 - 70, 170 + 96 + 150 + 50], [T.ADD2, 510 + 900 - 70, 170 + 96 + 150 + 2 * 100 + 50],
   ];
   const pk = [8, ...clicks.flatMap(([t]) => [t - 12, t + 8]), T.END];
@@ -102,8 +126,8 @@ export const Profile: React.FC = () => {
         {/* header card */}
         <div style={{ position: "absolute", left: 400, top: 20, width: 840, height: 380, borderRadius: 28, background: "linear-gradient(120deg, #f2c4bd, #f7d9cf 60%, #f4cfc7)", overflow: "hidden" }}>
           {[["⇪", 1110 - 400], ["⚙", 1190 - 400]].map(([k, x], i) => <div key={k} style={{ position: "absolute", left: (x as number) - 32, top: 40, width: 64, height: 64, borderRadius: 16, background: "#fff", boxShadow: `0 ${4 - 3 * (i ? press(f, T.GEAR) : 0)}px 0 #e2e2e2`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, color: "#3c3c3c" }}>{k}</div>)}
-          <div style={{ position: "absolute", left: 420 - 85, top: 34, transform: `scale(${1 + 0.12 * Math.sin(lin(f, T.OK + 8, T.OK + 30) * Math.PI)})` }}><Avatar size={170} hair={f >= T.OK ? hair : "#3a2418"} bg={f >= T.OK ? bg : "#ffe2d1"} ring /></div>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 224, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 40, color: "#3c3c3c" }}>Нодира <span style={{ color: BLUE }}>✔</span></div>
+          <div style={{ position: "absolute", left: 420 - 85, top: 34, transform: `scale(${1 + 0.12 * Math.sin(lin(f, T.OK + 8, T.OK + 30) * Math.PI)})` }}><AvatarImg size={170} src={f >= T.OK ? "p3" : "p1"} bg={f >= T.OK ? "#f7d6ef" : "#ffe2d1"} ring /></div>
+          <div style={{ position: "absolute", left: 0, right: 0, top: 224, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 40, color: "#3c3c3c" }}>Нодира <Verified size={38} /></div>
           <div style={{ position: "absolute", left: 0, right: 0, top: 278, textAlign: "center", fontWeight: 600, fontSize: 19, color: "#7c6f6a" }}><span style={{ color: "#2e9d3a", fontWeight: 800 }}>В сети</span> · С нами с 6 ноября 2026 г.</div>
           <div style={{ position: "absolute", left: 28, top: 312, display: "flex", gap: 12 }}>{["12 подписки", "48 подписчиков"].map((t) => <div key={t} style={{ padding: "12px 20px", borderRadius: 14, background: "#fff", fontWeight: 900, fontSize: 18, color: BLUE }}>{t}</div>)}</div>
         </div>
@@ -132,41 +156,41 @@ export const Profile: React.FC = () => {
           {[["🔍", "Найти друзей"], ["🦉", "Пригласить друзей"]].map(([ic, t], i) => <div key={t} style={{ marginTop: i ? 10 : 22, height: 60, display: "flex", alignItems: "center", gap: 16, fontWeight: 800, fontSize: 21, color: INK, borderRadius: 14, border: i === 0 && f >= T.FIND - 14 ? `3px solid ${BLUE}` : "3px solid transparent", padding: "0 8px" }}><span style={{ fontSize: 30 }}>{ic}</span>{t}<span style={{ marginLeft: "auto", color: "#9aa1ab" }}>›</span></div>)}
         </div>
 
-        {/* avatar editor */}
+        {/* avatar editor, laid out like the site */}
         {ed > 0.001 ? (
-          <Modal o={ed} x={EX} y={EY} w={EW} h={860} title="Редактировать">
-            <div style={{ position: "absolute", right: 110, top: -76, width: 58, height: 58, borderRadius: 14, background: GREEN, boxShadow: `0 ${4 - 3 * press(f, T.OK)}px 0 ${GLIP}`, transform: `translateY(${press(f, T.OK) * 3}px)`, display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></div>
-            <div style={{ margin: "20px 30px 0", height: 240, borderRadius: 20, background: bg, display: "flex", alignItems: "flex-end", justifyContent: "center", overflow: "hidden" }}>
-              <div style={{ transform: `translateY(30px) scale(${1 + 0.06 * Math.sin(lin(f, T.H + 2, T.H + 20) * Math.PI) + 0.06 * Math.sin(lin(f, T.B + 2, T.B + 20) * Math.PI)})` }}><Avatar size={250} hair={hair} bg="transparent" /></div>
-            </div>
-            <div style={{ margin: "20px 30px 0", height: 72, borderRadius: 16, background: "#f4f6f9", display: "flex", padding: 4, boxSizing: "border-box" }}>
-              {["Персонаж", "Кожа", "Лицо", "Волосы", "Верх", "Очки", "Фон", "Своё фото"].map((t, i) => (
-                <div key={t} style={{ width: TABW - 4, borderRadius: 12, background: i === tab ? BLUE : "transparent", color: i === tab ? "#fff" : "#3c3c3c", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16 }}>
-                  <span style={{ fontSize: 20 }}>{["👤", "💧", "🙂", "✂", "👕", "👓", "🎨", "📷"][i]}</span>{t}
-                </div>
-              ))}
-            </div>
-            <div style={{ margin: "22px 30px 0", fontWeight: 800, fontSize: 24, color: INK }}>{tab === 0 ? "Тип персонажа" : tab === 3 ? "Цвет волос" : "Цвет фона"}</div>
-            {tab === 0 ? (
-              <div style={{ margin: "14px 30px 0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                {[["Классика", "Знакомый аватар с одеждой"], ["Приключение", "Яркий персонаж"], ["Забавный", "Милый герой с большими ушами"], ["Скетч", "Чёрные линии, 48 причёсок"]].map(([t, d], i) => (
-                  <div key={t} style={{ height: 96, borderRadius: 16, border: `3px solid ${i === 0 ? BLUE : "#e5e5e5"}`, display: "flex", alignItems: "center", gap: 16, padding: "0 18px" }}>
-                    <Img src={staticFile(`av/${["p1", "me3", "me5", "p2"][i]}.svg`)} style={{ width: 64, height: 64 }} />
-                    <div><div style={{ fontWeight: 800, fontSize: 22, color: INK }}>{t}</div><div style={{ fontWeight: 600, fontSize: 16, color: "#7c8593" }}>{d}</div></div>
+          <>
+            <div style={{ position: "absolute", left: -400, top: -400, right: -400, bottom: -400, background: `rgba(40,46,58,${0.45 * ed})` }} />
+            <div style={{ position: "absolute", left: EX, top: EY, width: EW, height: EH, borderRadius: 26, background: "#fff", boxShadow: "0 40px 120px rgba(13,22,48,0.35)", opacity: Math.min(1, ed * 1.4), transform: `translateY(${(1 - ed) * 40}px)`, overflow: "hidden" }}>
+              <div style={{ position: "absolute", left: 40, top: 28, fontWeight: 800, fontSize: 32, color: "#3c3c3c" }}>Редактировать</div>
+              {[["dice", "#fff", "#e3e5e9"], ["ok", GREEN, GLIP], ["close", "#fff", "#e3e5e9"]].map(([k, c, sh]) => { const cx = BTN[k as "dice"] - EX; const d = k === "ok" ? press(f, T.OK) : 0; return (
+                <div key={k} style={{ position: "absolute", left: cx - 29, top: 19, width: 58, height: 58, borderRadius: 16, background: c, border: c === "#fff" ? "3px solid #e3e5e9" : undefined, boxSizing: "border-box", boxShadow: `0 ${4 - 3 * d}px 0 ${sh}`, transform: `translateY(${d * 3}px)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {k === "dice" ? <svg width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill={BLUE} /><g fill="#fff"><circle cx="8" cy="8" r="1.6" /><circle cx="16" cy="8" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="8" cy="16" r="1.6" /><circle cx="16" cy="16" r="1.6" /></g></svg>
+                    : k === "ok" ? <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                    : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6f7682" strokeWidth="2.8" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>}
+                </div>); })}
+              <div style={{ position: "absolute", left: 30, top: 96 + 20, width: EW - 60, height: 240, borderRadius: 22, background: bg, overflow: "hidden", display: "flex", justifyContent: "center" }}>
+                <Img key={av} src={staticFile(`av/nobg/${av}.svg`)} style={{ width: 280, height: 280, marginTop: 10, transform: `scale(${0.9 + 0.1 * lin(f, av === "p1" ? 0 : av === "me3" ? T.TAB1 + 2 : T.H + 2, (av === "p1" ? 0 : av === "me3" ? T.TAB1 : T.H) + 14, 0, 1, OUTE)})` }} />
+              </div>
+              <div style={{ position: "absolute", left: 30, top: 96 + 280, width: EW - 60, height: 76, borderRadius: 18, background: "#f4f6f9", display: "flex", padding: 4, boxSizing: "border-box" }}>
+                {TABS.map((t, i) => (
+                  <div key={t} style={{ width: TABW, borderRadius: 14, background: i === tab ? "#4aa8f0" : "transparent", color: i === tab ? "#fff" : "#3c3c3c", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, fontWeight: 800, fontSize: 18 }}>
+                    <span style={{ fontSize: 22 }}>{["👤", "🙂", "✂", "👕", "👓", "🎨", "📷"][i]}</span>{t}
                   </div>
                 ))}
               </div>
-            ) : (
-              <div style={{ margin: "14px 30px 0", display: "grid", gridTemplateColumns: "repeat(8, 100px)", gap: 16 }}>
-                {(tab === 3 ? HAIRS : BGS).map((c, i) => { const sel = tab === 3 ? (f >= T.H + 2 ? i === 6 : i === 1) : (f >= T.B + 2 ? i === 1 : i === 0); return (
-                  <div key={c + i} style={{ width: 100, height: 88, borderRadius: 16, border: `3px solid ${sel ? BLUE : "#e5e5e5"}`, padding: 5, boxSizing: "border-box", transform: sel && (f >= T.H + 2 || f >= T.B + 2) ? `scale(${1 + 0.08 * Math.sin(lin(f, tab === 3 ? T.H + 2 : T.B + 2, (tab === 3 ? T.H : T.B) + 16) * Math.PI)})` : undefined }}>
-                    <div style={{ width: "100%", height: "100%", borderRadius: 11, background: c }} />
-                  </div>); })}
-              </div>
-            )}
-          </Modal>
+              <div style={{ position: "absolute", left: 40, top: 96 + 384, fontWeight: 800, fontSize: 26, color: "#3c3c3c" }}>{tab === 0 ? "Тип персонажа" : "Цвет фона"}</div>
+              {tab === 0 ? CARDS.map(([t, d, a], i) => (
+                <div key={t} style={{ position: "absolute", left: 30 + (i % 2) * 478, top: 96 + 430 + Math.floor(i / 2) * 126, width: 462, height: 110, borderRadius: 18, border: `3px solid ${i === card ? BLUE : "#e5e5e5"}`, boxSizing: "border-box", display: "flex", alignItems: "center", gap: 16, padding: "0 18px", transform: `scale(${i === card && card > 0 ? 1 + 0.04 * Math.sin(lin(f, card === 1 ? T.TAB1 + 2 : T.H + 2, (card === 1 ? T.TAB1 : T.H) + 14) * Math.PI) : 1})` }}>
+                  <Img src={staticFile(`av/${a}.svg`)} style={{ width: 76, height: 76, borderRadius: 16 }} />
+                  <div><div style={{ fontWeight: 800, fontSize: 23, color: INK }}>{t}</div><div style={{ fontWeight: 600, fontSize: 16, color: "#7c8593" }}>{d}</div></div>
+                </div>
+              )) : BG2.map((c, i) => { const sel = f >= T.B + 2 ? i === 3 : i === 2; return (
+                <div key={c + i} style={{ position: "absolute", left: 30 + (i % 8) * 116, top: 96 + 430 + Math.floor(i / 8) * 104, width: 100, height: 88, borderRadius: 18, border: `3px solid ${sel ? BLUE : "#e5e5e5"}`, padding: 6, boxSizing: "border-box", transform: sel && f >= T.B + 2 ? `scale(${1 + 0.08 * Math.sin(lin(f, T.B + 2, T.B + 16) * Math.PI)})` : undefined }}>
+                  <div style={{ width: "100%", height: "100%", borderRadius: 12, background: c }} />
+                </div>); })}
+            </div>
+          </>
         ) : null}
-
         {/* medals */}
         {med > 0.001 ? (
           <Modal o={med} x={460} y={190} w={1000} h={720} title="Медали" closeDown={press(f, T.MCLOSE)}>
