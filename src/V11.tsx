@@ -4,6 +4,7 @@ import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
 import { Lesson, LessonMore } from "./Lesson";
+import { Duel } from "./Duel";
 import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, ArticleActions, Collect, Search, AiPick, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
 import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
@@ -753,24 +754,25 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: LessonPath, d: 403 },
   { C: Lesson, d: 1325 },
   { C: LessonMore, d: 634 },
-  { C: G3, d: 231 },
+  { C: G3, d: 230 },
+  { C: Duel, d: 720 },
   { C: S7, d: 115 },
-  { C: S7b, d: 374, xo: 16 },
+  { C: S7b, d: 375, xo: 16 },
   { C: Wall, d: 288 },
   { C: S9, d: 115, xo: 12 },
-  { C: Counter, d: 346, xo: 16 },
+  { C: Counter, d: 345, xo: 16 },
   { C: LexScene, d: 317 },
   { C: OurWords, d: 115 },
   { C: LawsHome, d: 202 },
-  { C: Reader, d: 604, k: 1.4, xo: 18 },
-  { C: Hints, d: 404, k: 1.4, xo: 16 },
+  { C: Reader, d: 605, k: 1.4, xo: 18 },
+  { C: Hints, d: 403, k: 1.4, xo: 16 },
   { C: ArticleActions, d: 403, k: 1.4, xo: 16 },
-  { C: Collect, d: 806, k: 1.4, xo: 16 },
-  { C: Search, d: 490, k: 1.416667 },
+  { C: Collect, d: 807, k: 1.4, xo: 16 },
+  { C: Search, d: 489, k: 1.416667 },
   { C: AiWords, d: 173 },
-  { C: AiPick, d: 172, xo: 16 },
+  { C: AiPick, d: 173, xo: 16 },
   { C: AIReal, d: 317, xo: 16 },
-  { C: Langs, d: 231, xo: 10 },
+  { C: Langs, d: 230, xo: 10 },
   { C: Table, d: 288, xo: 16 },
   { C: S11, d: 720 },
 ];
