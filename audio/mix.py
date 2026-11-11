@@ -17,7 +17,11 @@ K = json.load(open(_KJ)) if os.path.exists(_KJ) else [1] * len(DURS)
 _NM = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../out/names.json")
 NAMES = json.load(open(_NM)) if os.path.exists(_NM) else []
 def N(name): return NAMES.index(name) if name in NAMES else -1   # cues refer to scenes by name; a removed scene is skipped
-def F(sc, lf): return -1e9 if sc < 0 else STARTS[sc] + lf * K[sc]   # lf is in the scene's own (unstretched) frames
+def _lessonmap(lf): return lf if lf < 150 else (150 + (lf - 150) * 1.75 if lf < 390 else lf + 180)
+def F(sc, lf):
+    if sc < 0: return -1e9
+    if NAMES and NAMES[sc] == "LessonSlow": lf = _lessonmap(lf)
+    return STARTS[sc] + lf * K[sc]   # lf is in the scene's own (unstretched) frames
 STING = STARTS[-1] / FPS + 2.33
 DUR = sum(DURS) / FPS
 
@@ -130,9 +134,9 @@ pops += [(N("Search"), 46), (N("Search"), 176)]
 for sc, lf in [(N("AiPick"), 128)]: at(CL, F(sc, lf), -16)
 pops += [(N("AiPick"), 92)]
 # Lesson (the real lesson page): every click, then correct / wrong chimes
-for lf in [110, 250, 340, 375, 430, 520, 600, 622, 644, 666, 692, 745, 790, 810, 840, 860, 890, 910, 940, 992, 1012, 1066, 1086, 1250, 1275]: at(CL, F(N("Lesson"), lf), -16)
-pops += [(N("Lesson"), 14), (N("Lesson"), 24), (N("Lesson"), 34), (N("Lesson"), 254), (N("Lesson"), 744 + 2)]
-for sc, lf in [(N("Lesson"), 522), (N("Lesson"), 694), (N("Lesson"), 942), (N("Lesson"), 1088), (N("Lesson"), 1277)]: at(CH, F(sc, lf), -17)
+for lf in [110, 186, 214, 292, 352, 378, 430, 520, 600, 622, 644, 666, 692, 745, 790, 810, 840, 860, 890, 910, 940, 992, 1012, 1066, 1086, 1250, 1275]: at(CL, F(N("LessonSlow"), lf), -16)
+pops += [(N("LessonSlow"), 14), (N("LessonSlow"), 24), (N("LessonSlow"), 34), (N("LessonSlow"), 296), (N("LessonSlow"), 744 + 2)]
+for sc, lf in [(N("LessonSlow"), 522), (N("LessonSlow"), 694), (N("LessonSlow"), 942), (N("LessonSlow"), 1088), (N("LessonSlow"), 1277)]: at(CH, F(sc, lf), -17)
 # LessonMore: term pick, check, next, answer field, check; AI check and success
 for lf in [110, 142, 192, 268, 680]: at(CL, F(N("LessonMore"), lf), -16)
 for lf in [144, 690]: at(CH, F(N("LessonMore"), lf), -17)

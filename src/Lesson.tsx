@@ -1,5 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
+import { SlowCtx } from "./Scenes9";
 import { NAVY, BLUE, GREEN, GLIP, RED, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer, TopLine } from "./Scenes9";
 import { ART } from "./Laws7";
 
@@ -64,6 +65,9 @@ export const Confetti: React.FC<{ at: number; x?: number; y?: number; n?: number
     </AbsoluteFill>
   );
 };
+/** theory (frames 150-390) runs 1.75x slower so it can be read; the rest of the lesson keeps its pace */
+export const THEORY_MAP = (c: number) => (c < 150 ? c : c < 570 ? 150 + (c - 150) / 1.75 : c - 180);
+export const LessonSlow: React.FC = () => <SlowCtx.Provider value={THEORY_MAP}><Lesson /></SlowCtx.Provider>;
 export const Lesson: React.FC = () => {
   const f = useFrame();
   const sp = useSp();
@@ -73,12 +77,12 @@ export const Lesson: React.FC = () => {
   const starts = [S.A, S.B, S.C, S.D, S.E, S.F, S.G];
   const prog = interpolate(f, [starts[step], starts[step] + 20], [PROG[Math.max(0, step - 1)], PROG[step]], { ...cl, easing: OUTE }) + lin(f, 1278, 1300, 0, 1 - PROG[6], OUTE);
   // --- clicks (frame, x, y): the cursor arrives 12 frames before and stays 8 after
-  const CB = { book: 250, bookX: 340, contB: 375 };
+  const CB = { book: 292, bookX: 352, contB: 378 };
   const wordsX = { "это": CX, "общие": CX + 116, "правила": CX + 272, "право": CX + 458 };
   const W = { "право": 150, "это": 100, "правила": 170, "общие": 140 } as Record<string, number>;
   const clicks: [number, number, number][] = [
-    [110, MAIN_X, BTN_Y + 42],
-    [CB.book, CX + 50, BTN_Y + 42], [CB.bookX, 1830, 130], [CB.contB, MAIN_X, BTN_Y + 42],
+    [110, MAIN_X, BTN_Y + 42], [186, MAIN_X, BTN_Y + 42], [214, MAIN_X, BTN_Y + 42],
+    [S.B + 112, CX + 50, BTN_Y + 42], [CB.book, CX + 50, BTN_Y + 42], [CB.bookX, 1830, 130], [CB.contB, MAIN_X, BTN_Y + 42],
     [430, CX + 300, 420], [520, MAIN_X, BTN_Y + 42],
     [600, wordsX["право"] + 70, 740], [622, wordsX["это"] + 50, 740], [644, wordsX["правила"] + 80, 740], [666, wordsX["общие"] + 70, 740], [692, MAIN_X, BTN_Y + 42], [745, CX + CW - 150, 978],
     [790, CX + 215, 450], [810, CX + 665, 450], [840, CX + 215, 580], [860, CX + 665, 710], [890, CX + 215, 710], [910, CX + 665, 580], [940, MAIN_X, BTN_Y + 42],
@@ -89,7 +93,15 @@ export const Lesson: React.FC = () => {
   const pxs = [1500, ...clicks.flatMap(([, x]) => [x - 4, x - 4]), 1500];
   const pys = [900, ...clicks.flatMap(([, , y]) => [y - 4, y - 4]), 900];
   const px = interpolate(f, pk, pxs, { ...cl, easing: IOE }), py = interpolate(f, pk, pys, { ...cl, easing: IOE });
-  const down = Math.max(...clicks.map(([t]) => press(f, t)));
+  const down = Math.max(...clicks.filter(([t]) => t !== S.B + 112).map(([t]) => press(f, t)));
+  // reading the theory: camera moves in on the text block that is being read (out again before each click)
+  const rd = (a: number, b: number) => lin(f, S.B + a, S.B + a + 8, 0, 1, IOE) * (1 - lin(f, S.B + b - 6, S.B + b, 0, 1, IOE));
+  const zt = Math.max(rd(14, 34), rd(44, 62), rd(74, 108));
+  // hover on the book button before clicking it: camera moves to the button, a tip explains it
+  const HOV = S.B + 112;
+  const zb = lin(f, HOV - 4, HOV + 12, 0, 1, IOE) * (1 - lin(f, CB.book + 4, CB.book + 18, 0, 1, IOE));
+  // camera moves in on the Constitution panel while it is open
+  const zc = lin(f, CB.book + 14, CB.book + 40, 0, 1, IOE) * (1 - lin(f, CB.bookX - 12, CB.bookX + 6, 0, 1, IOE));
   // --- hearts
   const lost = f >= 1014 ? 1 : 0;
   const hpop = sp(1014, 9, 260);
@@ -99,7 +111,7 @@ export const Lesson: React.FC = () => {
   const mainDown = clicks.filter(([, x, y]) => x === MAIN_X && y === BTN_Y + 42).reduce((m, [t]) => Math.max(m, press(f, t)), 0);
   // --- captions on the left (big, for older viewers)
   const CAPS: [number, string, string?, string?][] = [
-    [S.A, "Урок", "за 5 минут.", "за 5 минут."], [S.B, "Сначала", "теория.", "теория."], [CB.book, "Конституция", "прямо в уроке.", "прямо в уроке."],
+    [S.A, "Урок", "за 5 минут.", "за 5 минут."], [S.B, "Сначала", "теория.", "теория."], [S.B + 112, "Даже в игре", "можно подглядывать в Конституцию.", "можно подглядывать в Конституцию."],
     [S.C, "Слушай", "и выбирай.", "и выбирай."], [S.D, "Собери ответ", "из слов.", "из слов."], [S.E, "Соедини", "пары.", "пары."],
     [S.F, "Ошибся?", "Минус сердечко.", "Минус сердечко."], [S.G, "Истории", "из жизни.", "из жизни."],
   ];
@@ -109,7 +121,9 @@ export const Lesson: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
       {/* caption column */}
-      <AbsoluteFill style={{ transformOrigin: "50% 0", transform: "translateY(104px) scale(0.9)" }}>
+      <AbsoluteFill style={{ transformOrigin: "1540px 560px", transform: `translateY(${104 * (1 - zc)}px) scale(${0.9 + 0.3 * zc}) translateX(${-150 * zc}px)` }}>
+      <AbsoluteFill style={{ transformOrigin: "1080px 560px", transform: `scale(${1 + 0.3 * zt})` }}>
+      <AbsoluteFill style={{ transformOrigin: `${CX + 50}px ${BTN_Y + 42}px`, transform: `scale(${1 + 0.6 * zb})` }}>
       {/* top bar: close, progress, hearts */}
       <svg style={{ position: "absolute", left: CX - 4, top: 46 }} width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#afafaf" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
       <div style={{ position: "absolute", left: CX + 64, top: 56, width: CW - 160, height: 22, borderRadius: 11, background: "#e5e5e5", overflow: "hidden" }}>
@@ -136,30 +150,43 @@ export const Lesson: React.FC = () => {
           </div>
         </div>); })()}
 
-      {/* ===== B: theory */}
-      {(() => { const w = win(S.B, S.C); if (!w.on) return null; const lf = f - S.B; const r = (a: number) => lin(lf, a, a + 16); return (
+      {/* ===== B: theory (site layout: picture, then blocks on a timeline with icons; the page scrolls down smoothly) */}
+      {(() => { const w = win(S.B, S.C); if (!w.on) return null; const lf = f - S.B; const r = (a: number) => lin(lf, a, a + 16);
+        const scroll = lin(lf, 70, 104, 0, 300, Easing.bezier(0.45, 0, 0.3, 1));
+        const BL: [React.ReactNode, string, React.ReactNode, number][] = [
+          [<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18M7 21h10M4 7h16M6 7l-3 7a3 3 0 0 0 6 0zM18 7l-3 7a3 3 0 0 0 6 0z" /></svg>, "ЧТО ТАКОЕ ПРАВО",
+            <div style={{ fontWeight: 600, fontSize: 30, lineHeight: 1.6, color: INK, textAlign: "justify" }}><span style={{ color: "#ce82ff", borderBottom: "3px dotted #ce82ff" }}>Право</span> это правила, которые для всех одинаковые и которые защищает государство.</div>, 10],
+          [<Img src={staticFile("site/target.svg")} style={{ width: 44, height: 44 }} />, "",
+            <>{["Правила записаны в законах, их можно прочитать.", "Они одинаковые для всех, и для богатых, и для бедных.", "Если правило нарушили, государство может наказать."].map((t, i) => (
+              <div key={t} style={{ marginTop: i ? 18 : 4, display: "flex", gap: 16, alignItems: "baseline", fontWeight: 600, fontSize: 30, color: INK, opacity: r(42 + i * 6), transform: `translateX(${(1 - r(42 + i * 6)) * 20}px)` }}>
+                <div style={{ width: 18, height: 5, borderRadius: 3, background: BLUE, flexShrink: 0, transform: "translateY(-8px)" }} />{t}</div>))}</>, 40],
+          [<Img src={staticFile("site/customer-file.svg")} style={{ width: 44, height: 44 }} />, "ПРИМЕР",
+            <div style={{ fontWeight: 600, fontSize: 30, lineHeight: 1.6, color: INK, textAlign: "justify" }}>Покупатель в Ташкенте может вернуть сломанную вещь по закону, и на базаре, и в интернет-магазине. Продавец не скажет, что у него свои правила.</div>, 68],
+        ];
+        return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <svg style={{ position: "absolute", left: CX + CW / 2 - 120, top: 110, opacity: r(4), transform: `scale(${0.85 + 0.15 * r(4)})` }} width="240" height="250" viewBox="0 0 120 125" fill="none" stroke="#1a1a1a" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14 6h50l14 14v86a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4z" fill="#fff" />
-            <path d="M64 6v14h14" />
-            <rect x="22" y="18" width="30" height="10" rx="2" />
-            <path d="M22 40h40M22 50h28M22 60h36M22 70h22" />
-            <path d="M24 92c4-8 10-8 8 0s4 8 10 2" />
-            <rect x="60" y="62" width="40" height="18" rx="3" fill="#fff" />
-            <path d="M56 60v22M104 60v22M80 80v32a5 5 0 0 1-10 0V80" fill="#fff" />
-          </svg>
-          <div style={{ position: "absolute", left: CX, top: 390, width: CW }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 18, fontWeight: 900, fontSize: 22, letterSpacing: "0.1em", color: "#7c8593", opacity: r(14) }}>
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18M7 21h10M4 7h16M6 7l-3 7a3 3 0 0 0 6 0zM18 7l-3 7a3 3 0 0 0 6 0z" /></svg>ЧТО ТАКОЕ ПРАВО
-            </div>
-            <div style={{ marginTop: 16, marginLeft: 58, fontWeight: 600, fontSize: 32, lineHeight: 1.55, color: INK, opacity: r(24), textAlign: "justify" }}>
-              <span style={{ color: "#ce82ff", borderBottom: "3px dotted #ce82ff" }}>Право</span> это правила, которые для всех одинаковые и которые защищает государство.
-            </div>
-            {["Правила записаны в законах, их можно прочитать.", "Они одинаковые для всех, и для богатых, и для бедных.", "Если правило нарушили, государство может наказать."].map((t, i) => (
-              <div key={t} style={{ marginTop: i ? 14 : 30, marginLeft: 58, display: "flex", gap: 16, alignItems: "baseline", fontWeight: 600, fontSize: 30, color: INK, opacity: r(44 + i * 12), transform: `translateX(${(1 - r(44 + i * 12)) * 20}px)` }}>
-                <div style={{ width: 18, height: 5, borderRadius: 3, background: BLUE, flexShrink: 0, transform: "translateY(-8px)" }} />{t}
+          <div style={{ position: "absolute", left: 0, right: 0, top: 100, height: BTN_Y - 120, overflow: "hidden", WebkitMaskImage: "linear-gradient(180deg, transparent, #000 40px, #000 calc(100% - 40px), transparent)", maskImage: "linear-gradient(180deg, transparent, #000 40px, #000 calc(100% - 40px), transparent)" }}>
+            <div style={{ position: "absolute", left: 0, right: 0, top: 20 - scroll }}>
+              <svg style={{ position: "absolute", left: CX + CW / 2 - 120, top: 0, opacity: r(4), transform: `scale(${0.85 + 0.15 * r(4)})` }} width="240" height="250" viewBox="0 0 120 125" fill="none" stroke="#1a1a1a" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 6h50l14 14v86a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4z" fill="#fff" /><path d="M64 6v14h14" /><rect x="22" y="18" width="30" height="10" rx="2" /><path d="M22 40h40M22 50h28M22 60h36M22 70h22" /><path d="M24 92c4-8 10-8 8 0s4 8 10 2" />
+                <rect x="60" y="62" width="40" height="18" rx="3" fill="#fff" /><path d="M56 60v22M104 60v22M80 80v32a5 5 0 0 1-10 0V80" fill="#fff" />
+              </svg>
+              <div style={{ position: "absolute", left: CX, top: 290, width: CW }}>
+                {BL.map(([ic, title, body, at], i) => { const e = r(at); const line = lin(lf, at + 6, at + 40, 0, 1, OUTE); return (
+                  <div key={i} style={{ display: "flex", gap: 22, marginTop: i ? 34 : 0, opacity: e, transform: `translateY(${(1 - e) * 16}px)` }}>
+                    <div style={{ width: 48, display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                      {ic}
+                      <div style={{ marginTop: 10, width: 3, flex: 1, borderRadius: 2, background: "rgba(28,176,246,0.3)", transformOrigin: "50% 0", transform: `scaleY(${line})` }} />
+                    </div>
+                    <div style={{ flex: 1, position: "relative" }}>
+                      {(() => { const win2 = [[14, 34], [44, 62], [74, 108]][i]; const o = lin(lf, win2[0], win2[0] + 8) * (1 - lin(lf, win2[1] - 6, win2[1])); const sweep = lin(lf, win2[0], win2[1], 0, 1, Easing.linear); return o > 0.01 ? (
+                        <div style={{ position: "absolute", left: -14, right: -14, top: title ? 50 : -6, bottom: -6, borderRadius: 14, background: `linear-gradient(180deg, rgba(28,176,246,${0.14 + 0.08 * Math.sin(f / 5)}) ${sweep * 100}%, rgba(28,176,246,0.05) ${sweep * 100 + 12}%)`, boxShadow: `0 0 0 ${2 + 2 * Math.abs(Math.sin(f / 6))}px rgba(28,176,246,0.25)`, opacity: o }} />) : null; })()}
+                      {title ? <div style={{ position: "relative", height: 44, display: "flex", alignItems: "center", fontWeight: 800, fontSize: 22, letterSpacing: "0.1em", color: "#7c8593" }}>{title}</div> : null}
+                      <div style={{ position: "relative", marginTop: title ? 10 : 0 }}>{body}</div>
+                    </div>
+                  </div>); })}
               </div>
-            ))}
+            </div>
           </div>
         </div>); })()}
 
@@ -289,6 +316,13 @@ export const Lesson: React.FC = () => {
       {/* coming out of the green "НАЧАТЬ" flood of the lesson path */}
       <AbsoluteFill style={{ background: GREEN, opacity: 1 - lin(f, 0, 18), pointerEvents: "none" }} />
       {f >= 14 && f < S.END - 20 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, 14, 26) * (1 - lin(f, S.END - 34, S.END - 20))} /></div> : null}
+      {zb > 0.01 ? (
+        <div style={{ position: "absolute", left: CX - 10, top: BTN_Y - 150, width: 470, padding: "16px 20px", borderRadius: 16, background: "#2b2f36", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 22, lineHeight: 1.35, opacity: lin(f, HOV + 6, HOV + 14) * (1 - lin(f, CB.book - 2, CB.book + 4)), transform: `translateY(${(1 - lin(f, HOV + 6, HOV + 16, 0, 1, OUTE)) * 10}px)` }}>
+          <div style={{ fontWeight: 900, fontSize: 24, marginBottom: 4 }}>📘 Конституция</div>Открой закон прямо во время игры и подсмотри нужную статью.
+          <div style={{ position: "absolute", left: 40, bottom: -9, width: 18, height: 18, background: "#2b2f36", transform: "rotate(45deg)" }} />
+        </div>) : null}
+      </AbsoluteFill>
+      </AbsoluteFill>
       </AbsoluteFill>
       <TopLine key={ci} a={CAPS[ci][1]} b={CAPS[ci][2] || undefined} at={CAPS[ci][0] + 4} />
     </AbsoluteFill>
