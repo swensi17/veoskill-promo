@@ -1116,3 +1116,42 @@ export const PhraseBank: React.FC = () => {
   );
 };
 export { RED as _red, GREY as _grey, fit as _fit };
+
+/** Short contrast insert: on lex.uz the same action does nothing (plain browser selection / no hint), the page shakes, red cross. */
+export const LexTry: React.FC<{ mode: "select" | "hover" }> = ({ mode }) => {
+  const f = useFrame();
+  const sp = useSp();
+  const S = 2.4, OY = -80;
+  const ly = (y: number) => y * S + OY;
+  const lineY = mode === "select" ? ly(289) : ly(273);
+  const x0 = 600, x1 = 1560;
+  const drag = mode === "select" ? lin(f, 30, 58, 0, 1, Easing.bezier(0.4, 0, 0.3, 1)) : 0;
+  const px = mode === "select" ? interpolate(f, [8, 28, 30, 58, 100], [1300, x0, x0, x1, x1], { ...cl, easing: IOE }) : interpolate(f, [8, 32, 100], [1300, 1452, 1452], { ...cl, easing: IOE });
+  const py = interpolate(f, [8, 28, 100], [900, lineY + 6, lineY + 6], { ...cl, easing: IOE });
+  const NO = 70;
+  const shake = f >= NO && f < NO + 18 ? Math.sin((f - NO) * 2.2) * 14 * (1 - (f - NO) / 18) : 0;
+  const x = sp(NO, 10, 240);
+  const msg = mode === "select" ? "Нельзя выделить цветом и оставить заметку" : "Нет подсказок к терминам";
+  return (
+    <AbsoluteFill style={{ background: "#fff", overflow: "hidden" }}>
+      <AbsoluteFill style={{ transform: `translateX(${shake}px)`, opacity: lin(f, 0, 8) }}>
+        <Img src={staticFile("lex/doc-desk.jpg")} style={{ position: "absolute", left: 0, top: OY, width: 800 * S, height: 505 * S }} />
+        {mode === "select" && drag > 0 ? <div style={{ position: "absolute", left: x0, top: lineY - 16, width: (x1 - x0) * drag, height: 38, background: "rgba(51,103,214,0.35)" }} /> : null}
+        {mode === "hover" && f > 34 && f < NO ? <div style={{ position: "absolute", left: 1452 - 50, top: lineY - 44, width: 100, height: 100, borderRadius: 50, border: "4px dashed #8a929e", opacity: lin(f, 36, 44) * (1 - lin(f, NO - 6, NO)) , display: "flex", alignItems: "flex-start", justifyContent: "flex-end" }}><span style={{ marginTop: -30, marginRight: -26, width: 48, height: 48, borderRadius: 24, background: "#8a929e", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: UI, fontWeight: 900, fontSize: 32 }}>?</span></div> : null}
+        <Pointer x={px} y={py} down={mode === "select" && f >= 30 && f < 58 ? 0.5 : 0} op={lin(f, 6, 14)} />
+      </AbsoluteFill>
+      <AbsoluteFill style={{ background: `rgba(255,255,255,${0.55 * lin(f, NO, NO + 10)})` }} />
+      {f >= NO ? (
+        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 26 }}>
+          <div style={{ width: 170, height: 170, borderRadius: 85, background: RED, boxShadow: "0 10px 0 #c23a3a, 0 30px 60px rgba(255,75,75,0.4)", display: "flex", alignItems: "center", justifyContent: "center", transform: `scale(${x}) rotate(${(1 - x) * -30}deg)` }}>
+            <svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </div>
+          <div style={{ padding: "16px 34px", borderRadius: 22, background: "#fff", boxShadow: "0 20px 50px rgba(13,22,48,0.15)", fontFamily: HEAD, fontWeight: 900, fontSize: 52, color: "#c23a3a", opacity: lin(f, NO + 6, NO + 16), transform: `translateY(${(1 - lin(f, NO + 6, NO + 18, 0, 1, OUTE)) * 20}px)` }}>{msg}</div>
+        </AbsoluteFill>
+      ) : null}
+      <TopLine a="А на lex.uz?" b={mode === "select" ? "Попробуем выделить." : "Наведём на термин."} at={4} size={66} accentColor="#7c8593" />
+    </AbsoluteFill>
+  );
+};
+export const LexTrySelect: React.FC = () => <LexTry mode="select" />;
+export const LexTryHover: React.FC = () => <LexTry mode="hover" />;
