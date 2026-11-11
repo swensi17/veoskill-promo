@@ -149,6 +149,10 @@ for lf in [386, 990]:
 # section word cuts
 for nm in ["DuelWords", "LibWords"]: pops += [(N(nm), 0), (N(nm), 58)]
 pops += [(N("S7"), 115)]
+# Counter: word cut, tiles
+pops += [(N("Counter"), 4), (N("Counter"), 14), (N("Counter"), 100)] + [(N("Counter"), 372 + 6 * i) for i in range(5)]
+for lf in [330]:
+    i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(N("Counter"), lf) / FPS - i / SR + 0.03, -20)
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
 pops += [(N("AiWords"), 0), (N("AiWords"), 58)]
 # other entrances found in the scene code
