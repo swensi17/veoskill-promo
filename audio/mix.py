@@ -164,6 +164,9 @@ pops += [(N("Profile"), 66), (N("Profile"), 266), (N("Profile"), 436)]
 for lf in [213, 338]: at(CH, F(N("Profile"), lf), -17)
 at(CL, F(N("Premium"), 150), -16)
 pops += [(N("Premium"), 14), (N("Premium"), 20), (N("Premium"), 26)] + [(N("Premium"), 246 + 10 * i) for i in range(6)]
+# lex.uz inserts: red cross
+for nm in ["LexTrySelect", "LexTryHover"]:
+    at(CL, F(N(nm), 70), -16); pops += [(N(nm), 76)]
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
 pops += [(N("AiWords"), 0), (N("AiWords"), 58)]
 # other entrances found in the scene code
