@@ -724,7 +724,8 @@ const Table: React.FC = () => {
     ["XP, лига и соревнования", "учиться интересно каждый день"],
     ["Всё в одном месте", "законы, уроки и библиотека книг"],
   ];
-  const rowAt = (i: number) => Math.round(28.8 + i * 14.4);
+  const rowAt = (i: number) => Math.round(72 + i * 14.4);
+  const up = lin(f, 44, 70, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
   const push = lin(f, 0, 288, 0, 1, Easing.linear);
   const RH = 78;
   return (
@@ -733,20 +734,21 @@ const Table: React.FC = () => {
         {Array.from({ length: 8 }, (_, r) => <div key={r} style={{ position: "absolute", left: -1400, top: -120 + r * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, color: "#fff", transform: `translateX(${(f * (r % 2 ? 1.6 : -1.6)) % 1300 + (r % 2 ? -650 : 0)}px)` }}>{"УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ • ".repeat(6)}</div>)}
       </AbsoluteFill>
       <AbsoluteFill style={{ transform: `scale(${1.0 + push * 0.025})` }}>
-        <div style={{ position: "absolute", left: 0, right: 0, top: 36, display: "flex", justifyContent: "center", columnGap: 22 }}>
-          <Cap text="Топ-10 причин," at={4} size={66} color="#fff" />
-          <Cap text="почему с veoskill удобнее." at={12} size={66} color="#fff" accent="с veoskill удобнее." accentColor={NAVY} />
+        {/* headline first, big in the centre; then it glides up and the table fades in */}
+        <div style={{ position: "absolute", left: 0, right: 0, top: 36 + (1 - up) * 400, display: "flex", justifyContent: "center", columnGap: 22, transformOrigin: "50% 50%", transform: `scale(${1 + 0.8 * (1 - up)})` }}>
+          <Cap text="Почему" at={4} size={66} color="#fff" />
+          <Cap text="с veoskill удобнее?" at={12} size={66} color="#fff" accent="с veoskill удобнее?" accentColor={NAVY} />
         </div>
-        <div style={{ position: "absolute", left: 210, top: 150, width: 1500, borderRadius: 30, background: "#fff", boxShadow: "0 40px 100px rgba(13,22,48,0.25)", padding: "8px 40px 12px", boxSizing: "border-box", opacity: lin(f, 4, 16) }}>
-          <div style={{ display: "flex", alignItems: "center", height: 64, fontFamily: HEAD, fontWeight: 800, fontSize: 30 }}>
-            <div style={{ flex: 1 }} />
+        <div style={{ position: "absolute", left: 210, top: 150, width: 1500, borderRadius: 30, background: "#fff", boxShadow: "0 40px 100px rgba(13,22,48,0.25)", padding: "8px 0 12px", boxSizing: "border-box", overflow: "hidden", opacity: lin(f, 56, 76), transform: `translateY(${(1 - lin(f, 56, 80, 0, 1, OUTE)) * 60}px)` }}>
+          <div style={{ display: "flex", alignItems: "center", height: 64, padding: "0 40px", fontFamily: HEAD, fontWeight: 800, fontSize: 30 }}>
+            <div style={{ flex: 1, color: NAVY }}>Что вы получаете:</div>
             <div style={{ width: 190, textAlign: "center", color: "#7c8593" }}>lex.uz</div>
             <div style={{ width: 190, textAlign: "center", color: LOGO, fontFamily: UI, fontWeight: 900 }}>veoskill</div>
           </div>
           {ROWS.map(([t, d], i) => {
             const s = sp(rowAt(i), 14, 220);
             return (
-              <div key={t} style={{ display: "flex", alignItems: "center", height: RH, borderTop: "2px solid #eef0f3", transform: `translateY(${(1 - s) * 24}px)`, opacity: Math.min(1, s * 1.3) }}>
+              <div key={t} style={{ display: "flex", alignItems: "center", height: RH, padding: "0 40px", background: i % 2 ? "#fff" : "#f2f4f7", transform: `translateY(${(1 - s) * 24}px)`, opacity: Math.min(1, s * 1.3) }}>
                 <div style={{ width: 60, fontFamily: HEAD, fontWeight: 900, fontSize: 36, color: LOGO }}>{i + 1}</div>
                 <div style={{ flex: 1, fontFamily: UI, fontWeight: 900, fontSize: 38, color: INK, whiteSpace: "nowrap" }}>{t}{void d}</div>
                 <div style={{ width: 190, display: "flex", justifyContent: "center" }}><Mark ok={false} s={42} /></div>
