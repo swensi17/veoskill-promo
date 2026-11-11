@@ -290,6 +290,42 @@ export const Reader: React.FC = () => {
     </AbsoluteFill>
   );
 };
+/** Hints: click the green bulb ("Подсказки" popover), then hover a dotted term and its explanation pops up (as on veoskill.uz). */
+const HintBox: React.FC<{ x: number; y: number; w: number; title: string; text: string; o: number; arrowX: number }> = ({ x, y, w, title, text, o, arrowX }) => (
+  <div style={{ position: "absolute", left: x, top: y, width: w, opacity: o, transform: `translateY(${(1 - o) * 10}px)`, fontFamily: UI }}>
+    <div style={{ position: "absolute", left: arrowX - 12, top: -11, width: 22, height: 22, background: "#fff", borderLeft: "3px solid #1cb0f6", borderTop: "3px solid #1cb0f6", transform: "rotate(45deg)", borderRadius: "4px 0 0 0" }} />
+    <div style={{ background: "#fff", border: "3px solid #1cb0f6", borderRadius: 16, padding: "16px 22px 18px", boxShadow: "0 18px 40px rgba(13,22,48,0.16)" }}>
+      <div style={{ fontWeight: 800, fontSize: 21, color: "#3c3c3c" }}>{title}</div>
+      <div style={{ marginTop: 8, fontWeight: 600, fontSize: 18, lineHeight: 1.5, color: "#7c8593" }}>{text}</div>
+    </div>
+  </div>
+);
+export const Hints: React.FC = () => {
+  const f = useCurrentFrame();
+  const BULB = 46, POP = 52, HOVER = 176, TIP = 184;
+  const keys: CK[] = [{ at: 0, x: 1250, y: 330, s: 1.25 }, { at: 40, x: 1300, y: 320, s: 1.3 }, { at: 120, x: 1300, y: 320, s: 1.3 }, { at: 160, x: 1090, y: 700, s: 1.32 }, { at: 288, x: 1080, y: 700, s: 1.36 }];
+  const kx = [10, BULB - 6, 120, HOVER - 4];
+  const px = interpolate(f, kx, [1760, 1590, 1600, 1080], { ...cl, easing: IOE });
+  const py = interpolate(f, kx, [420, 168, 260, 738], { ...cl, easing: IOE });
+  const pop = lin(f, POP, POP + 10) * (1 - lin(f, 140, 152));
+  const tip = lin(f, TIP, TIP + 10);
+  const ul = lin(f, HOVER - 2, HOVER + 6);
+  return (
+    <AbsoluteFill style={{ background: BG }}>
+      <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640}>
+        {/* bulb pressed: dark ring like on the site */}
+        <div style={{ position: "absolute", left: 1551, top: 134, width: 68, height: 60, borderRadius: 14, border: "3px solid #1f5d2a", boxSizing: "border-box", opacity: lin(f, BULB + 2, BULB + 6) }} />
+        <HintBox x={1430} y={214} w={380} o={pop} arrowX={155} title="Подсказки" text="Подсказки к юридическим терминам: наведите на выделенное слово, и появится пояснение." />
+        {/* hovered term: dotted underline becomes solid */}
+        <div style={{ position: "absolute", left: 971, top: 742, width: 206, height: 3, borderRadius: 2, background: "#1cb0f6", opacity: ul }} />
+        <HintBox x={930} y={772} w={440} o={tip} arrowX={140} title="Юридическая ответственность" text="Обязанность лица претерпеть неблагоприятные последствия за нарушение закона: штраф, возмещение вреда, лишение свободы." />
+        {f >= 8 ? <Pointer x={px} y={py} down={press(f, BULB)} op={lin(f, 8, 18)} /> : null}
+      </Plane>
+      <TopCap lines={["Непонятный термин?", "Наведи и узнай."]} at={8} accent="Наведи и узнай." />
+      <Top />
+    </AbsoluteFill>
+  );
+};
 /** AI: the site's "Объяснение статьи" window (same layout as veoskill.uz): loading, then three blocks written in. */
 const EXPL: [string, string, string, boolean][] = [
   ["target.svg", "КОРОТКО", "Первая статья определяет главные основы государства. Узбекистан признается независимой страной с выборной властью, подчинением закону и заботой о гражданах, а его короткое и полное названия имеют равную силу.", true],
