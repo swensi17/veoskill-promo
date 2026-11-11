@@ -24,12 +24,14 @@ const CONC = String(Math.max(2, os.cpus().length - 1));
 // Таблица сцен читается прямо из src/V11.tsx (единый источник правды).
 const src = fs.readFileSync("src/V11.tsx", "utf8");
 const block = src.slice(src.indexOf("const SCENES"), src.indexOf("];", src.indexOf("const SCENES")));
-const scenes = [...block.matchAll(/\{ C: (\w+), d: (\d+)/g)].map((m) => ({ name: m[1], d: Number(m[2]) }));
+const scenes = [...block.matchAll(/\{ C: (\w+), d: (\d+)([^}]*)\}/g)].map((m) => ({ name: m[1], d: Number(m[2]), k: Number((m[3].match(/k: ([\d.]+)/) || [0, 1])[1]) }));
 let acc = 0;
 for (const s of scenes) { s.from = acc; acc += s.d; s.to = acc - 1; }
 const TOTAL = acc;
 fs.mkdirSync("out/audio", { recursive: true });
 fs.writeFileSync("out/scenes.json", JSON.stringify(scenes.map((s) => s.d)));
+// time stretch per scene (k in SCENES): audio cue frames inside a slowed scene are multiplied by k
+fs.writeFileSync("out/slow.json", JSON.stringify(scenes.map((s) => s.k)));
 
 const run = (cmd, args, label) => {
   const t = Date.now();

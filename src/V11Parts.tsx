@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, random, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { fit, textWidth } from "./Kit7";
 import { ART } from "./Laws7";
-import { BG, NAVY, BLUE, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, Cap, Pointer } from "./Scenes9";
+import { BG, NAVY, BLUE, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer } from "./Scenes9";
 
 // v11 parts: intro mosaic, wall of screens, live counter, real-screenshot law scenes, languages, word-bank game.
 const LOGO = "#3db7f4";
@@ -19,7 +19,7 @@ const Top: React.FC<{ dark?: boolean }> = ({ dark }) => (
 
 // ================= intro: a tilted mosaic of real screens, then the logo =================
 export const IntroMosaic: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const { fps } = useVideoConfig();
   const veil = lin(f, 96, 140, 0, 1, IOE);
   const zoom = 1.25 - 0.2 * lin(f, 0, 140, 0, 1, Easing.out(Easing.quad));
@@ -61,7 +61,7 @@ export const IntroMosaic: React.FC = () => {
 // ================= wall of screens (everything in one place) =================
 const WALL_HI: [number, string][] = [[6, "Уроки"], [1, "Законы"], [7, "Игры"], [3, "Тесты"]];
 export const Wall: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const cols = 5, rws = 3, TW = 470, TH = 294, GAP = 30;
   const items = Array.from({ length: cols * rws }, (_, i) => ["l-home", "l-reader", "article", "c2", "on-2", "laws-search", "c0", "m-ok", "reader", "on-0", "l-marked", "mem-end", "home", "on-5", "l-select"][i]);
   // highlights cross-fade: each one rises and settles back while the next rises (no hard switches)
@@ -107,7 +107,7 @@ const Digit: React.FC<{ d: number; size: number; color: string; dim: boolean; bl
   );
 };
 export const Counter: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const sp = useSp();
   const TARGET = 1608;
   // part 1: "Сегодня в базе" with screens flashing behind
@@ -189,7 +189,7 @@ export const Counter: React.FC = () => {
 // ================= real screenshots under a moving camera =================
 type CK = { at: number; x: number; y: number; s: number; rx?: number; ry?: number };
 const useCam = (keys: CK[]) => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const at = keys.map((k) => k.at);
   const g = (p: (k: CK) => number) => (keys.length < 2 ? p(keys[0]) : interpolate(f, at, keys.map(p), { ...cl, easing: IOE }));
   return { x: g((k) => k.x), y: g((k) => k.y), s: g((k) => k.s), rx: g((k) => k.rx ?? 0), ry: g((k) => k.ry ?? 0) };
@@ -197,7 +197,7 @@ const useCam = (keys: CK[]) => {
 const SHOT = (n: string) => staticFile(`hack/hd/${n}.png`);
 type Layer = { src: string; from: number; fade?: number };
 const Plane: React.FC<{ keys: CK[]; layers: Layer[]; cy?: number; children?: React.ReactNode }> = ({ keys, layers, cy = 620, children }) => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const c = useCam(keys);
   return (
     <AbsoluteFill style={{ perspective: 2400, overflow: "hidden" }}>
@@ -212,7 +212,7 @@ const Plane: React.FC<{ keys: CK[]; layers: Layer[]; cy?: number; children?: Rea
 };
 /** Caption at the top: big (for older viewers), holds ~3.5 s, then glides up and fades; the logo under its band shows after. */
 const TopCap: React.FC<{ lines: [string, string?]; at: number; accent?: string; hold?: number }> = ({ lines, at, accent, hold = 210 }) => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const out = lin(f, at + hold, at + hold + 26, 0, 1, Easing.bezier(0.5, 0, 0.75, 0));
   if (out >= 1) return null;
   return (
@@ -228,7 +228,7 @@ const TopCap: React.FC<{ lines: [string, string?]; at: number; accent?: string; 
 const Toast: React.FC<{ text: string; at: number }> = ({ text, at }) => {
   const sp = useSp();
   const s = sp(at, 15, 170);
-  const f = useCurrentFrame();
+  const f = useFrame();
   if (f < at) return null;
   return (
     <div style={{ position: "absolute", left: 960 - 230, bottom: 70, width: 460, height: 78, borderRadius: 24, background: NAVY, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 14, fontFamily: UI, fontWeight: 800, fontSize: 28, transform: `translateY(${(1 - s) * 140}px)`, zIndex: 60 }}>
@@ -239,7 +239,7 @@ const Toast: React.FC<{ text: string; at: number }> = ({ text, at }) => {
 };
 /** Laws home: glide over the real code covers, click Constitution, push into it. */
 export const LawsHome: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const CLICK = 132;
   const keys: CK[] = [{ at: 0, x: 1100, y: 520, s: 1.12, rx: 8, ry: -6 }, { at: 100, x: 1000, y: 480, s: 1.05, rx: 3 }, { at: CLICK + 4, x: 960, y: 470, s: 1.05 }, { at: CLICK + 34, x: 617, y: 387, s: 1.7 }, { at: 200, x: 575, y: 405, s: 6.5 }];
   const px = interpolate(f, [60, CLICK - 4, CLICK + 30], [1300, 600, 610], { ...cl, easing: IOE });
@@ -266,7 +266,7 @@ export const LawsHome: React.FC = () => {
 /** Reader: select a line, pick yellow, write a note, save. All on the real reader screens. */
 const NOTE = "Повторить перед экзаменом";
 export const Reader: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const D0 = 64, D1 = 112, SEL = 122, YELC = 162, NOTEC = 204, T0 = 236, SAVE = 330, MARK = 344;
   const keys: CK[] = [{ at: 0, x: 1000, y: 520, s: 1.3 }, { at: 60, x: 1040, y: 560, s: 1.12 }, { at: SEL, x: 1020, y: 530, s: 1.15 }, { at: NOTEC + 6, x: 1020, y: 530, s: 1.15 }, { at: NOTEC + 40, x: 960, y: 520, s: 1.08 }, { at: SAVE + 6, x: 960, y: 520, s: 1.08 }, { at: MARK + 40, x: 1150, y: 580, s: 1.0 }];
   const sel = lin(f, D0, D1, 0, 1, Easing.bezier(0.45, 0, 0.55, 1));
@@ -311,7 +311,7 @@ const HintBox: React.FC<{ x: number; y: number; w: number; title: string; text: 
   );
 };
 export const Hints: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const BULB = 46, POP = 52, HOVER = 176, TIP = 184;
   // starts exactly where Reader's camera ends (so the cross-dissolve is seamless), glides to the bulb,
   // then moves in close on each hint while it is on screen
@@ -355,7 +355,7 @@ const MENU: [React.ReactNode, string][] = [
   [MI(<path d="M10 6h10M10 12h10M10 18h10M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" />), "Тест по статье"],
 ];
 export const ArticleActions: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const sp = useSp();
   const HEART = 56, POP = 62, DOTS = 164, MENU_AT = 170, F1 = 86, F2 = 108;
   const keys: CK[] = [{ at: 0, x: 1200, y: 600, s: 1.0 }, { at: 40, x: 980, y: 560, s: 1.3 }, { at: 70, x: 980, y: 560, s: 1.3 }, { at: 96, x: 800, y: 600, s: 1.6 }, { at: 136, x: 820, y: 610, s: 1.6 }, { at: 168, x: 1560, y: 560, s: 1.35 }, { at: 196, x: 1600, y: 640, s: 1.62 }, { at: 288, x: 1610, y: 660, s: 1.62 }];
@@ -457,7 +457,7 @@ const FileIc: React.FC<{ label: string; c: string }> = ({ label, c }) => (
 );
 const FORMATS: [string, string, string, string][] = [["DOC", "#2f6fe0", "Word (.docx)", "для правки и отправки"], ["PDF", "#e5322d", "PDF (.pdf)", "готовый файл для чтения и печати"], ["TXT", "#f08a24", "Текст (.txt)", "без оформления"], ["HTML", "#22a35a", "Веб-страница (.html)", "откроется в любом браузере"]];
 export const Collect: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const sp = useSp();
   const T = [40, 64, 88]; // ticks: articles 2, 3, 4
   const DL = 122, PDF = 160, GO = 196, SH = 272, COPY = 318, PHONE = 362;
@@ -651,7 +651,7 @@ const Sel: React.FC<{ label: string; value: string; ph?: boolean; w?: number; ac
   </div>
 );
 export const Search: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const sp = useSp();
   const FILT = 40, TYPE0 = 62, FIND = 112, LOAD = 128, RES = 176, ALL = 196;
   const WORD = "право";
@@ -779,7 +779,7 @@ export const AiIcon: React.FC<{ size: number; color?: string; spin?: number; bli
 /** blink pulse: 1 for a few frames every ~1.6 s */
 export const blinkAt = (f: number) => { const m = f % 96; return m < 6 ? Math.sin((m / 6) * Math.PI) : 0; };
 export const AIReal: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const sp = useSp();
   const MX = 400, MY = 290, MW = 1120;
   // camera follows the answer as it types: close in on each block and glide down with the typed line,
@@ -879,7 +879,7 @@ const L_FIRST = 44, L_STEP = 26; // first switch, then one language every ~0.43 
 const BAR = "linear-gradient(90deg, #1cb0f6, #3db7f4)";
 const Chev: React.FC<{ c?: string }> = ({ c = "#fff" }) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>;
 export const Langs: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const sp = useSp();
   const page = sp(2, 15, 140);
   const sw = (k: number) => L_FIRST + (k - 1) * L_STEP;
@@ -976,7 +976,7 @@ const CARD: React.CSSProperties = { position: "absolute", borderRadius: 22, back
 const BANK = ["всех", "богатых", "Закон", "иногда", "для", "только", "один"];
 const ANSWER = ["Закон", "один", "для", "всех"];
 export const PhraseBank: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useFrame();
   const { fps } = useVideoConfig();
   const iris = 1 - lin(f, 0, 30, 0, 1, Easing.bezier(0.3, 0, 0.3, 1));
   const H = 92, GAP = 22;
