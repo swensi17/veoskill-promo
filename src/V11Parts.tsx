@@ -361,64 +361,120 @@ export const AIReal: React.FC = () => {
 
 // ================= languages =================
 const LANGS: [string, string, "ru" | "uz" | "en"][] = [["Русский", "v4/flag-ru.svg", "ru"], ["O‘zbekcha", "v4/flag-uz.svg", "uz"], ["English", "v4/flag-en.svg", "en"]];
-// languages: flags on a circle behind (Google-style, calm white); in the middle the site's law reader,
-// left a language panel with all languages scrolling inside, right the article switching RU -> UZ -> EN
-const FL = (c: string, round = false) => staticFile(`flags/${round ? "c-" : ""}${c}.svg`);
-const ALL_L: [string, string][] = [["ru", "Русский"], ["uz", "O‘zbekcha"], ["gb", "English"], ["kz", "Қазақша"], ["kg", "Кыргызча"], ["tj", "Тоҷикӣ"], ["tr", "Türkçe"], ["de", "Deutsch"], ["fr", "Français"], ["es", "Español"], ["it", "Italiano"], ["cn", "中文"], ["jp", "日本語"], ["kr", "한국어"], ["sa", "العربية"], ["in", "हिन्दी"], ["pt", "Português"], ["pl", "Polski"], ["ua", "Українська"], ["tm", "Türkmençe"], ["az", "Azərbaycanca"], ["id", "Bahasa"]];
-const DOC = { ru: ["КОНСТИТУЦИЯ РЕСПУБЛИКИ УЗБЕКИСТАН", "Документ действует"], uz: ["O‘ZBEKISTON RESPUBLIKASI KONSTITUTSIYASI", "Hujjat amalda"], en: ["CONSTITUTION OF THE REPUBLIC OF UZBEKISTAN", "Document in force"] };
+// languages: the site's law reader page (blue toolbar, breadcrumbs with home, A4 sheet); left a list of all
+// languages scrolling inside, the article runs quickly and smoothly through 15 languages
+const FL = (c: string) => staticFile(`flags/${c}.svg`);
+type LDoc = { c: string; n: string; code: string; doc: string; st: string; t: string; p1: string; p2: string; rtl?: boolean };
+const LD: LDoc[] = [
+  { c: "ru", n: "Русский", code: "RU", doc: "КОНСТИТУЦИЯ РЕСПУБЛИКИ УЗБЕКИСТАН", st: "Документ действует, актуальная редакция", t: ART.ru.t, p1: ART.ru.p1, p2: ART.ru.p2 },
+  { c: "uz", n: "O‘zbekcha", code: "UZ", doc: "O‘ZBEKISTON RESPUBLIKASI KONSTITUTSIYASI", st: "Hujjat amalda, amaldagi tahrir", t: ART.uz.t, p1: ART.uz.p1, p2: ART.uz.p2 },
+  { c: "gb", n: "English", code: "EN", doc: "CONSTITUTION OF THE REPUBLIC OF UZBEKISTAN", st: "Document in force, current version", t: ART.en.t, p1: ART.en.p1, p2: ART.en.p2 },
+  { c: "kz", n: "Қазақша", code: "KZ", doc: "ӨЗБЕКСТАН РЕСПУБЛИКАСЫНЫҢ КОНСТИТУЦИЯСЫ", st: "Құжат күшінде", t: "1-бап.", p1: "Өзбекстан — республикалық басқару нысанындағы егемен, демократиялық, құқықтық, әлеуметтік және зайырлы мемлекет.", p2: "«Өзбекстан Республикасы» және «Өзбекстан» атаулары бірдей мағыналы." },
+  { c: "kg", n: "Кыргызча", code: "KG", doc: "ӨЗБЕКСТАН РЕСПУБЛИКАСЫНЫН КОНСТИТУЦИЯСЫ", st: "Документ күчүндө", t: "1-берене.", p1: "Өзбекстан — республикалык башкаруу формасындагы эгемендүү, демократиялык, укуктук, социалдык жана светтик мамлекет.", p2: "«Өзбекстан Республикасы» жана «Өзбекстан» деген аталыштар бирдей маанидеги." },
+  { c: "tj", n: "Тоҷикӣ", code: "TJ", doc: "КОНСТИТУТСИЯИ ҶУМҲУРИИ ӮЗБЕКИСТОН", st: "Ҳуҷҷат амал мекунад", t: "Моддаи 1.", p1: "Ӯзбекистон давлати соҳибихтиёр, демократӣ, ҳуқуқбунёд, иҷтимоӣ ва дунявӣ бо шакли ҷумҳуриявии идора мебошад.", p2: "Номҳои «Ҷумҳурии Ӯзбекистон» ва «Ӯзбекистон» баробармаъноянд." },
+  { c: "tr", n: "Türkçe", code: "TR", doc: "ÖZBEKİSTAN CUMHURİYETİ ANAYASASI", st: "Belge yürürlükte", t: "Madde 1.", p1: "Özbekistan, cumhuriyet yönetim biçimine sahip egemen, demokratik, hukuk, sosyal ve laik bir devlettir.", p2: "“Özbekistan Cumhuriyeti” ve “Özbekistan” adları eş anlamlıdır." },
+  { c: "de", n: "Deutsch", code: "DE", doc: "VERFASSUNG DER REPUBLIK USBEKISTAN", st: "Dokument in Kraft", t: "Artikel 1.", p1: "Usbekistan ist ein souveräner, demokratischer, sozialer und säkularer Rechtsstaat mit republikanischer Regierungsform.", p2: "Die Bezeichnungen „Republik Usbekistan“ und „Usbekistan“ sind gleichbedeutend." },
+  { c: "fr", n: "Français", code: "FR", doc: "CONSTITUTION DE LA RÉPUBLIQUE D’OUZBÉKISTAN", st: "Document en vigueur", t: "Article 1.", p1: "L’Ouzbékistan est un État souverain, démocratique, de droit, social et laïque, à forme républicaine de gouvernement.", p2: "Les noms « République d’Ouzbékistan » et « Ouzbékistan » sont équivalents." },
+  { c: "es", n: "Español", code: "ES", doc: "CONSTITUCIÓN DE LA REPÚBLICA DE UZBEKISTÁN", st: "Documento vigente", t: "Artículo 1.", p1: "Uzbekistán es un Estado soberano, democrático, de derecho, social y laico con forma republicana de gobierno.", p2: "Los nombres «República de Uzbekistán» y «Uzbekistán» son equivalentes." },
+  { c: "it", n: "Italiano", code: "IT", doc: "COSTITUZIONE DELLA REPUBBLICA DELL’UZBEKISTAN", st: "Documento in vigore", t: "Articolo 1.", p1: "L’Uzbekistan è uno Stato sovrano, democratico, di diritto, sociale e laico, con forma di governo repubblicana.", p2: "Le denominazioni «Repubblica dell’Uzbekistan» e «Uzbekistan» sono equivalenti." },
+  { c: "cn", n: "中文", code: "ZH", doc: "乌兹别克斯坦共和国宪法", st: "文件现行有效", t: "第一条", p1: "乌兹别克斯坦是实行共和政体的主权、民主、法治、社会和世俗国家。", p2: "“乌兹别克斯坦共和国”和“乌兹别克斯坦”两个名称具有同等意义。" },
+  { c: "jp", n: "日本語", code: "JA", doc: "ウズベキスタン共和国憲法", st: "現行の文書", t: "第1条", p1: "ウズベキスタンは、共和制の統治形態をとる主権的、民主的、法治的、社会的かつ世俗的な国家である。", p2: "「ウズベキスタン共和国」と「ウズベキスタン」の名称は同等である。" },
+  { c: "kr", n: "한국어", code: "KO", doc: "우즈베키스탄 공화국 헌법", st: "현행 문서", t: "제1조", p1: "우즈베키스탄은 공화제 정부 형태를 가진 주권적, 민주적, 법치적, 사회적, 세속적 국가이다.", p2: "‘우즈베키스탄 공화국’과 ‘우즈베키스탄’이라는 명칭은 동일한 의미를 가진다." },
+  { c: "sa", n: "العربية", code: "AR", doc: "دستور جمهورية أوزبكستان", st: "الوثيقة سارية المفعول", t: "المادة 1.", p1: "أوزبكستان دولة ذات سيادة، ديمقراطية، قانونية، اجتماعية وعلمانية، ذات شكل جمهوري للحكم.", p2: "تسميتا «جمهورية أوزبكستان» و«أوزبكستان» متساويتان في المعنى.", rtl: true },
+];
+const MORE_L: [string, string][] = [["in", "हिन्दी"], ["pt", "Português"], ["pl", "Polski"], ["ua", "Українська"], ["tm", "Türkmençe"], ["az", "Azərbaycanca"], ["id", "Bahasa"]];
+const L_FIRST = 50, L_STEP = 12; // first switch, then one language every 0.2 s
+const BAR = "linear-gradient(90deg, #1cb0f6, #3db7f4)";
+const Chev: React.FC<{ c?: string }> = ({ c = "#fff" }) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>;
 export const Langs: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
-  const card = sp(4, 15, 140);
-  const SW = [112, 158];
-  const cur = (f < SW[0] ? "ru" : f < SW[1] ? "uz" : "en") as "ru" | "uz" | "en";
-  const fadeT = f < SW[0] - 10 ? 0 : f < SW[1] - 10 ? lin(f, SW[0] - 8, SW[0] + 8) : lin(f, SW[1] - 8, SW[1] + 8);
-  const veil = fadeT < 0.5 ? fadeT * 2 : (1 - fadeT) * 2;
-  const a = ART[cur];
-  const ROW = 70;
-  // list scrolls down through all languages, then comes back so the selected one is in view
-  const scroll = lin(f, 30, 100, 0, ROW * 9, IOE) * (1 - lin(f, 100, SW[0] - 6, 0, 1, IOE));
-  const selIdx = lin(f, SW[0] - 6, SW[0] + 4) + lin(f, SW[1] - 6, SW[1] + 4);
-  const turn = f * 0.004;
-  const R = 470;
+  const page = sp(2, 15, 140);
+  const sw = (k: number) => L_FIRST + (k - 1) * L_STEP;
+  const cur = Math.max(0, Math.min(LD.length - 1, Math.floor((f - L_FIRST) / L_STEP) + 1));
+  const near = Math.abs(f - sw(Math.max(1, Math.min(LD.length - 1, Math.round((f - L_FIRST) / L_STEP) + 1))));
+  const veil = f < L_FIRST - 6 ? 0 : Math.max(0, 1 - near / 6);
+  const d = LD[cur];
+  const ROW = 66;
+  const selY = LD.slice(1).reduce((acc, _, k) => acc + lin(f, sw(k + 1) - 4, sw(k + 1) + 4), 0);
+  const scroll = Math.max(0, (selY - 4) * ROW);
+  const ico = (p: React.ReactNode, bg = "#1cb0f6") => <div style={{ width: 62, height: 54, borderRadius: 14, background: bg, boxShadow: "0 4px 0 rgba(13,111,163,0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">{p}</svg></div>;
   return (
     <AbsoluteFill style={{ background: "#ffffff", overflow: "hidden" }}>
-      <Top />
-      <div style={{ position: "absolute", left: 960 - 680, top: 540 - 370, width: 1360, height: 760, borderRadius: 30, background: "#fff", boxShadow: "0 40px 100px rgba(13,22,48,0.16)", border: "2px solid #eef0f3", overflow: "hidden", fontFamily: UI, zIndex: 3, opacity: Math.min(1, card * 1.4), transform: `translateY(${(1 - card) * 60}px) scale(${0.94 + 0.06 * card})`, display: "flex" }}>
-        <div style={{ width: 400, borderRight: "2px solid #eef0f3", display: "flex", flexDirection: "column" }}>
-          <div style={{ height: 96, background: "linear-gradient(90deg, #1cb0f6, #3db7f4)", display: "flex", alignItems: "center", gap: 14, padding: "0 26px", color: "#fff", fontWeight: 900, fontSize: 24, letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" /></svg>
-            <span><span style={{ fontSize: 34 }}>99+</span> ЯЗЫКОВ</span>
+      <AbsoluteFill style={{ padding: "40px 48px", boxSizing: "border-box", fontFamily: UI, opacity: Math.min(1, page * 1.4), transform: `translateY(${(1 - page) * 50}px) scale(${0.96 + 0.04 * page})` }}>
+        {/* toolbar */}
+        <div style={{ height: 88, borderRadius: 22, background: BAR, display: "flex", alignItems: "stretch", color: "#fff", overflow: "hidden" }}>
+          <div style={{ width: 470, padding: "0 26px", display: "flex", alignItems: "center", gap: 14, borderRight: "2px solid rgba(255,255,255,0.35)" }}>
+            <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ВЫБЕРИТЕ ЗАКОН</div><div style={{ fontWeight: 900, fontSize: 23, whiteSpace: "nowrap" }}>Конституция Республики</div></div><Chev />
           </div>
-          <div style={{ flex: 1, overflow: "hidden", position: "relative", padding: "10px 14px", WebkitMaskImage: "linear-gradient(180deg, #000 80%, transparent)", maskImage: "linear-gradient(180deg, #000 80%, transparent)" }}>
-            <div style={{ position: "relative", transform: `translateY(${-scroll}px)` }}>
-              <div style={{ position: "absolute", left: 0, right: 0, top: selIdx * ROW + 5, height: ROW - 10, borderRadius: 14, border: "2.5px solid #1cb0f6", boxSizing: "border-box" }} />
-              {ALL_L.map(([c, n], i) => {
-                const s = sp(8 + Math.min(i, 8) * 3, 14, 180);
-                const on = i === Math.round(selIdx);
-                return (
-                  <div key={c} style={{ position: "relative", height: ROW, display: "flex", alignItems: "center", gap: 16, padding: "0 14px", fontWeight: on ? 900 : 800, fontSize: 29, color: on ? "#0d6fa3" : "#4b4b4b", opacity: s }}>
-                    <Img src={FL(c)} style={{ width: 46, height: 34, borderRadius: 6, objectFit: "cover", boxShadow: "0 0 0 1px rgba(0,0,0,0.08)" }} />{n}
-                  </div>
-                );
-              })}
+          <div style={{ width: 300, padding: "0 24px", display: "flex", alignItems: "center", gap: 14, borderRight: "2px solid rgba(255,255,255,0.35)" }}>
+            <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ЧАСТЬ 1 ИЗ 10</div><div style={{ fontWeight: 900, fontSize: 23 }}>СТАТЬЯ 1</div></div><Chev />
+          </div>
+          <div style={{ width: 150, display: "flex", alignItems: "center", justifyContent: "center", gap: 12, borderRight: "2px solid rgba(255,255,255,0.35)", background: f >= L_FIRST - 4 ? "rgba(255,255,255,0.16)" : "transparent" }}>
+            <Img src={FL(d.c)} style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover", border: "2px solid #fff" }} />
+            <div style={{ fontWeight: 900, fontSize: 25 }}>{d.code}</div>
+          </div>
+          <div style={{ flex: 1, padding: "12px 14px", display: "flex" }}>
+            <div style={{ flex: 1, borderRadius: 14, background: "#fff", display: "flex", alignItems: "center", gap: 14, padding: "0 22px", color: "#9aa1ab", fontWeight: 600, fontSize: 22 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.6" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>Поиск по всей базе законов
+            </div>
+          </div>
+          <div style={{ width: 170, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, borderLeft: "2px solid rgba(255,255,255,0.35)", fontWeight: 900, fontSize: 22, letterSpacing: "0.06em" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinejoin="round"><path d="M3 4h18l-7 8v7l-4 2v-9z" /></svg>ФИЛЬТР
+          </div>
+        </div>
+        {/* breadcrumbs */}
+        <div style={{ height: 96, display: "flex", alignItems: "center", gap: 18, padding: "0 8px", fontSize: 26, fontWeight: 700 }}>
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /></svg>
+          <span style={{ color: "#9aa1ab" }}>›</span><span style={{ color: "#6f7682" }}>Основные законы</span><span style={{ color: "#9aa1ab" }}>›</span><span style={{ color: "#1a237e", fontWeight: 900 }}>Конституция Республики Узбекистан</span>
+          <div style={{ marginLeft: "auto", display: "flex", gap: 14 }}>
+            {ico(<path d="M12 5v14M5 12h14" />)}
+            {ico(<><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" /></>)}
+            {ico(<path d="M20 12l-8 8-9-9V3h8z" />)}
+            {ico(<><circle cx="6" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="18" cy="12" r="1" /></>)}
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 32, height: 1080 - 80 - 88 - 96 }}>
+          {/* languages */}
+          <div style={{ width: 420, borderRadius: 20, border: "2px solid #e6e9ee", background: "#fff", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            <div style={{ height: 78, background: BAR, display: "flex", alignItems: "center", gap: 16, padding: "0 26px", color: "#fff", fontFamily: HEAD, fontWeight: 900, fontSize: 30, whiteSpace: "nowrap" }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" /></svg>
+              99+ языков
+            </div>
+            <div style={{ flex: 1, overflow: "hidden", padding: "10px 14px", WebkitMaskImage: "linear-gradient(180deg, #000 82%, transparent)", maskImage: "linear-gradient(180deg, #000 82%, transparent)" }}>
+              <div style={{ position: "relative", transform: `translateY(${-scroll}px)` }}>
+                <div style={{ position: "absolute", left: 0, right: 0, top: selY * ROW + 5, height: ROW - 10, borderRadius: 14, border: "2.5px solid #1cb0f6", boxSizing: "border-box" }} />
+                {[...LD.map((l) => [l.c, l.n] as [string, string]), ...MORE_L].map(([c, n], i) => {
+                  const on = i === cur;
+                  return (
+                    <div key={c} style={{ height: ROW, display: "flex", alignItems: "center", gap: 18, padding: "0 16px", fontWeight: on ? 900 : 800, fontSize: 28, color: on ? "#0d6fa3" : "#4b4b4b", opacity: sp(6 + Math.min(i, 8) * 3, 14, 180) }}>
+                      <Img src={FL(c)} style={{ width: 46, height: 34, borderRadius: 6, objectFit: "cover", boxShadow: "0 0 0 1px rgba(0,0,0,0.08)" }} />{n}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          {/* A4 sheet */}
+          <div style={{ flex: 1, borderRadius: 8, border: "2px solid #e6e9ee", background: "#fff", boxShadow: "0 24px 60px rgba(13,22,48,0.08)", padding: "34px 64px", boxSizing: "border-box", overflow: "hidden" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 18, color: "#c3c8cf" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-2" /></svg>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M15 14l5-5-5-5M20 9H9a5 5 0 0 0 0 10h2" /></svg>
+            </div>
+            <div style={{ opacity: 1 - veil * 0.85, filter: `blur(${veil * 5}px)`, transform: `translateY(${veil * 6}px)`, direction: d.rtl ? "rtl" : "ltr" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, justifyContent: "flex-end", marginTop: -30, fontWeight: 800, fontSize: 22, color: "#2e9d3a", direction: "ltr" }}>
+                <svg width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2e9d3a" /><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                {d.st}
+              </div>
+              <div style={{ marginTop: 34, textAlign: "center", fontWeight: 900, fontSize: 34, color: "#1a237e", lineHeight: 1.25 }}>{d.doc}</div>
+              <div style={{ marginTop: 8, textAlign: "center", fontWeight: 600, fontSize: 24, color: "#5d6470" }}>30.04.2023</div>
+              <div style={{ marginTop: 34, textAlign: "center", fontWeight: 900, fontSize: 34, color: "#1a237e" }}>{d.t}</div>
+              <div style={{ marginTop: 18, fontWeight: 500, fontSize: 31, lineHeight: 1.6, color: "#2b2b2b", textAlign: "justify", textIndent: 70 }}>{d.p1}</div>
+              <div style={{ marginTop: 12, fontWeight: 500, fontSize: 31, lineHeight: 1.6, color: "#2b2b2b", textAlign: "justify", textIndent: 70 }}>{d.p2}</div>
             </div>
           </div>
         </div>
-        <div style={{ flex: 1, padding: "56px 70px", boxSizing: "border-box" }}>
-          <div style={{ opacity: 1 - veil * 0.9, filter: `blur(${veil * 6}px)` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 800, fontSize: 20, color: "#2e9d3a" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2e9d3a" /><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              {DOC[cur][1]}
-            </div>
-            <div style={{ marginTop: 30, fontWeight: 900, fontSize: 38, color: "#1a237e", lineHeight: 1.2 }}>{DOC[cur][0]}</div>
-            <div style={{ marginTop: 6, fontWeight: 600, fontSize: 22, color: "#7c8593" }}>30.04.2023</div>
-            <div style={{ marginTop: 36, fontWeight: 900, fontSize: 42, color: "#1a237e" }}>{a.t}</div>
-            <div style={{ marginTop: 16, fontWeight: 600, fontSize: 32, lineHeight: 1.55, color: "#3c3c3c", textAlign: "justify" }}>{a.p1}</div>
-            <div style={{ marginTop: 14, fontWeight: 600, fontSize: 32, lineHeight: 1.55, color: "#3c3c3c", textAlign: "justify" }}>{a.p2}</div>
-          </div>
-        </div>
-      </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
