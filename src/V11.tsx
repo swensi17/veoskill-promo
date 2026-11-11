@@ -524,13 +524,13 @@ const S11: React.FC = () => {
   const sp = useSp();
   const logo = sp(10, 15, 140);
   const qr = sp(60, 14, 150);
-  const blobs: [string, number, number, number][] = [[BLUE, 260, 220, 520], [GREEN, 1640, 820, 600], [YEL, 1560, 180, 320], [LOGO, 300, 900, 380]];
+  // calm end card: white, one soft brand-blue glow behind the QR, faint dot grid fading to the edges
+  const glow = lin(f, 0, 40);
+  const mask = "radial-gradient(ellipse 60% 70% at 50% 52%, #000 0%, rgba(0,0,0,0.35) 55%, transparent 85%)";
   return (
-    <AbsoluteFill style={{ background: "#f7fbff", overflow: "hidden" }}>
-      {blobs.map(([c, x, y, r], i) => {
-        const s = sp(i * 6, 16, 90);
-        return <div key={i} style={{ position: "absolute", left: x - r + Math.sin(f / 50 + i) * 30, top: y - r + Math.cos(f / 60 + i) * 24, width: r * 2, height: r * 2, borderRadius: "50%", background: c, opacity: 0.16, filter: "blur(40px)", transform: `scale(${s})` }} />;
-      })}
+    <AbsoluteFill style={{ background: "#ffffff", overflow: "hidden" }}>
+      <AbsoluteFill style={{ backgroundImage: "radial-gradient(rgba(13,22,48,0.10) 1.6px, transparent 1.8px)", backgroundSize: "36px 36px", backgroundPosition: `0 ${-f * 0.15}px`, WebkitMaskImage: mask, maskImage: mask, opacity: 0.8 * glow }} />
+      <div style={{ position: "absolute", left: 960 - 700, top: 640 - 460, width: 1400, height: 920, borderRadius: "50%", background: `radial-gradient(closest-side, rgba(61,183,244,0.16), rgba(61,183,244,0.05) 60%, transparent)`, opacity: glow, transform: `scale(${0.96 + 0.04 * glow})` }} />
       <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 960 - 380, top: 170, width: 760, opacity: logo, transform: `translateY(${(1 - logo) * 40}px) scale(${0.94 + 0.06 * logo})` }} />
       <div style={{ position: "absolute", top: 380, width: "100%" }}><div style={{ display: "flex", justifyContent: "center" }}><Cap text="Учись играя. Начни сегодня." at={36} size={60} accent="Начни сегодня." /></div></div>
       <div style={{ position: "absolute", left: 960 - 216, top: 500, width: 432, padding: 52, borderRadius: 40, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.16)", boxSizing: "border-box", transform: `scale(${qr})`, opacity: qr }}>
