@@ -365,9 +365,7 @@ const LANGS: [string, string, "ru" | "uz" | "en"][] = [["Русский", "v4/fl
 // left a language panel with all languages scrolling inside, right the article switching RU -> UZ -> EN
 const FL = (c: string, round = false) => staticFile(`flags/${round ? "c-" : ""}${c}.svg`);
 const ALL_L: [string, string][] = [["ru", "Русский"], ["uz", "O‘zbekcha"], ["gb", "English"], ["kz", "Қазақша"], ["kg", "Кыргызча"], ["tj", "Тоҷикӣ"], ["tr", "Türkçe"], ["de", "Deutsch"], ["fr", "Français"], ["es", "Español"], ["it", "Italiano"], ["cn", "中文"], ["jp", "日本語"], ["kr", "한국어"], ["sa", "العربية"], ["in", "हिन्दी"], ["pt", "Português"], ["pl", "Polski"], ["ua", "Українська"], ["tm", "Türkmençe"], ["az", "Azərbaycanca"], ["id", "Bahasa"]];
-const RING = ["ru", "de", "cn", "uz", "fr", "jp", "tr", "gb", "es", "kr", "kz", "it", "sa", "in", "pt", "pl", "ua", "az", "id", "br", "nl", "vn", "th", "tj"];
 const DOC = { ru: ["КОНСТИТУЦИЯ РЕСПУБЛИКИ УЗБЕКИСТАН", "Документ действует"], uz: ["O‘ZBEKISTON RESPUBLIKASI KONSTITUTSIYASI", "Hujjat amalda"], en: ["CONSTITUTION OF THE REPUBLIC OF UZBEKISTAN", "Document in force"] };
-const CODE = { ru: "RU", uz: "UZ", en: "EN" };
 export const Langs: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
@@ -377,7 +375,7 @@ export const Langs: React.FC = () => {
   const fadeT = f < SW[0] - 10 ? 0 : f < SW[1] - 10 ? lin(f, SW[0] - 8, SW[0] + 8) : lin(f, SW[1] - 8, SW[1] + 8);
   const veil = fadeT < 0.5 ? fadeT * 2 : (1 - fadeT) * 2;
   const a = ART[cur];
-  const ROW = 62;
+  const ROW = 70;
   // list scrolls down through all languages, then comes back so the selected one is in view
   const scroll = lin(f, 30, 100, 0, ROW * 9, IOE) * (1 - lin(f, 100, SW[0] - 6, 0, 1, IOE));
   const selIdx = lin(f, SW[0] - 6, SW[0] + 4) + lin(f, SW[1] - 6, SW[1] + 4);
@@ -386,44 +384,38 @@ export const Langs: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#ffffff", overflow: "hidden" }}>
       <Top />
-      {RING.map((c, i) => {
-        const an = (i / RING.length) * Math.PI * 2 - Math.PI / 2 + turn;
-        const s = sp(2 + i * 2, 14, 140);
-        const r = R * (1.2 - 0.2 * s);
-        return <Img key={c} src={FL(c, true)} style={{ position: "absolute", left: 960 + Math.cos(an) * r - 28, top: 540 + Math.sin(an) * r - 28, width: 56, height: 56, borderRadius: "50%", border: "3px solid #fff", boxShadow: "0 8px 20px rgba(13,22,48,0.14)", transform: `scale(${s})`, opacity: Math.min(1, s * 1.5) }} />;
-      })}
-      <div style={{ position: "absolute", left: 960 - 520, top: 540 - 300, width: 1040, height: 600, borderRadius: 30, background: "#fff", boxShadow: "0 40px 100px rgba(13,22,48,0.16)", border: "2px solid #eef0f3", overflow: "hidden", fontFamily: UI, zIndex: 3, opacity: Math.min(1, card * 1.4), transform: `translateY(${(1 - card) * 60}px) scale(${0.94 + 0.06 * card})`, display: "flex" }}>
-        <div style={{ width: 330, borderRight: "2px solid #eef0f3", display: "flex", flexDirection: "column" }}>
-          <div style={{ height: 84, background: "linear-gradient(90deg, #1cb0f6, #3db7f4)", display: "flex", alignItems: "center", gap: 14, padding: "0 26px", color: "#fff", fontWeight: 900, fontSize: 24, letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+      <div style={{ position: "absolute", left: 960 - 680, top: 540 - 370, width: 1360, height: 760, borderRadius: 30, background: "#fff", boxShadow: "0 40px 100px rgba(13,22,48,0.16)", border: "2px solid #eef0f3", overflow: "hidden", fontFamily: UI, zIndex: 3, opacity: Math.min(1, card * 1.4), transform: `translateY(${(1 - card) * 60}px) scale(${0.94 + 0.06 * card})`, display: "flex" }}>
+        <div style={{ width: 400, borderRight: "2px solid #eef0f3", display: "flex", flexDirection: "column" }}>
+          <div style={{ height: 96, background: "linear-gradient(90deg, #1cb0f6, #3db7f4)", display: "flex", alignItems: "center", gap: 14, padding: "0 26px", color: "#fff", fontWeight: 900, fontSize: 24, letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" /></svg>
-            <span><span style={{ fontSize: 34 }}>99+</span> ЯЗЫКОВ</span><span style={{ marginLeft: "auto", padding: "4px 12px", borderRadius: 10, background: "rgba(255,255,255,0.25)" }}>{CODE[cur]}</span>
+            <span><span style={{ fontSize: 34 }}>99+</span> ЯЗЫКОВ</span>
           </div>
           <div style={{ flex: 1, overflow: "hidden", position: "relative", padding: "10px 14px", WebkitMaskImage: "linear-gradient(180deg, #000 80%, transparent)", maskImage: "linear-gradient(180deg, #000 80%, transparent)" }}>
-            <div style={{ transform: `translateY(${-scroll}px)` }}>
-              <div style={{ position: "absolute", left: 14, right: 14, top: 10 + selIdx * ROW + 4, height: ROW - 8, borderRadius: 14, background: "#e3f4fd", border: "2px solid rgba(28,176,246,0.5)", boxSizing: "border-box" }} />
+            <div style={{ position: "relative", transform: `translateY(${-scroll}px)` }}>
+              <div style={{ position: "absolute", left: 0, right: 0, top: selIdx * ROW + 5, height: ROW - 10, borderRadius: 14, border: "2.5px solid #1cb0f6", boxSizing: "border-box" }} />
               {ALL_L.map(([c, n], i) => {
                 const s = sp(8 + Math.min(i, 8) * 3, 14, 180);
                 const on = i === Math.round(selIdx);
                 return (
-                  <div key={c} style={{ position: "relative", height: ROW, display: "flex", alignItems: "center", gap: 16, padding: "0 14px", fontWeight: on ? 900 : 800, fontSize: 25, color: on ? "#0d6fa3" : "#4b4b4b", opacity: s }}>
-                    <Img src={FL(c)} style={{ width: 40, height: 30, borderRadius: 5, objectFit: "cover", boxShadow: "0 0 0 1px rgba(0,0,0,0.08)" }} />{n}
+                  <div key={c} style={{ position: "relative", height: ROW, display: "flex", alignItems: "center", gap: 16, padding: "0 14px", fontWeight: on ? 900 : 800, fontSize: 29, color: on ? "#0d6fa3" : "#4b4b4b", opacity: s }}>
+                    <Img src={FL(c)} style={{ width: 46, height: 34, borderRadius: 6, objectFit: "cover", boxShadow: "0 0 0 1px rgba(0,0,0,0.08)" }} />{n}
                   </div>
                 );
               })}
             </div>
           </div>
         </div>
-        <div style={{ flex: 1, padding: "44px 54px", boxSizing: "border-box" }}>
+        <div style={{ flex: 1, padding: "56px 70px", boxSizing: "border-box" }}>
           <div style={{ opacity: 1 - veil * 0.9, filter: `blur(${veil * 6}px)` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 800, fontSize: 20, color: "#2e9d3a" }}>
               <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2e9d3a" /><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
               {DOC[cur][1]}
             </div>
-            <div style={{ marginTop: 26, fontWeight: 900, fontSize: 30, color: "#1a237e", lineHeight: 1.2 }}>{DOC[cur][0]}</div>
+            <div style={{ marginTop: 30, fontWeight: 900, fontSize: 38, color: "#1a237e", lineHeight: 1.2 }}>{DOC[cur][0]}</div>
             <div style={{ marginTop: 6, fontWeight: 600, fontSize: 22, color: "#7c8593" }}>30.04.2023</div>
-            <div style={{ marginTop: 30, fontWeight: 900, fontSize: 34, color: "#1a237e" }}>{a.t}</div>
-            <div style={{ marginTop: 16, fontWeight: 600, fontSize: 27, lineHeight: 1.55, color: "#3c3c3c", textAlign: "justify" }}>{a.p1}</div>
-            <div style={{ marginTop: 14, fontWeight: 600, fontSize: 27, lineHeight: 1.55, color: "#3c3c3c", textAlign: "justify" }}>{a.p2}</div>
+            <div style={{ marginTop: 36, fontWeight: 900, fontSize: 42, color: "#1a237e" }}>{a.t}</div>
+            <div style={{ marginTop: 16, fontWeight: 600, fontSize: 32, lineHeight: 1.55, color: "#3c3c3c", textAlign: "justify" }}>{a.p1}</div>
+            <div style={{ marginTop: 14, fontWeight: 600, fontSize: 32, lineHeight: 1.55, color: "#3c3c3c", textAlign: "justify" }}>{a.p2}</div>
           </div>
         </div>
       </div>
