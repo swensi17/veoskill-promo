@@ -421,6 +421,161 @@ export const ArticleActions: React.FC = () => {
     </AbsoluteFill>
   );
 };
+/** Collection: tick several articles, download them as one file (format picker as on the site), share one link; a friend opens it on a phone. */
+const COL_ARTS: [string, string[]][] = [
+  ["2", ["Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами."]],
+  ["3", ["Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику.", "Государственная граница и территория Узбекистана неприкосновенны и неделимы."]],
+  ["4", ["Государственным языком Республики Узбекистан является узбекский язык.", "Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития."]],
+  ["5", ["Республика Узбекистан имеет свои государственные символы — флаг, герб, гимн, утверждаемые законом.", "Государственные символы находятся под защитой государства."]],
+];
+const Tick: React.FC<{ on: number; size?: number }> = ({ on, size = 30 }) => (
+  <div style={{ width: size, height: size, borderRadius: 8, border: `2.5px solid ${on > 0.5 ? "#1cb0f6" : "#b9bec6"}`, background: on > 0.5 ? "#1cb0f6" : "#fff", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", transform: `scale(${1 + 0.25 * Math.sin(Math.min(1, on) * Math.PI)})` }}>
+    {on > 0.5 ? <svg width={size * 0.7} height={size * 0.7} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : null}
+  </div>
+);
+const FileIc: React.FC<{ label: string; c: string }> = ({ label, c }) => (
+  <svg width="40" height="46" viewBox="0 0 40 46"><path d="M4 3h22l10 10v30H4z" fill="#f4f5f7" stroke="#d5d9df" strokeWidth="1.5" /><path d="M26 3v10h10" fill="#e6e9ee" /><rect x="1" y="22" width="30" height="13" rx="3" fill={c} /><text x="16" y="31.5" textAnchor="middle" fontFamily="Arial" fontWeight="700" fontSize="8.5" fill="#fff">{label}</text></svg>
+);
+const FORMATS: [string, string, string, string][] = [["DOC", "#2f6fe0", "Word (.docx)", "для правки и отправки"], ["PDF", "#e5322d", "PDF (.pdf)", "готовый файл для чтения и печати"], ["TXT", "#f08a24", "Текст (.txt)", "без оформления"], ["HTML", "#22a35a", "Веб-страница (.html)", "откроется в любом браузере"]];
+export const Collect: React.FC = () => {
+  const f = useCurrentFrame();
+  const sp = useSp();
+  const T = [40, 64, 88]; // ticks: articles 2, 3, 4
+  const DL = 122, PDF = 160, GO = 196, SH = 272, COPY = 318, PHONE = 362;
+  const cam = { x: 1214, y: 560, s: 0.9 };
+  const camS = cam.s + 0.06 * lin(f, 0, 110, 0, 1, Easing.linear);
+  const keys: CK[] = [{ at: 0, x: cam.x, y: cam.y, s: camS }];
+  // screen positions of the ticks (world x 636, y 304 / 442 / 656)
+  const scr = (wx: number, wy: number, ff: number) => { const s = cam.s + 0.06 * lin(ff, 0, 110, 0, 1, Easing.linear); return [960 + s * (wx - cam.x), 640 + s * (wy - cam.y)]; };
+  const [t1x, t1y] = scr(636, 304, T[0]), [t2x, t2y] = scr(636, 442, T[1]), [t3x, t3y] = scr(636, 656, T[2]);
+  const BAR_Y = 958, DLX = 924, SHX = 1232;
+  const pk = [10, T[0] - 6, T[1] - 6, T[2] - 6, DL - 6, PDF - 6, GO - 6, 240, SH - 6, COPY - 6, 346];
+  const pxs = [1300, t1x, t2x, t3x, DLX, 808, 1110, 1300, SHX, 1210, 1500];
+  const pys = [800, t1y, t2y, t3y, BAR_Y, 518, 760, 900, BAR_Y, 600, 860];
+  const px = interpolate(f, pk, pxs, { ...cl, easing: IOE }), py = interpolate(f, pk, pys, { ...cl, easing: IOE });
+  const down = Math.max(...T.map((t) => press(f, t)), press(f, DL), press(f, PDF), press(f, GO), press(f, SH), press(f, COPY));
+  const nSel = T.filter((t) => f >= t + 2).length;
+  const bar = sp(T[0] + 4, 15, 170) * (1 - lin(f, PHONE - 20, PHONE - 6));
+  const dl = sp(DL + 6, 15, 190) * (1 - lin(f, 236, 248));
+  const fmt = f < PDF + 2 ? 0 : 1;
+  const done = lin(f, GO + 6, GO + 12);
+  const sh = sp(SH + 6, 15, 190) * (1 - lin(f, PHONE - 20, PHONE - 6));
+  const copied = lin(f, COPY + 4, COPY + 10);
+  const sceneOut = lin(f, PHONE - 24, PHONE + 4);
+  const phone = sp(PHONE - 6, 16, 120);
+  const cap = f < DL ? 0 : f < SH - 6 ? 1 : 2;
+  const modal = (o: number, w: number, children: React.ReactNode) => (
+    <AbsoluteFill style={{ background: `rgba(30,34,42,${0.32 * o})`, alignItems: "center", justifyContent: "center", zIndex: 30 }}>
+      <div style={{ width: w, background: "#fff", borderRadius: 26, boxShadow: "0 40px 100px rgba(13,22,48,0.3)", padding: "34px 38px", boxSizing: "border-box", fontFamily: UI, opacity: Math.min(1, o * 1.4), transform: `translateY(${(1 - o) * 30}px) scale(${0.94 + 0.06 * o})` }}>{children}</div>
+    </AbsoluteFill>
+  );
+  return (
+    <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
+      <AbsoluteFill style={{ opacity: 1 - sceneOut, transform: `scale(${1 - 0.06 * sceneOut})`, filter: sceneOut > 0.01 ? `blur(${sceneOut * 8}px)` : undefined }}>
+        <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640}>
+          <div style={{ position: "absolute", left: 573, top: 218, width: 1282, height: 990, background: "#fff", padding: "14px 60px 0 48px", boxSizing: "border-box", overflow: "hidden" }}>
+            <div style={ART_P}>Названия государства «Республика Узбекистан» и «Узбекистан» равнозначны.</div>
+            {COL_ARTS.map(([n, ps], i) => {
+              const on = i < 3 ? sp(T[i], 10, 260) * (f >= T[i] ? 1 : 0) : 0;
+              const e = lin(f, 8 + i * 4, 20 + i * 4);
+              return (
+                <div key={n} style={{ marginTop: 14, position: "relative" }}>
+                  <div style={{ position: "absolute", left: -24, right: -30, top: -6, bottom: -6, borderRadius: 14, background: "rgba(28,176,246,0.08)", border: "2px solid rgba(28,176,246,0.35)", opacity: Math.min(1, on) }} />
+                  <div style={{ position: "relative", height: 48, display: "flex", alignItems: "center", gap: 14 }}>
+                    <div style={{ opacity: e, transform: `scale(${0.6 + 0.4 * e})` }}><Tick on={on} /></div>
+                    <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>Статья {n}.</div>
+                  </div>
+                  {ps.map((t, k) => <div key={k} style={{ ...ART_P, position: "relative", marginTop: 8 }}>{t}</div>)}
+                </div>
+              );
+            })}
+          </div>
+        </Plane>
+        {/* selection bar */}
+        <div style={{ position: "absolute", left: 960 - 470, top: BAR_Y - 46, width: 940, height: 92, borderRadius: 24, background: "#fff", boxShadow: "0 24px 60px rgba(13,22,48,0.22)", display: "flex", alignItems: "center", gap: 18, padding: "0 20px 0 30px", boxSizing: "border-box", fontFamily: UI, opacity: Math.min(1, bar * 1.4), transform: `translateY(${(1 - bar) * 80}px)`, zIndex: 20 }}>
+          <Tick on={1} size={30} />
+          <div style={{ fontWeight: 900, fontSize: 26, color: INK, flex: 1, whiteSpace: "nowrap" }}>Выбрано: {Math.max(1, nSel)} {nSel >= 2 ? "статьи" : "статья"}</div>
+          <div style={{ height: 58, padding: "0 24px", borderRadius: 16, border: "2.5px solid #1cb0f6", color: "#1cb0f6", display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 22, letterSpacing: "0.04em", boxSizing: "border-box" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>СКАЧАТЬ
+          </div>
+          <div style={{ height: 58, padding: "0 24px", borderRadius: 16, background: "#1cb0f6", boxShadow: "0 4px 0 #1899d6", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 22, letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>ПОДЕЛИТЬСЯ ССЫЛКОЙ
+          </div>
+        </div>
+        {/* download: format picker */}
+        {dl > 0.01 ? modal(dl, 640, <>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ flex: 1 }}><div style={{ fontWeight: 900, fontSize: 32, color: INK }}>Скачать подборку</div><div style={{ marginTop: 4, fontWeight: 700, fontSize: 20, color: "#8a8f98" }}>3 статьи в одном файле</div></div>
+            <div style={{ width: 56, height: 56, borderRadius: 16, background: "#1cb0f6", boxShadow: "0 4px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg></div>
+          </div>
+          {FORMATS.map(([lb, c, name, sub], i) => (
+            <div key={lb} style={{ marginTop: i ? 14 : 26, display: "flex", alignItems: "center", gap: 18 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 16, border: `2.5px solid ${i === fmt ? "#1cb0f6" : "#b9bec6"}`, background: i === fmt ? "#1cb0f6" : "#fff", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center" }}>{i === fmt ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : null}</div>
+              <FileIc label={lb} c={c} />
+              <div style={{ fontSize: 23, color: "#3c3c3c", lineHeight: 1.3 }}><b style={{ fontWeight: 800 }}>{name}</b> <span style={{ fontWeight: 600, color: "#6f7682" }}>{sub}</span></div>
+            </div>
+          ))}
+          <div style={{ marginTop: 30, display: "flex", justifyContent: "flex-end" }}>
+            <div style={{ height: 66, padding: "0 46px", borderRadius: 18, background: GREEN, boxShadow: `0 5px 0 ${GLIP}`, color: "#fff", display: "flex", alignItems: "center", gap: 12, fontWeight: 900, fontSize: 24, letterSpacing: "0.06em", transform: `scale(${1 - press(f, GO) * 0.05})` }}>
+              {done > 0.5 ? <><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>ФАЙЛ СКАЧАН</> : "СКАЧАТЬ"}
+            </div>
+          </div>
+        </>) : null}
+        {/* share: one link */}
+        {sh > 0.01 ? modal(sh, 660, <>
+          <div style={{ fontWeight: 900, fontSize: 32, color: INK }}>Ссылка на подборку</div>
+          <div style={{ marginTop: 4, fontWeight: 700, fontSize: 20, color: "#8a8f98" }}>Друг или студент откроет все 3 статьи в одном месте</div>
+          <div style={{ marginTop: 26, display: "flex", gap: 12 }}>
+            <div style={{ flex: 1, height: 64, borderRadius: 16, border: `2.5px solid ${copied > 0.5 ? GREEN : "#e6e9ee"}`, display: "flex", alignItems: "center", gap: 12, padding: "0 18px", fontWeight: 800, fontSize: 24, color: "#1cb0f6", boxSizing: "border-box" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>veoskill.uz/s/k7Qm2
+            </div>
+            <div style={{ height: 64, padding: "0 26px", borderRadius: 16, background: copied > 0.5 ? GREEN : "#1cb0f6", boxShadow: `0 4px 0 ${copied > 0.5 ? GLIP : "#1899d6"}`, color: "#fff", display: "flex", alignItems: "center", fontWeight: 900, fontSize: 21, letterSpacing: "0.04em", whiteSpace: "nowrap", transform: `scale(${1 - press(f, COPY) * 0.05})` }}>{copied > 0.5 ? "СКОПИРОВАНО" : "КОПИРОВАТЬ"}</div>
+          </div>
+        </>) : null}
+        {f >= 12 && f < PHONE - 10 ? <div style={{ position: "absolute", inset: 0, zIndex: 40 }}><Pointer x={px} y={py} down={down} op={lin(f, 12, 22)} /></div> : null}
+        <div style={{ position: "absolute", inset: 0, zIndex: 45 }}>
+          {cap === 0 ? <TopCap key="c0" lines={["Выдели нужные статьи."]} at={8} /> : cap === 1 ? <TopCap key="c1" lines={["Скачай одним файлом:", "Word, PDF, TXT, HTML."]} at={DL} accent="Word, PDF, TXT, HTML." /> : <TopCap key="c2" lines={["Отправь", "одной ссылкой."]} at={SH - 4} accent="одной ссылкой." />}
+          <Top />
+        </div>
+      </AbsoluteFill>
+      {/* the friend opens the link on a phone */}
+      {f >= PHONE - 10 ? (
+        <AbsoluteFill style={{ background: "#ffffff" }}>
+          <Top />
+          <div style={{ position: "absolute", left: 150, top: 380 }}>
+            <Cap text="Друг откроет" at={PHONE + 4} size={84} />
+            <Cap text="всё в одном месте." at={PHONE + 14} size={84} accent="всё в одном месте." />
+            <div style={{ marginTop: 16, fontFamily: HEAD, fontWeight: 600, fontSize: 34, color: "#6f7682", opacity: lin(f, PHONE + 30, PHONE + 46) }}>Удобно для учёбы и преподавателей.</div>
+          </div>
+          <div style={{ position: "absolute", left: 1200, top: 70, width: 470, height: 940, borderRadius: 64, background: "#0d1630", padding: 14, boxSizing: "border-box", boxShadow: "0 50px 120px rgba(13,22,48,0.3)", transform: `translateY(${(1 - phone) * 300}px) rotate(${(1 - phone) * 6}deg)`, opacity: Math.min(1, phone * 1.5) }}>
+            <div style={{ width: "100%", height: "100%", borderRadius: 52, background: "#fff", overflow: "hidden", fontFamily: UI }}>
+              <div style={{ height: 44, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 34px", fontWeight: 800, fontSize: 18, color: INK }}><span>9:41</span><span style={{ width: 120, height: 30, borderRadius: 15, background: "#0d1630" }} /><span>5G</span></div>
+              <div style={{ margin: "8px 18px 0", height: 44, borderRadius: 14, background: "#f1f3f6", display: "flex", alignItems: "center", gap: 8, padding: "0 14px", fontWeight: 700, fontSize: 17, color: "#5d6470" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5d6470" strokeWidth="2.6"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>veoskill.uz/s/k7Qm2
+              </div>
+              <div style={{ margin: "16px 18px 0", borderRadius: 22, background: "linear-gradient(90deg, #1cb0f6, #3db7f4)", padding: "20px 22px", color: "#fff" }}>
+                <div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ПОДБОРКА СТАТЕЙ</div>
+                <div style={{ marginTop: 6, fontWeight: 900, fontSize: 25, lineHeight: 1.2 }}>Конституция Республики Узбекистан</div>
+                <div style={{ marginTop: 8, fontWeight: 700, fontSize: 17, opacity: 0.9 }}>3 статьи · RU</div>
+              </div>
+              {COL_ARTS.slice(0, 3).map(([n, ps], i) => {
+                const e = sp(PHONE + 18 + i * 8, 15, 170);
+                return (
+                  <div key={n} style={{ margin: "16px 18px 0", borderRadius: 18, border: "2px solid #e6e9ee", padding: "16px 20px", opacity: Math.min(1, e * 1.4), transform: `translateY(${(1 - e) * 30}px)` }}>
+                    <div style={{ fontWeight: 900, fontSize: 23, color: "#1a237e" }}>Статья {n}.</div>
+                    <div style={{ marginTop: 6, fontWeight: 600, fontSize: 18, lineHeight: 1.45, color: "#3c3c3c", display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical" as const, overflow: "hidden" }}>{ps[0]}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </AbsoluteFill>
+      ) : null}
+      {/* toast after copy */}
+      {f >= COPY + 6 && f < PHONE - 10 ? <Toast text="Ссылка скопирована" at={COPY + 6} /> : null}
+    </AbsoluteFill>
+  );
+};
 /** AI: the site's "Объяснение статьи" window (same layout as veoskill.uz): loading, then three blocks written in. */
 const EXPL: [string, string, string, boolean][] = [
   ["target.svg", "КОРОТКО", "Первая статья определяет главные основы государства. Узбекистан признается независимой страной с выборной властью, подчинением закону и заботой о гражданах, а его короткое и полное названия имеют равную силу.", true],
