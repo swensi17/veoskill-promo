@@ -1,0 +1,40 @@
+{
+  "name": "veoskill-promo",
+  "version": "1.0.0",
+  "description": "veoskill.uz promo video (Remotion)",
+  "repository": {},
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24"
+  },
+  "private": true,
+  "dependencies": {
+    "@fontsource/nunito": "^5.3.0",
+    "@remotion/cli": "4.0.541",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.541",
+    "@remotion/bundler": "4.0.541",
+    "@remotion/renderer": "4.0.541"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.541",
+    "@types/react": "19.3.0",
+    "@types/web": "0.0.166",
+    "eslint": "10.12.0",
+    "prettier": "3.8.1",
+    "qrcode": "^1.5.4",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "draft": "node scripts/build.mjs --draft",
+    "render": "node scripts/build.mjs",
+    "scene": "node scripts/build.mjs --scene",
+    "stills": "node scripts/stills.mjs",
+    "lint": "tsc --noEmit"
+  },
+  "allowScripts": {
+    "esbuild": false
+  }
+}
