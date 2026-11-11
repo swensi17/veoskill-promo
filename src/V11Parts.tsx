@@ -333,6 +333,94 @@ export const Hints: React.FC = () => {
     </AbsoluteFill>
   );
 };
+/** Article actions: heart -> "В избранное" with the folder picker; "⋯" -> the article menu (as on veoskill.uz). */
+const ART_P = { fontFamily: UI, fontWeight: 500, fontSize: 25, lineHeight: 1.36, color: "#2b2b2b", textAlign: "justify" as const, textIndent: 80 };
+const Heart: React.FC<{ on: number; size?: number }> = ({ on, size = 30 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.2-9.3C1.6 7.8 3.8 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 3.4 0 5.6 3.3 4.4 6.7-1.7 4.7-9.2 9.3-9.2 9.3z" fill={on > 0.5 ? "#ff4b4b" : "none"} stroke={on > 0.5 ? "#ff4b4b" : "#9aa1ab"} strokeWidth="2" strokeLinejoin="round" /></svg>
+);
+const MI = (d: React.ReactNode) => <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{d}</svg>;
+const MENU: [React.ReactNode, string][] = [
+  [MI(<><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" /></>), "Копировать статью"],
+  [MI(<path d="M7 17c-2 0-3-1.5-3-3.5C4 10 6 7.5 9 7M17 17c-2 0-3-1.5-3-3.5 0-3.5 2-6 5-6.5" />), "Скопировать источник"],
+  [MI(<><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></>), "Кто ссылается на статью"],
+  [MI(<><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 9h8M8 13h8M8 17h5" /></>), "Заметка к статье"],
+  [MI(<path d="M10 6h10M10 12h10M10 18h10M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" />), "Тест по статье"],
+];
+export const ArticleActions: React.FC = () => {
+  const f = useCurrentFrame();
+  const sp = useSp();
+  const HEART = 56, POP = 62, DOTS = 164, MENU_AT = 170;
+  const keys: CK[] = [{ at: 0, x: 1200, y: 600, s: 1.0 }, { at: 40, x: 980, y: 560, s: 1.3 }, { at: 70, x: 980, y: 560, s: 1.3 }, { at: 96, x: 800, y: 600, s: 1.6 }, { at: 136, x: 820, y: 610, s: 1.6 }, { at: 168, x: 1560, y: 560, s: 1.35 }, { at: 196, x: 1600, y: 640, s: 1.62 }, { at: 288, x: 1610, y: 660, s: 1.62 }];
+  const kx = [12, HEART - 6, 130, DOTS - 6, MENU_AT + 22, 278];
+  const px = interpolate(f, kx, [1300, 636, 900, 1826, 1700, 1700], { ...cl, easing: IOE });
+  const py = interpolate(f, kx, [760, 466, 380, 466, 548, 548 + 4 * 62], { ...cl, easing: IOE });
+  const heart = sp(HEART + 2, 9, 260);
+  const pop = lin(f, POP, POP + 10) * (1 - lin(f, 132, 142));
+  const menu = sp(MENU_AT, 15, 200);
+  const hover = lin(f, MENU_AT + 22, 278, 0, 4, Easing.linear);
+  const Y3 = 440;
+  return (
+    <AbsoluteFill style={{ background: BG }}>
+      <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640}>
+        <div style={{ position: "absolute", left: 573, top: 218, width: 1282, height: 990, background: "#fff", padding: "14px 60px 0 48px", boxSizing: "border-box", overflow: "hidden" }}>
+          <div style={ART_P}>Названия государства «Республика Узбекистан» и «Узбекистан» равнозначны.</div>
+          {[["2", ["Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами."]],
+            ["3", ["Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику.", "Государственная граница и территория Узбекистана неприкосновенны и неделимы."]],
+            ["4", ["Государственным языком Республики Узбекистан является узбекский язык.", "Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития."]],
+            ["5", ["Республика Узбекистан имеет свои государственные символы — флаг, герб, гимн, утверждаемые законом.", "Государственные символы находятся под защитой государства."]]].map(([n, ps]) => (
+            <div key={n as string} style={{ marginTop: 14 }}>
+              <div style={{ height: 48, display: "flex", alignItems: "center", gap: 14 }}>
+                <div style={{ transform: n === "3" ? `scale(${1 + 0.35 * Math.sin(Math.min(1, heart) * Math.PI)})` : undefined }}><Heart on={n === "3" ? heart : 0} /></div>
+                <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>Статья {n}.</div>
+                {n === "3" ? (
+                  <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 18 }}>
+                    <AiIcon size={30} color="#8a8f98" />
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="#6f7682"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>
+                  </div>
+                ) : null}
+              </div>
+              {(ps as string[]).map((t, i) => <div key={i} style={{ ...ART_P, marginTop: 8 }}>{t}</div>)}
+            </div>
+          ))}
+        </div>
+        {/* favourites: folder picker */}
+        <div style={{ position: "absolute", left: 606, top: Y3 + 58, width: 330, opacity: pop, transform: `translateY(${(1 - pop) * 10}px)`, fontFamily: UI }}>
+          <div style={{ background: "#fff", borderRadius: 18, boxShadow: "0 22px 50px rgba(13,22,48,0.2)", border: "1px solid #eef0f3", padding: "16px 16px 10px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ padding: "6px 10px", borderRadius: 8, background: "#3c3c3c", color: "#fff", fontWeight: 800, fontSize: 16 }}>В избранное</div>
+              <div style={{ fontWeight: 800, fontSize: 17, letterSpacing: "0.08em", color: "#6f7682" }}>В ПАПКУ</div>
+            </div>
+            <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
+              <div style={{ flex: 1, height: 44, borderRadius: 12, border: "2px solid #e6e9ee", display: "flex", alignItems: "center", padding: "0 14px", color: "#9aa1ab", fontWeight: 600, fontSize: 17 }}>Найти папку</div>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: "#1cb0f6", boxShadow: "0 3px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg></div>
+            </div>
+            {[150, 110, 170].map((w, i) => (
+              <div key={i} style={{ height: 50, display: "flex", alignItems: "center", gap: 14, borderTop: i ? "1px solid #f0f1f4" : undefined, marginTop: i ? 0 : 10 }}>
+                <div style={{ width: 22, height: 22, borderRadius: 6, background: "#e9ebef" }} />
+                <div style={{ width: w, height: 14, borderRadius: 7, background: `linear-gradient(90deg, #e9ebef, #f5f6f8 ${50 + 40 * Math.sin(f / 9 + i)}%, #e9ebef)` }} />
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* article menu */}
+        {f >= MENU_AT ? (
+          <div style={{ position: "absolute", left: 1450, top: Y3 + 54, width: 400, background: "#fff", borderRadius: 16, boxShadow: "0 22px 50px rgba(13,22,48,0.2)", border: "1px solid #eef0f3", overflow: "hidden", fontFamily: UI, opacity: Math.min(1, menu * 1.4), transform: `scale(${0.92 + 0.08 * menu})`, transformOrigin: "100% 0" }}>
+            {MENU.map(([ic, t], i) => {
+              const e = lin(f, MENU_AT + 2 + i * 3, MENU_AT + 10 + i * 3);
+              const h = Math.max(0, 1 - Math.abs(hover - i)) * lin(f, MENU_AT + 18, MENU_AT + 24);
+              return (
+                <div key={t} style={{ height: 62, display: "flex", alignItems: "center", gap: 16, padding: "0 20px", borderTop: i ? "1px solid #f0f1f4" : undefined, background: `rgba(227,244,253,${h})`, fontWeight: 700, fontSize: 21, color: "#3c3c3c", whiteSpace: "nowrap", opacity: e, transform: `translateX(${(1 - e) * 10}px)` }}>{ic}{t}</div>
+              );
+            })}
+          </div>
+        ) : null}
+        {f >= 12 ? <Pointer x={px} y={py} down={Math.max(press(f, HEART), press(f, DOTS))} op={lin(f, 12, 22)} /> : null}
+      </Plane>
+      <TopCap lines={["Сохраняй статьи.", "Всё под рукой."]} at={8} accent="Всё под рукой." />
+      <Top />
+    </AbsoluteFill>
+  );
+};
 /** AI: the site's "Объяснение статьи" window (same layout as veoskill.uz): loading, then three blocks written in. */
 const EXPL: [string, string, string, boolean][] = [
   ["target.svg", "КОРОТКО", "Первая статья определяет главные основы государства. Узбекистан признается независимой страной с выборной властью, подчинением закону и заботой о гражданах, а его короткое и полное названия имеют равную силу.", true],
