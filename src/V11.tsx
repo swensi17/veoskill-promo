@@ -369,11 +369,11 @@ const S9: React.FC = () => <Words per={43.2} items={[["А ТЕПЕРЬ", BG, NAV
 const AiWords: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
-  const B1 = 28.8;
+  const B1 = 43.2; // 1.5 beats, then the AI card for 3.5 beats (scene = 5 beats = 144 frames)
   if (f < B1) return <Words per={B1} items={[["А ТЕПЕРЬ", BG, NAVY]]} />;
   const lf = f - B1;
   const ic = sp(B1, 12, 170);
-  const s = 1.05 - lin(lf, 0, 57, 0, 0.05, Easing.out(Easing.quad));
+  const s = 1.05 - lin(lf, 0, 100, 0, 0.05, Easing.out(Easing.quad));
   return (
     <AbsoluteFill style={{ background: BLUE, alignItems: "center", justifyContent: "center" }}>
       <Top dark />
@@ -754,7 +754,7 @@ const SCENES: { C: React.FC; d: number; xo?: number }[] = [
   { C: OurWords, d: 86 },
   { C: LawsHome, d: 202 },
   { C: Reader, d: 432 },
-  { C: AiWords, d: 86 },
+  { C: AiWords, d: 144 },
   { C: AIReal, d: 316, xo: 16 },
   { C: Langs, d: 231, xo: 10 },
   { C: Table, d: 288, xo: 16 },
