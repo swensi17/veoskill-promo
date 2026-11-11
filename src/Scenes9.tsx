@@ -433,7 +433,7 @@ export const S7b: React.FC = () => {
       {/* league badges like the site */}
       <div style={{ position: "absolute", left: 1000, top: 110, display: "flex", alignItems: "center", gap: 22 }}>
         <Img src={staticFile("real/bronze.webp")} style={{ width: 110, transform: `scale(${sp(4, 12, 170)})` }} />
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1, 2, 3, 4, 5].map((i) => (
           <div key={i} style={{ position: "relative", width: 76, height: 86, transform: `scale(${sp(8 + i * 3, 12, 170)})` }}>
             <svg width="76" height="86" viewBox="0 0 76 86"><path d="M38 2 L72 14 V44 C72 64 56 78 38 84 C20 78 4 64 4 44 V14 Z" fill={i === 0 ? `rgb(${200 + 30 * silver},${204 + 26 * silver},${212 + 22 * silver})` : "#e3e5e9"} stroke={i === 0 && silver > 0.5 ? "#9aa3b0" : "#d2d5db"} strokeWidth="3" /></svg>
             {i === 0 && silver > 0.5 ? <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><Check s={34} c="#6d7684" /></div> : null}
@@ -445,14 +445,18 @@ export const S7b: React.FC = () => {
       <div style={{ position: "absolute", left: 980, top: 320, width: 760, height: ROWH * 6 + 30, borderRadius: 34, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.12)", opacity: sp(0, 14, 150), transform: `translateY(${(1 - sp(0, 14, 150)) * 60}px)` }}>
         {(() => {
           const cs = PEOPLE.map((p) => Math.min(1, Math.max(0, (p[2] - mineXp) / 8 + 0.5)));
-          const exact = cs.reduce((x, c) => x + c, 0);
+          // the "Ты" row glides: its place is averaged over +-20 frames so each climb is one soft move
+          const xpAt = (ff: number) => { let v = 65; for (let k = 0; k < 6; k++) v += 15 * lin(ff, T0 + k * B, T0 + k * B + 16, 0, 1, OUTE); return v; };
+          const placeAt = (ff: number) => { const x = xpAt(ff); return PEOPLE.reduce((a, p) => a + Math.min(1, Math.max(0, (p[2] - x) / 8 + 0.5)), 0); };
+          let exact = 0; for (let d = -20; d <= 20; d++) exact += placeAt(f + d); exact /= 41;
+          const csSm = PEOPLE.map((p) => { let a = 0; for (let d = -20; d <= 20; d++) a += Math.min(1, Math.max(0, (p[2] - xpAt(f + d)) / 8 + 0.5)); return a / 41; });
           const myRank = PEOPLE.filter((p) => p[2] > mine).length + 1;
           const rowTop = (r: number) => 15 + r * ROWH;
           const flash = Array.from({ length: 6 }, (_, k) => press(f, T0 + k * B)).reduce((x, y) => Math.max(x, y), 0);
           return (
             <>
               {PEOPLE.map(([name, av, xp], idx) => {
-                const c = cs[idx];
+                const c = csSm[idx];
                 const r = idx + (1 - c);
                 const rank = idx + (mine > xp ? 1 : 0) + 1;
                 return (
@@ -464,7 +468,7 @@ export const S7b: React.FC = () => {
                   </div>
                 );
               })}
-              <div style={{ position: "absolute", left: 20, right: 20, top: rowTop(exact), height: ROWH - 10, borderRadius: 22, border: `4px solid ${BLUE}`, background: "#ddf4ff", display: "flex", alignItems: "center", gap: 20, padding: "0 16px", fontFamily: UI, boxShadow: "0 12px 30px rgba(28,176,246,0.25)", zIndex: 5, boxSizing: "border-box" }}>
+              <div style={{ position: "absolute", left: 20, right: 20, top: rowTop(exact), height: ROWH - 10, borderRadius: 22, border: `4px solid ${BLUE}`, background: "#fff", display: "flex", alignItems: "center", gap: 20, padding: "0 16px", fontFamily: UI, boxShadow: "0 12px 30px rgba(28,176,246,0.25)", zIndex: 5, boxSizing: "border-box" }}>
                 <div style={{ width: 40, fontWeight: 900, fontSize: 28, color: myRank === 1 ? "#e0a800" : DEEP }}>{myRank}</div>
                 <Img src={staticFile("av/p1.svg")} style={{ width: 66, height: 66, borderRadius: 33, background: "#fff" }} />
                 <div style={{ fontWeight: 900, fontSize: 30, color: DEEP }}>Ты</div>
