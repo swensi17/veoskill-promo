@@ -140,6 +140,11 @@ for lf in [144, 552]: at(CH, F(N("LessonMore"), lf), -17)
 pops += [(N("Duel"), 128), (N("Duel"), 214), (N("Duel"), 470)]
 at(CL, F(N("Duel"), 330), -16)
 for lf in [352, 472]: at(CH, F(N("Duel"), lf), -17)
+# Books: open a book, select (popup), colour, share, next page, gear, sepia, size, close; phone in
+for lf in [196, 404, 446, 548, 604, 664, 712, 760]: at(CL, F(N("Books"), lf), -16)
+pops += [(N("Books"), 6), (N("Books"), 346), (N("Books"), 450), (N("Books"), 608)]
+for lf in [262, 794]:
+    i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(N("Books"), lf) / FPS - i / SR + 0.03, -20)
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
 pops += [(N("AiWords"), 0), (N("AiWords"), 58)]
 # other entrances found in the scene code
