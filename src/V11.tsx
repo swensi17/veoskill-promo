@@ -753,7 +753,7 @@ const SCENES: { C: React.FC; d: number; xo?: number }[] = [
   { C: LexScene, d: 317 },
   { C: OurWords, d: 115 },
   { C: LawsHome, d: 202 },
-  { C: Reader, d: 432 },
+  { C: Reader, d: 432, xo: 18 },
   { C: Hints, d: 288 },
   { C: AiWords, d: 173 },
   { C: AIReal, d: 316, xo: 16 },

@@ -303,12 +303,14 @@ const HintBox: React.FC<{ x: number; y: number; w: number; title: string; text: 
 export const Hints: React.FC = () => {
   const f = useCurrentFrame();
   const BULB = 46, POP = 52, HOVER = 176, TIP = 184;
-  const keys: CK[] = [{ at: 0, x: 1250, y: 330, s: 1.25 }, { at: 40, x: 1300, y: 320, s: 1.3 }, { at: 120, x: 1300, y: 320, s: 1.3 }, { at: 160, x: 1090, y: 700, s: 1.32 }, { at: 288, x: 1080, y: 700, s: 1.36 }];
-  const kx = [10, BULB - 6, 120, HOVER - 4];
-  const px = interpolate(f, kx, [1760, 1590, 1600, 1080], { ...cl, easing: IOE });
-  const py = interpolate(f, kx, [420, 168, 260, 738], { ...cl, easing: IOE });
-  const pop = lin(f, POP, POP + 10) * (1 - lin(f, 140, 152));
-  const tip = lin(f, TIP, TIP + 10);
+  // starts exactly where Reader's camera ends (so the cross-dissolve is seamless), glides to the bulb,
+  // then moves in close on each hint while it is on screen
+  const keys: CK[] = [{ at: 0, x: 1150, y: 580, s: 1.0 }, { at: 40, x: 1350, y: 300, s: 1.25 }, { at: 56, x: 1350, y: 300, s: 1.25 }, { at: 92, x: 1610, y: 270, s: 1.6 }, { at: 132, x: 1610, y: 270, s: 1.62 }, { at: 172, x: 1080, y: 740, s: 1.35 }, { at: 188, x: 1080, y: 740, s: 1.35 }, { at: 224, x: 1150, y: 805, s: 1.7 }, { at: 288, x: 1150, y: 805, s: 1.74 }];
+  const kx = [14, BULB - 6, 132, HOVER - 4];
+  const px = interpolate(f, kx, [1500, 1590, 1600, 1080], { ...cl, easing: IOE });
+  const py = interpolate(f, kx, [560, 168, 236, 738], { ...cl, easing: IOE });
+  const pop = lin(f, POP, POP + 12) * (1 - lin(f, 136, 152));
+  const tip = lin(f, TIP, TIP + 12);
   const ul = lin(f, HOVER - 2, HOVER + 6);
   return (
     <AbsoluteFill style={{ background: BG }}>
@@ -319,7 +321,7 @@ export const Hints: React.FC = () => {
         {/* hovered term: dotted underline becomes solid */}
         <div style={{ position: "absolute", left: 971, top: 742, width: 206, height: 3, borderRadius: 2, background: "#1cb0f6", opacity: ul }} />
         <HintBox x={930} y={772} w={440} o={tip} arrowX={140} title="Юридическая ответственность" text="Обязанность лица претерпеть неблагоприятные последствия за нарушение закона: штраф, возмещение вреда, лишение свободы." />
-        {f >= 8 ? <Pointer x={px} y={py} down={press(f, BULB)} op={lin(f, 8, 18)} /> : null}
+        {f >= 14 ? <Pointer x={px} y={py} down={press(f, BULB)} op={lin(f, 14, 26)} /> : null}
       </Plane>
       <TopCap lines={["Непонятный термин?", "Наведи и узнай."]} at={8} accent="Наведи и узнай." />
       <Top />
