@@ -134,8 +134,8 @@ pops += [(N("Search"), 46), (N("Search"), 176)]
 for sc, lf in [(N("AiPick"), 128)]: at(CL, F(sc, lf), -16)
 pops += [(N("AiPick"), 92)]
 # Lesson (the real lesson page): every click, then correct / wrong chimes
-for lf in [110, 186, 214, 292, 352, 378, 430, 520, 600, 622, 644, 666, 692, 745, 790, 810, 840, 860, 890, 910, 940, 992, 1012, 1066, 1086, 1250, 1275]: at(CL, F(N("LessonSlow"), lf), -16)
-pops += [(N("LessonSlow"), 14), (N("LessonSlow"), 24), (N("LessonSlow"), 34), (N("LessonSlow"), 296), (N("LessonSlow"), 744 + 2)]
+for lf in [110, 186, 214, 322, 364, 384, 430, 520, 600, 622, 644, 666, 692, 745, 790, 810, 840, 860, 890, 910, 940, 992, 1012, 1066, 1086, 1250, 1275]: at(CL, F(N("LessonSlow"), lf), -16)
+pops += [(N("LessonSlow"), 14), (N("LessonSlow"), 24), (N("LessonSlow"), 34), (N("LessonSlow"), 326), (N("LessonSlow"), 744 + 2)]
 for sc, lf in [(N("LessonSlow"), 522), (N("LessonSlow"), 694), (N("LessonSlow"), 942), (N("LessonSlow"), 1088), (N("LessonSlow"), 1277)]: at(CH, F(sc, lf), -17)
 # LessonMore: term pick, check, next, answer field, check; AI check and success
 for lf in [110, 142, 192, 268, 680]: at(CL, F(N("LessonMore"), lf), -16)

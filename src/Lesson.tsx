@@ -77,12 +77,12 @@ export const Lesson: React.FC = () => {
   const starts = [S.A, S.B, S.C, S.D, S.E, S.F, S.G];
   const prog = interpolate(f, [starts[step], starts[step] + 20], [PROG[Math.max(0, step - 1)], PROG[step]], { ...cl, easing: OUTE }) + lin(f, 1278, 1300, 0, 1 - PROG[6], OUTE);
   // --- clicks (frame, x, y): the cursor arrives 12 frames before and stays 8 after
-  const CB = { book: 292, bookX: 352, contB: 378 };
+  const CB = { book: 322, bookX: 364, contB: 384 };
   const wordsX = { "это": CX, "общие": CX + 116, "правила": CX + 272, "право": CX + 458 };
   const W = { "право": 150, "это": 100, "правила": 170, "общие": 140 } as Record<string, number>;
   const clicks: [number, number, number][] = [
     [110, MAIN_X, BTN_Y + 42], [186, MAIN_X, BTN_Y + 42], [214, MAIN_X, BTN_Y + 42],
-    [S.B + 112, CX + 50, BTN_Y + 42], [CB.book, CX + 50, BTN_Y + 42], [CB.bookX, 1830, 130], [CB.contB, MAIN_X, BTN_Y + 42],
+    [S.B + 108, CX + 50, BTN_Y + 42], [CB.book, CX + 50, BTN_Y + 42], [CB.bookX, 1830, 130], [CB.contB, MAIN_X, BTN_Y + 42],
     [430, CX + 300, 420], [520, MAIN_X, BTN_Y + 42],
     [600, wordsX["право"] + 70, 740], [622, wordsX["это"] + 50, 740], [644, wordsX["правила"] + 80, 740], [666, wordsX["общие"] + 70, 740], [692, MAIN_X, BTN_Y + 42], [745, CX + CW - 150, 978],
     [790, CX + 215, 450], [810, CX + 665, 450], [840, CX + 215, 580], [860, CX + 665, 710], [890, CX + 215, 710], [910, CX + 665, 580], [940, MAIN_X, BTN_Y + 42],
@@ -93,12 +93,12 @@ export const Lesson: React.FC = () => {
   const pxs = [1500, ...clicks.flatMap(([, x]) => [x - 4, x - 4]), 1500];
   const pys = [900, ...clicks.flatMap(([, , y]) => [y - 4, y - 4]), 900];
   const px = interpolate(f, pk, pxs, { ...cl, easing: IOE }), py = interpolate(f, pk, pys, { ...cl, easing: IOE });
-  const down = Math.max(...clicks.filter(([t]) => t !== S.B + 112).map(([t]) => press(f, t)));
+  const down = Math.max(...clicks.filter(([t]) => t !== S.B + 108).map(([t]) => press(f, t)));
   // reading the theory: camera moves in on the text block that is being read (out again before each click)
   const rd = (a: number, b: number) => lin(f, S.B + a, S.B + a + 8, 0, 1, IOE) * (1 - lin(f, S.B + b - 6, S.B + b, 0, 1, IOE));
-  const zt = Math.max(rd(14, 34), rd(44, 62), rd(74, 108));
+  const zt = Math.max(rd(14, 34), rd(44, 62), rd(74, 104));
   // hover on the book button before clicking it: camera moves to the button, a tip explains it
-  const HOV = S.B + 112;
+  const HOV = S.B + 108;
   const zb = lin(f, HOV - 4, HOV + 12, 0, 1, IOE) * (1 - lin(f, CB.book + 4, CB.book + 18, 0, 1, IOE));
   // camera moves in on the Constitution panel while it is open
   const zc = lin(f, CB.book + 14, CB.book + 40, 0, 1, IOE) * (1 - lin(f, CB.bookX - 12, CB.bookX + 6, 0, 1, IOE));
@@ -111,7 +111,7 @@ export const Lesson: React.FC = () => {
   const mainDown = clicks.filter(([, x, y]) => x === MAIN_X && y === BTN_Y + 42).reduce((m, [t]) => Math.max(m, press(f, t)), 0);
   // --- captions on the left (big, for older viewers)
   const CAPS: [number, string, string?, string?][] = [
-    [S.A, "Урок", "за 5 минут.", "за 5 минут."], [S.B, "Сначала", "теория.", "теория."], [S.B + 112, "Даже в игре", "можно подглядывать в Конституцию.", "можно подглядывать в Конституцию."],
+    [S.A, "Урок", "за 5 минут.", "за 5 минут."], [S.B, "Сначала", "теория.", "теория."], [S.B + 108, "Даже в игре", "можно подглядывать в Конституцию.", "можно подглядывать в Конституцию."],
     [S.C, "Слушай", "и выбирай.", "и выбирай."], [S.D, "Собери ответ", "из слов.", "из слов."], [S.E, "Соедини", "пары.", "пары."],
     [S.F, "Ошибся?", "Минус сердечко.", "Минус сердечко."], [S.G, "Истории", "из жизни.", "из жизни."],
   ];
@@ -179,7 +179,7 @@ export const Lesson: React.FC = () => {
                       <div style={{ marginTop: 10, width: 3, flex: 1, borderRadius: 2, background: "rgba(28,176,246,0.3)", transformOrigin: "50% 0", transform: `scaleY(${line})` }} />
                     </div>
                     <div style={{ flex: 1, position: "relative" }}>
-                      {(() => { const win2 = [[14, 34], [44, 62], [74, 108]][i]; const o = lin(lf, win2[0], win2[0] + 8) * (1 - lin(lf, win2[1] - 6, win2[1])); const sweep = lin(lf, win2[0], win2[1], 0, 1, Easing.linear); return o > 0.01 ? (
+                      {(() => { const win2 = [[14, 34], [44, 62], [74, 104]][i]; const o = lin(lf, win2[0], win2[0] + 8) * (1 - lin(lf, win2[1] - 6, win2[1])); const sweep = lin(lf, win2[0], win2[1], 0, 1, Easing.linear); return o > 0.01 ? (
                         <div style={{ position: "absolute", left: -14, right: -14, top: title ? 50 : -6, bottom: -6, borderRadius: 14, background: `linear-gradient(180deg, rgba(28,176,246,${0.14 + 0.08 * Math.sin(f / 5)}) ${sweep * 100}%, rgba(28,176,246,0.05) ${sweep * 100 + 12}%)`, boxShadow: `0 0 0 ${2 + 2 * Math.abs(Math.sin(f / 6))}px rgba(28,176,246,0.25)`, opacity: o }} />) : null; })()}
                       {title ? <div style={{ position: "relative", height: 44, display: "flex", alignItems: "center", fontWeight: 800, fontSize: 22, letterSpacing: "0.1em", color: "#7c8593" }}>{title}</div> : null}
                       <div style={{ position: "relative", marginTop: title ? 10 : 0 }}>{body}</div>
@@ -317,8 +317,9 @@ export const Lesson: React.FC = () => {
       <AbsoluteFill style={{ background: GREEN, opacity: 1 - lin(f, 0, 18), pointerEvents: "none" }} />
       {f >= 14 && f < S.END - 20 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, 14, 26) * (1 - lin(f, S.END - 34, S.END - 20))} /></div> : null}
       {zb > 0.01 ? (
-        <div style={{ position: "absolute", left: CX - 10, top: BTN_Y - 150, width: 470, padding: "16px 20px", borderRadius: 16, background: "#2b2f36", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 22, lineHeight: 1.35, opacity: lin(f, HOV + 6, HOV + 14) * (1 - lin(f, CB.book - 2, CB.book + 4)), transform: `translateY(${(1 - lin(f, HOV + 6, HOV + 16, 0, 1, OUTE)) * 10}px)` }}>
-          <div style={{ fontWeight: 900, fontSize: 24, marginBottom: 4 }}>📘 Конституция</div>Открой закон прямо во время игры и подсмотри нужную статью.
+        <div style={{ position: "absolute", left: CX - 10, top: BTN_Y - 150, width: 470, padding: "16px 20px", borderRadius: 16, background: "#2b2f36", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 22, lineHeight: 1.35, opacity: lin(f, HOV + 6, HOV + 14) * (1 - lin(f, CB.book + 2, CB.book + 8)), transform: `translateY(${(1 - lin(f, HOV + 6, HOV + 16, 0, 1, OUTE)) * 10}px)` }}>
+          <div style={{ fontWeight: 900, fontSize: 24, marginBottom: 4 }}>📘 Конституция</div>
+          {(() => { const ws = "Открой закон прямо во время игры и подсмотри нужную статью.".split(" "); const k = lin(f, HOV + 16, CB.book - 8, 0, ws.length, Easing.linear); return ws.map((w, i) => { const d = k - i; const on = d > 0 ? 1 : 0; const pulse = d > 0 && d < 1.2 ? 1 - d / 1.2 : 0; return <span key={i} style={{ display: "inline-block", marginRight: 6, color: on ? "#fff" : "rgba(255,255,255,0.45)", background: `rgba(28,176,246,${0.55 * pulse})`, borderRadius: 6, padding: "0 2px", transform: `scale(${1 + 0.06 * pulse})` }}>{w}</span>; }); })()}
           <div style={{ position: "absolute", left: 40, bottom: -9, width: 18, height: 18, background: "#2b2f36", transform: "rotate(45deg)" }} />
         </div>) : null}
       </AbsoluteFill>
