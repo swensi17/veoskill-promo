@@ -2,7 +2,6 @@ import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
 import { NAVY, BLUE, GREEN, GLIP, RED, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer } from "./Scenes9";
 import { ART } from "./Laws7";
-import { AiIcon } from "./V11Parts";
 
 // A whole lesson as on veoskill.uz/exercise: intro list, theory (with the Constitution side panel), find the sound,
 // build the answer from words, match pairs, find the mistake (a wrong pick costs a heart), a chat story.
@@ -49,6 +48,22 @@ const Result: React.FC<{ o: number; ok: boolean; title: string; sub: string; btn
   </div>
 );
 
+/** Confetti burst from (x, y) starting at frame `at` (deterministic). */
+export const Confetti: React.FC<{ at: number; x?: number; y?: number; n?: number }> = ({ at, x = 960, y = 760, n = 90 }) => {
+  const f = useFrame();
+  if (f < at || f > at + 150) return null;
+  const t = (f - at) / 60;
+  const cols = [GREEN, BLUE, "#ffc800", "#ff4b4b", "#ce82ff"];
+  return (
+    <AbsoluteFill style={{ pointerEvents: "none", zIndex: 90 }}>
+      {Array.from({ length: n }, (_, i) => {
+        const r = (k: number) => { const v = Math.sin(i * k) * 43758.5453; return v - Math.floor(v); };
+        const vx = (r(12.9898) - 0.5) * 1400, vy = -650 - r(78.233) * 750;
+        return <div key={i} style={{ position: "absolute", left: x + vx * t, top: y + vy * t + 950 * t * t, width: 14, height: 22, borderRadius: 3, background: cols[i % 5], transform: `rotate(${(r(3.1) * 720 + f * (8 + r(5.7) * 10)) % 360}deg)`, opacity: 1 - lin(t, 1.6, 2.4) }} />;
+      })}
+    </AbsoluteFill>
+  );
+};
 export const Lesson: React.FC = () => {
   const f = useFrame();
   const sp = useSp();
@@ -248,6 +263,7 @@ export const Lesson: React.FC = () => {
       {f >= 942 && f < 960 ? <Result o={lin(f, 942, 950, 0, 1, OUTE) * (1 - lin(f, 954, 960))} ok title="Все пары верно!" sub="+15 XP" btn="ДАЛЕЕ" /> : null}
       {f >= 1014 && f < 1046 ? <Result o={lin(f, 1014, 1026, 0, 1, OUTE) * (1 - lin(f, 1036, 1046))} ok={false} title="Неверно" sub="Это правда, ищите ошибку" btn="ПОНЯТНО" /> : null}
       {f >= 1088 && f < 1130 ? <Result o={lin(f, 1088, 1100, 0, 1, OUTE) * (1 - lin(f, 1120, 1130))} ok title="Верно!" sub="+12 XP" btn="ДАЛЕЕ" /> : null}
+      {[522, 694, 942, 1088, 1277].map((t) => <Confetti key={t} at={t} />)}
       {f >= 1277 ? <Result o={lin(f, 1277, 1290, 0, 1, OUTE)} ok title="Ура! Урок пройден" sub="+50 XP" btn="ПРОДОЛЖИТЬ" /> : null}
 
       {/* the Constitution opens from the book button, right inside the lesson */}
@@ -286,25 +302,26 @@ export const LessonMore: React.FC = () => {
   const sp = useSp();
   const H_END = 220, END = 893;
   const PICK = 110, CHK1 = 142, NEXT = 192;
-  const OPEN = 268, READ0 = 320, READ1 = 520, ANS = 548, CHK2 = 608, AI0 = 612, OK2 = 664;
+  const OPEN = 268, READ0 = 316, READ1 = 540, SCR0 = 548, SCR1 = 600, ANS = 606, CHK2 = 680, OK2 = 690;
   const win = (a: number, b: number) => { const i = lin(f, a, a + 14), o = b < END ? lin(f, b - 12, b) : 0; return { o: i * (1 - o), x: (1 - i) * 70 - o * 70, on: f >= a - 1 && f < b + 1 }; };
   // camera over the page: read the case up close, back out, then move in on the check button
   const ck = [0, OPEN + 30, READ0, READ1, ANS + 10, CHK2 - 30, CHK2 + 6, OK2, OK2 + 30];
   const cam = (v: number[]) => interpolate(f, ck, v, { ...cl, easing: IOE });
   const cx = cam([960, 960, 1080, 1080, 960, 960, 1100, 1100, 960]);
-  const cy = cam([540, 540, 300, 560, 540, 540, 840, 840, 540]);
-  const cs = cam([1, 1, 1.5, 1.5, 1, 1, 1.25, 1.25, 1]);
-  const clicks: [number, number, number][] = [[PICK, CX + 665, 560], [CHK1, MAIN_X, BTN_Y + 42], [NEXT, CX + CW - 150, 978], [OPEN, CX + 170, 418], [CHK2, MAIN_X, BTN_Y + 42]];
+  const cy = cam([540, 540, 330, 560, 540, 540, 840, 840, 540]);
+  const cs = cam([1, 1, 1.42, 1.42, 1, 1, 1.25, 1.25, 1]);
+  const scroll = lin(f, SCR0, SCR1, 0, 330, IOE);
+  const clicks: [number, number, number][] = [[PICK, CX + 665, 560], [CHK1, MAIN_X, BTN_Y + 42], [NEXT, CX + CW - 150, 978], [OPEN, CX + CW / 2, 100 + 10 + 80 + 250 - 50], [CHK2, MAIN_X, BTN_Y + 42]];
   const pk = [10, ...clicks.flatMap(([t]) => [t - 12, t + 8]), END];
   const px = interpolate(f, pk, [1500, ...clicks.flatMap(([, x]) => [x - 4, x - 4]), 1500], { ...cl, easing: IOE });
   const py = interpolate(f, pk, [900, ...clicks.flatMap(([, , y]) => [y - 4, y - 4]), 900], { ...cl, easing: IOE });
-  const hideCursor = f > OPEN + 20 && f < CHK2 - 30;
+  const hideCursor = f > OPEN + 20 && f < CHK2 - 34;
   const down = Math.max(...clicks.map(([t]) => press(f, t)));
   const prog = 0.5 + lin(f, CHK1, CHK1 + 20, 0, 0.25, OUTE) + lin(f, OK2, OK2 + 20, 0, 0.25, OUTE);
   const step = f < H_END ? 0 : 1;
   const mainOn = (step === 0 && f >= PICK + 2) || (step === 1 && f >= ANS);
   const mainDown = Math.max(press(f, CHK1), press(f, CHK2));
-  const CAPS: [number, string, string][] = [[0, "Найди", "термин."], [H_END, "Реши казус,", "как на экзамене."], [AI0, "ИИ проверит", "ответ."]];
+  const CAPS: [number, string, string][] = [[0, "Найди", "термин."], [H_END, "Реши казус,", "как на экзамене."]];
   let ci = 0; CAPS.forEach(([t], i) => { if (f >= t) ci = i; });
   const capEnd = ci + 1 < CAPS.length ? CAPS[ci + 1][0] : END + 60;
   const TERMS = ["Право", "Ответственность", "Норма", "Договор"];
@@ -314,20 +331,11 @@ export const LessonMore: React.FC = () => {
     "Каримов вернулся в магазин с чеком и гарантийным талоном и потребовал заменить товар.",
     "Продавец отказал: «Телефон упал», хотя следов повреждений на корпусе нет, и предложил платный ремонт за 800 000 сум.",
     "Каримов направил письменную претензию, но ответа не получил.",
-    "Вопросы: 1) Какие права есть у Каримова? 2) Кто должен доказать, что недостаток возник по вине покупателя? 3) Что грозит продавцу за отказ?",
   ];
-  const ANSWER = "1) Недостаток выявлен в гарантийный срок, поэтому Каримов вправе потребовать замену товара, бесплатный ремонт, уменьшение цены или возврат денег. 2) Доказать вину покупателя должен продавец, например через экспертизу. 3) За отказ и просрочку продавец платит неустойку, а Каримов может обратиться в суд и требовать возмещения убытков.";
+  const QS = ["Какие права есть у Каримова?", "Кто должен доказать, что недостаток возник по вине покупателя?", "Что грозит продавцу за отказ?"];
+  const ANSW = ["Недостаток выявлен в гарантийный срок, поэтому Каримов вправе потребовать замену товара, бесплатный ремонт, уменьшение цены или возврат денег.", "Доказать вину покупателя должен продавец, например через экспертизу товара.", "За отказ и просрочку продавец платит неустойку, а Каримов может обратиться в суд и потребовать возмещения убытков."];
   const open = lin(f, OPEN + 2, OPEN + 30, 0, 1, OUTE);
-  const sent = f < READ0 ? -1 : Math.min(CASE.length - 1, Math.floor(lin(f, READ0, READ1, 0, CASE.length, Easing.linear)));
-  const confetti = f >= OK2 ? Array.from({ length: 90 }, (_, i) => {
-    const r1 = Math.sin(i * 12.9898) * 43758.5453, r2 = Math.sin(i * 78.233) * 12345.6789, r3 = Math.sin(i * 3.1) * 999.1;
-    const a = r1 - Math.floor(r1), b = r2 - Math.floor(r2), c = r3 - Math.floor(r3);
-    const t = (f - OK2) / 60;
-    const vx = (a - 0.5) * 1300, vy = -700 - b * 700;
-    const x = 960 + vx * t, y = 760 + vy * t + 900 * t * t;
-    const cols = [GREEN, BLUE, "#ffc800", "#ff4b4b", "#ce82ff"];
-    return <div key={i} style={{ position: "absolute", left: x, top: y, width: 14, height: 22, borderRadius: 3, background: cols[i % 5], transform: `rotate(${(c * 720 + f * (8 + a * 10)) % 360}deg)`, opacity: 1 - lin(t, 1.6, 2.4) }} />;
-  }) : null;
+  const sent = f < READ0 || f > READ1 ? -1 : Math.min(CASE.length + 2, Math.floor(lin(f, READ0, READ1, 0, CASE.length + 3, Easing.linear)));
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
       <div key={ci} style={{ position: "absolute", left: 80, top: 400, width: 520, opacity: (1 - lin(f, capEnd - 10, capEnd)) * (1 - 0.85 * lin(Math.abs(cs - 1), 0, 0.2)), zIndex: 60 }}>
@@ -354,29 +362,42 @@ export const LessonMore: React.FC = () => {
             <div key={t} style={{ position: "absolute", left: CX + (i % 2) * 450, top: 470 + Math.floor(i / 2) * 140, width: 430, height: 110, ...card(0, ok ? "green" : s ? "blue" : "plain"), display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 32, color: ok ? GLIP : s ? "#1899d6" : INK, opacity: Math.min(1, e * 1.4) }}>{t}</div>); })}
         </div>); })()}
 
-      {(() => { const w = win(H_END, END); if (!w.on) return null; const lf = f - H_END; const caseH = 200 + 228 * open; const ansTop = 186 + caseH + 26; return (
+      {(() => { const w = win(H_END, END); if (!w.on) return null; const lf = f - H_END;
+        const caseH = 250 + 330 * open;
+        return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <div style={{ position: "absolute", left: CX, top: 110, fontWeight: 900, fontSize: 48, color: INK }}>Решите казус</div>
-          <div style={{ position: "absolute", left: CX, top: 186, width: CW, height: caseH, padding: "20px 28px", borderRadius: 20, background: "#fff", border: "3px solid #ffc800", boxSizing: "border-box", overflow: "hidden", opacity: lin(lf, 6, 20) }}>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <div style={{ flex: 1, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: "#d49a00" }}>КАЗУС · ЗАЩИТА ПРАВ ПОТРЕБИТЕЛЕЙ</div>
-              <div style={{ fontWeight: 800, fontSize: 18, color: "#9aa1ab" }}>уровень: экзамен</div>
+          {/* scrolling column between the top bar and the buttons */}
+          <div style={{ position: "absolute", left: 0, right: 0, top: 100, height: BTN_Y - 120, overflow: "hidden", WebkitMaskImage: "linear-gradient(180deg, transparent, #000 30px, #000 calc(100% - 30px), transparent)", maskImage: "linear-gradient(180deg, transparent, #000 30px, #000 calc(100% - 30px), transparent)" }}>
+            <div style={{ position: "absolute", left: 0, right: 0, top: 10 - scroll }}>
+              <div style={{ position: "absolute", left: CX, top: 0, fontWeight: 900, fontSize: 48, color: INK }}>Решите казус</div>
+              <div style={{ position: "absolute", left: CX, top: 80, width: CW, height: caseH, padding: "22px 30px", borderRadius: 20, background: "#fff", border: "3px solid #ffc800", boxSizing: "border-box", overflow: "hidden", opacity: lin(lf, 6, 20) }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ flex: 1, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: "#d49a00" }}>КАЗУС · ЗАЩИТА ПРАВ ПОТРЕБИТЕЛЕЙ</div>
+                  <div style={{ fontWeight: 800, fontSize: 18, color: "#9aa1ab" }}>уровень: экзамен</div>
+                </div>
+                <div style={{ marginTop: 12, fontWeight: 600, fontSize: 25, lineHeight: 1.5, color: INK, textAlign: "justify" }}>
+                  {CASE.map((t, i) => <span key={i} style={{ background: i === sent ? "rgba(255,200,0,0.32)" : "transparent", borderRadius: 6, boxDecorationBreak: "clone", WebkitBoxDecorationBreak: "clone", padding: "0 2px" }}>{t} </span>)}
+                </div>
+                <div style={{ marginTop: 16, fontWeight: 900, fontSize: 25, color: INK }}>Вопросы:</div>
+                {QS.map((q, i) => (
+                  <div key={q} style={{ marginTop: 8, display: "flex", gap: 14, alignItems: "baseline", fontWeight: 700, fontSize: 25, lineHeight: 1.4, color: INK, background: sent === CASE.length + i ? "rgba(255,200,0,0.32)" : "transparent", borderRadius: 8, padding: "0 4px" }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 17, background: "#fff4cc", color: "#c48a00", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 19, flexShrink: 0, transform: "translateY(4px)" }}>{i + 1}</div>{q}
+                  </div>
+                ))}
+                {open < 0.99 ? <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 150, background: "linear-gradient(180deg, rgba(255,255,255,0), #fff 50%)", opacity: 1 - open, display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: 22 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 26px", borderRadius: 14, border: "3px solid #ffc800", boxShadow: "0 4px 0 #e0a800", background: "#fff", fontWeight: 900, fontSize: 22, letterSpacing: "0.04em", color: "#c48a00", transform: `translateY(${press(f, OPEN) * 4}px)` }}>РАСКРЫТЬ КАЗУС <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c48a00" strokeWidth="3" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg></div>
+                </div> : null}
+              </div>
+              <div style={{ position: "absolute", left: CX, top: 80 + caseH + 28, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: BLUE, opacity: lin(lf, 20, 34) }}>ВАШ ОТВЕТ</div>
+              <div style={{ position: "absolute", left: CX, top: 80 + caseH + 60, width: CW, minHeight: 300, borderRadius: 18, border: `3px solid ${f >= OK2 ? GREEN : f >= ANS ? BLUE : "#e5e5e5"}`, background: f >= OK2 ? "#f1ffe6" : "#fff", boxSizing: "border-box", padding: "18px 24px", opacity: lin(lf, 24, 38) }}>
+                {f < ANS ? <div style={{ fontWeight: 600, fontSize: 24, color: "#afafaf" }}>Напишите решение казуса…</div> : ANSW.map((t, i) => (
+                  <div key={i} style={{ marginTop: i ? 12 : 0, display: "flex", gap: 14, alignItems: "baseline", fontWeight: 600, fontSize: 23, lineHeight: 1.45, color: INK, opacity: lin(f, ANS + i * 14, ANS + i * 14 + 12), transform: `translateY(${(1 - lin(f, ANS + i * 14, ANS + i * 14 + 12)) * 10}px)` }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 16, background: "#ddf4ff", color: "#1899d6", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 18, flexShrink: 0, transform: "translateY(4px)" }}>{i + 1}</div>{t}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div style={{ marginTop: 10, fontWeight: 600, fontSize: 25, lineHeight: 1.5, color: INK, textAlign: "justify" }}>
-              {CASE.map((t, i) => <span key={i} style={{ background: i === sent ? "rgba(255,200,0,0.32)" : "transparent", borderRadius: 6, boxDecorationBreak: "clone", WebkitBoxDecorationBreak: "clone", padding: "0 2px", fontWeight: i === CASE.length - 1 ? 800 : 600 }}>{t} </span>)}
-            </div>
-            {open < 0.99 ? <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 120, background: "linear-gradient(180deg, rgba(255,255,255,0), #fff 55%)", opacity: 1 - open, display: "flex", alignItems: "flex-end", padding: "0 28px 16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 20px", borderRadius: 14, border: "3px solid #ffc800", boxShadow: "0 4px 0 #e0a800", background: "#fff", fontWeight: 900, fontSize: 22, letterSpacing: "0.04em", color: "#c48a00", transform: `translateY(${press(f, OPEN) * 4}px)` }}>РАСКРЫТЬ КАЗУС <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c48a00" strokeWidth="3" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg></div>
-            </div> : null}
           </div>
-          <div style={{ position: "absolute", left: CX, top: ansTop, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: BLUE, opacity: lin(lf, 20, 34) }}>ВАШ ОТВЕТ</div>
-          <div style={{ position: "absolute", left: CX, top: ansTop + 32, width: CW, height: Math.max(90, BTN_Y - 24 - ansTop - 32), borderRadius: 18, border: `3px solid ${f >= OK2 ? GREEN : f >= ANS ? BLUE : "#e5e5e5"}`, background: f >= OK2 ? "#f1ffe6" : "#fff", boxSizing: "border-box", padding: "14px 22px", overflow: "hidden", fontWeight: 600, fontSize: 21, lineHeight: 1.45, color: INK, opacity: lin(lf, 24, 38) }}>
-            {f >= ANS ? <span style={{ opacity: lin(f, ANS, ANS + 16) }}>{ANSWER}</span> : <span style={{ color: "#afafaf" }}>Напишите решение казуса…</span>}
-          </div>
-          {f >= AI0 && f < OK2 + 4 ? (
-            <div style={{ position: "absolute", left: CX + 160, top: BTN_Y - 64, display: "flex", alignItems: "center", gap: 14, fontWeight: 800, fontSize: 26, color: "#1899d6", opacity: lin(f, AI0, AI0 + 8) * (1 - lin(f, OK2 - 4, OK2 + 4)), background: "#fff", padding: "6px 14px", borderRadius: 14 }}>
-              <AiIcon size={44} spin={Math.sin(f / 6) * 8} />ИИ проверяет решение{".".repeat(1 + (Math.floor(f / 8) % 3))}
-            </div>) : null}
         </div>); })()}
 
       <div style={{ position: "absolute", left: CX, top: BTN_Y, width: 100, height: BTN_H, borderRadius: 18, background: "#ddf4ff", border: "3px solid #84d8ff", boxShadow: "0 5px 0 #1cb0f6", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -387,7 +408,8 @@ export const LessonMore: React.FC = () => {
       {f >= OK2 ? <Result o={lin(f, OK2, OK2 + 12, 0, 1, OUTE)} ok title="Ура! Казус решён верно" sub="+50 XP" btn="ПРОДОЛЖИТЬ" /> : null}
       {f >= 10 && !hideCursor && f < END - 20 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, 10, 20) * (1 - lin(f, END - 34, END - 20))} /></div> : null}
       </AbsoluteFill>
-      <AbsoluteFill style={{ pointerEvents: "none", zIndex: 80 }}>{confetti}</AbsoluteFill>
+      <Confetti at={CHK1 + 2} />
+      <Confetti at={OK2} />
     </AbsoluteFill>
   );
 };
