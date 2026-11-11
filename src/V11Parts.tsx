@@ -1117,41 +1117,56 @@ export const PhraseBank: React.FC = () => {
 };
 export { RED as _red, GREY as _grey, fit as _fit };
 
-/** Short contrast insert: on lex.uz the same action does nothing (plain browser selection / no hint), the page shakes, red cross. */
-export const LexTry: React.FC<{ mode: "select" | "hover" }> = ({ mode }) => {
+/** Short contrast insert: on lex.uz the same action does nothing, the page shakes, a red cross with a shadow and the reason. */
+type LexMode = "select" | "hover" | "search" | "collect" | "ai";
+const LEX_TXT: Record<LexMode, [string, string]> = {
+  select: ["Попробуем выделить.", "Нельзя выделить цветом и оставить заметку"],
+  hover: ["Наведём на термин.", "Нет подсказок к терминам"],
+  search: ["Ищем по всей базе.", "Нет подробного фильтра и поиска"],
+  collect: ["Соберём подборку.", "Нельзя собрать статьи и отправить ссылкой"],
+  ai: ["Попросим объяснить.", "Нет объяснения простыми словами"],
+};
+export const LexTry: React.FC<{ mode: LexMode }> = ({ mode }) => {
   const f = useFrame();
   const sp = useSp();
   const S = 2.4, OY = -80;
   const ly = (y: number) => y * S + OY;
   const lineY = mode === "select" ? ly(289) : ly(273);
-  const x0 = 600, x1 = 1560;
-  const drag = mode === "select" ? lin(f, 30, 58, 0, 1, Easing.bezier(0.4, 0, 0.3, 1)) : 0;
-  const px = mode === "select" ? interpolate(f, [8, 28, 30, 58, 100], [1300, x0, x0, x1, x1], { ...cl, easing: IOE }) : interpolate(f, [8, 32, 100], [1300, 1452, 1452], { ...cl, easing: IOE });
-  const py = interpolate(f, [8, 28, 100], [900, lineY + 6, lineY + 6], { ...cl, easing: IOE });
-  const NO = 70;
-  const shake = f >= NO && f < NO + 18 ? Math.sin((f - NO) * 2.2) * 14 * (1 - (f - NO) / 18) : 0;
+  // select: a short, slow drag over two words
+  const x0 = 690, x1 = 1060;
+  const drag = mode === "select" ? lin(f, 40, 84, 0, 1, Easing.bezier(0.4, 0, 0.3, 1)) : 0;
+  const tgt: Record<LexMode, [number, number]> = { select: [x1, lineY + 6], hover: [1452, lineY + 6], search: [150, ly(137) + 4], collect: [520, ly(241) + 6], ai: [1100, ly(209) + 6] };
+  const [tx, ty] = tgt[mode];
+  const px = mode === "select" ? interpolate(f, [8, 36, 40, 84, 140], [1300, x0, x0, x1, x1], { ...cl, easing: IOE }) : interpolate(f, [8, 38, 140], [1300, tx, tx], { ...cl, easing: IOE });
+  const py = interpolate(f, [8, 36, 140], [900, ty, ty], { ...cl, easing: IOE });
+  const NO = 100;
+  const typed = "право".slice(0, Math.max(0, Math.min(5, Math.floor((f - 46) / 6))));
+  const shake = f >= NO && f < NO + 20 ? Math.sin((f - NO) * 2.2) * 14 * (1 - (f - NO) / 20) : 0;
   const x = sp(NO, 10, 240);
-  const msg = mode === "select" ? "Нельзя выделить цветом и оставить заметку" : "Нет подсказок к терминам";
+  const [cap, msg] = LEX_TXT[mode];
+  const waiting = mode !== "select" && f > 42 && f < NO;
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden" }}>
       <AbsoluteFill style={{ transform: `translateX(${shake}px)`, opacity: lin(f, 0, 8) }}>
         <Img src={staticFile("lex/doc-desk.jpg")} style={{ position: "absolute", left: 0, top: OY, width: 800 * S, height: 505 * S }} />
-        {mode === "select" && drag > 0 ? <div style={{ position: "absolute", left: x0, top: lineY - 16, width: (x1 - x0) * drag, height: 38, background: "rgba(51,103,214,0.35)" }} /> : null}
-        {mode === "hover" && f > 34 && f < NO ? <div style={{ position: "absolute", left: 1452 - 50, top: lineY - 44, width: 100, height: 100, borderRadius: 50, border: "4px dashed #8a929e", opacity: lin(f, 36, 44) * (1 - lin(f, NO - 6, NO)) , display: "flex", alignItems: "flex-start", justifyContent: "flex-end" }}><span style={{ marginTop: -30, marginRight: -26, width: 48, height: 48, borderRadius: 24, background: "#8a929e", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: UI, fontWeight: 900, fontSize: 32 }}>?</span></div> : null}
-        <Pointer x={px} y={py} down={mode === "select" && f >= 30 && f < 58 ? 0.5 : 0} op={lin(f, 6, 14)} />
+        {mode === "select" && drag > 0 ? <div style={{ position: "absolute", left: x0, top: lineY - 16, width: (x1 - x0) * drag, height: 38, background: "rgba(51,103,214,0.38)" }} /> : null}
+        {mode === "search" && f > 40 ? <div style={{ position: "absolute", left: 14, top: ly(137) - 20, width: 380, height: 42, background: "#fff", paddingLeft: 16, boxSizing: "border-box", fontFamily: "Arial", fontSize: 30, color: "#222" }}>{typed}<span style={{ opacity: Math.floor(f / 8) % 2 ? 0 : 1 }}>|</span></div> : null}
+        {waiting ? <div style={{ position: "absolute", left: tx - 50, top: ty - 50, width: 100, height: 100, borderRadius: 50, border: "4px dashed #8a929e", opacity: lin(f, 44, 54) * (1 - lin(f, NO - 6, NO)), display: "flex", alignItems: "flex-start", justifyContent: "flex-end" }}><span style={{ marginTop: -30, marginRight: -26, width: 48, height: 48, borderRadius: 24, background: "#8a929e", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: UI, fontWeight: 900, fontSize: 32 }}>?</span></div> : null}
+        <Pointer x={px} y={py} down={mode === "select" && f >= 40 && f < 84 ? 0.5 : mode !== "select" ? press(f, 40) : 0} op={lin(f, 6, 14)} />
       </AbsoluteFill>
-      <AbsoluteFill style={{ background: `rgba(255,255,255,${0.55 * lin(f, NO, NO + 10)})` }} />
+      <AbsoluteFill style={{ background: `rgba(255,255,255,${0.7 * lin(f, NO, NO + 12)})` }} />
       {f >= NO ? (
-        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 26 }}>
-          <div style={{ width: 170, height: 170, borderRadius: 85, background: RED, boxShadow: "0 10px 0 #c23a3a, 0 30px 60px rgba(255,75,75,0.4)", display: "flex", alignItems: "center", justifyContent: "center", transform: `scale(${x}) rotate(${(1 - x) * -30}deg)` }}>
-            <svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-          </div>
-          <div style={{ padding: "16px 34px", borderRadius: 22, background: "#fff", boxShadow: "0 20px 50px rgba(13,22,48,0.15)", fontFamily: HEAD, fontWeight: 900, fontSize: 52, color: "#c23a3a", opacity: lin(f, NO + 6, NO + 16), transform: `translateY(${(1 - lin(f, NO + 6, NO + 18, 0, 1, OUTE)) * 20}px)` }}>{msg}</div>
+        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 10 }}>
+          <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke={RED} strokeWidth="3" strokeLinecap="round" style={{ filter: "drop-shadow(0 14px 22px rgba(194,58,58,0.4))", transform: `scale(${x}) rotate(${(1 - x) * -40}deg)` }}><path d="M6 6l12 12M18 6L6 18" /></svg>
+          <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 56, color: "#c23a3a", textShadow: "0 6px 24px rgba(255,255,255,0.9), 0 2px 10px rgba(194,58,58,0.25)", opacity: lin(f, NO + 6, NO + 16), transform: `translateY(${(1 - lin(f, NO + 6, NO + 18, 0, 1, OUTE)) * 20}px)` }}>{msg}</div>
         </AbsoluteFill>
       ) : null}
-      <TopLine a="А на lex.uz?" b={mode === "select" ? "Попробуем выделить." : "Наведём на термин."} at={4} size={66} accentColor="#7c8593" />
+      <TopLine a="А на lex.uz?" b={cap} at={4} size={66} accentColor="#7c8593" />
     </AbsoluteFill>
   );
 };
 export const LexTrySelect: React.FC = () => <LexTry mode="select" />;
 export const LexTryHover: React.FC = () => <LexTry mode="hover" />;
+export const LexTrySearch: React.FC = () => <LexTry mode="search" />;
+export const LexTryCollect: React.FC = () => <LexTry mode="collect" />;
+export const LexTryAi: React.FC = () => <LexTry mode="ai" />;
