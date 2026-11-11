@@ -94,7 +94,7 @@ pops += [(14, round(86.4 + 14.4 * k)) for k in range(5)]
 pops += [(1, round(43.2 * k)) for k in range(4)] + [(4, round(43.2 * k)) for k in range(4)]
 pops += [(9, 0), (9, 58), (12, 43), (15, 0), (15, 43)]
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
-pops += [(18, 0), (18, 29)]
+pops += [(18, 0), (18, 43)]
 # other entrances found in the scene code
 pops += [(2,180),(6,16),(7,4),(7,18),(7,202),(8,12),(8,216),(10,6),(17,122),(19,4)]
 for sc, lf in pops: at(POP, F(sc, lf), -15)
