@@ -43,8 +43,8 @@ export const Duel: React.FC = () => {
   const band = lin(f, REVEAL, REVEAL + 10, 0, 1, OUTE) * (1 - lin(f, RES - 30, RES - 16));
   const res = sp(RES, 15, 150);
   const pk = [SEARCH_END + 10, CLICK - 14, CLICK + 10, RES - 20];
-  const px = interpolate(f, pk, [1700, 1540, 1540, 1700], { ...cl, easing: IOE });
-  const py = interpolate(f, pk, [1060, 960, 960, 1000], { ...cl, easing: IOE });
+  const px = interpolate(f, pk, [1400, 1250, 1250, 1400], { ...cl, easing: IOE });
+  const py = interpolate(f, pk, [1060, 966, 966, 1010], { ...cl, easing: IOE });
   const cap: [number, string, string] = f < SEARCH_END ? [6, "Соревнуйся", "с другими."] : f < RES ? [SEARCH_END + 6, "Отвечай", "быстрее соперника."] : [RES + 6, "Побеждай", "и расти в лиге."];
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
@@ -71,21 +71,21 @@ export const Duel: React.FC = () => {
       {/* ===== question */}
       {f >= SEARCH_END - 10 ? (
         <AbsoluteFill style={{ background: "linear-gradient(110deg, #b893a6 0%, #8d82b8 55%, #7d86c2 100%)", opacity: q }}>
-          <div style={{ position: "absolute", left: 700, top: 40, width: 1140, display: "flex", gap: 10 }}>
+          <div style={{ position: "absolute", left: 390, top: 150, width: 1140, display: "flex", gap: 10 }}>
             {Array.from({ length: 7 }, (_, i) => <div key={i} style={{ flex: 1, height: 10, borderRadius: 5, background: i === 0 ? (rev ? GREEN : "#e0454f") : "rgba(255,255,255,0.45)" }} />)}
           </div>
-          <div style={{ position: "absolute", left: 700, top: 78, display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ position: "absolute", left: 390, top: 186, display: "flex", alignItems: "center", gap: 16 }}>
             <Avatar src={AV("p1")} size={92} bg="#ffd5cc" badge={rev ? "ok" : undefined} />
             <div style={{ fontWeight: 900, fontSize: 40, color: "#fff", transform: `scale(${1 + 0.25 * Math.sin(lin(f, REVEAL + 6, REVEAL + 30) * Math.PI)})` }}>{myScore}</div>
           </div>
-          <div style={{ position: "absolute", left: 1270 - 50, top: 78, width: 100, height: 100, borderRadius: 50, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 44, color: timer <= 5 ? "#e0454f" : "#1f6fb5", boxShadow: "0 8px 24px rgba(13,22,48,0.15)" }}>{timer}</div>
-          <div style={{ position: "absolute", right: 80, top: 78, display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ position: "absolute", left: 960 - 50, top: 186, width: 100, height: 100, borderRadius: 50, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 44, color: timer <= 5 ? "#e0454f" : "#1f6fb5", boxShadow: "0 8px 24px rgba(13,22,48,0.15)" }}>{timer}</div>
+          <div style={{ position: "absolute", right: 390, top: 186, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ textAlign: "right", color: "#fff" }}><div style={{ fontWeight: 700, fontSize: 26, opacity: 0.9 }}>Наргиза</div><div style={{ fontWeight: 900, fontSize: 40 }}>0</div></div>
             <Avatar src={AV("p3")} size={92} bg="#d9d6ff" badge={rev ? "no" : undefined} />
           </div>
-          <div style={{ position: "absolute", left: 700, top: 210, width: 1140, height: 470, borderRadius: 26, background: "#fff", overflow: "hidden", boxShadow: "0 20px 60px rgba(13,22,48,0.2)" }}>
-            <div style={{ position: "absolute", left: 70, right: 70, top: 150, fontWeight: 800, fontSize: 52, lineHeight: 1.3, color: "#2b2b2b", textAlign: "center", opacity: lin(f, SEARCH_END + 6, SEARCH_END + 20) }}>Право, закреплённое в законах государства, называется…</div>
-            <div style={{ position: "absolute", left: -40, right: -40, top: 190, height: 110, background: GREEN, transform: `rotate(-3deg) scaleX(${band})`, display: "flex", alignItems: "center", justifyContent: "center", gap: 18, color: "#fff", fontWeight: 900, fontSize: 52, opacity: band > 0.01 ? 1 : 0 }}>
+          <div style={{ position: "absolute", left: 390, top: 306, width: 1140, height: 400, borderRadius: 26, background: "#fff", overflow: "hidden", boxShadow: "0 20px 60px rgba(13,22,48,0.2)" }}>
+            <div style={{ position: "absolute", left: 70, right: 70, top: 120, fontWeight: 800, fontSize: 52, lineHeight: 1.3, color: "#2b2b2b", textAlign: "center", opacity: lin(f, SEARCH_END + 6, SEARCH_END + 20) }}>Право, закреплённое в законах государства, называется…</div>
+            <div style={{ position: "absolute", left: -40, right: -40, top: 145, height: 110, background: GREEN, transform: `rotate(-3deg) scaleX(${band})`, display: "flex", alignItems: "center", justifyContent: "center", gap: 18, color: "#fff", fontWeight: 900, fontSize: 52, opacity: band > 0.01 ? 1 : 0 }}>
               <div style={{ width: 62, height: 62, borderRadius: 31, border: "4px solid #fff", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></div>
               Верно! +700
             </div>
@@ -96,7 +96,7 @@ export const Duel: React.FC = () => {
             const dim = rev && !mine && !oppPick ? 0.45 : picked && !mine && !rev ? 0.6 : 1;
             const bg = rev && mine ? "#2f9e25" : rev && oppPick ? "#d33845" : c;
             return (
-              <div key={t} style={{ position: "absolute", left: 700 + (i % 2) * 580, top: 710 + Math.floor(i / 2) * 170, width: 560, height: 150, borderRadius: 18, background: bg, boxShadow: `0 6px 0 ${d}`, display: "flex", alignItems: "center", gap: 22, padding: "0 36px", boxSizing: "border-box", color: "#fff", fontWeight: 900, fontSize: 34, opacity: Math.min(1, e * 1.4) * dim, transform: `translateY(${(1 - e) * 30 + (mine ? press(f, CLICK) * 5 : 0)}px)` }}>
+              <div key={t} style={{ position: "absolute", left: 390 + (i % 2) * 580, top: 726 + Math.floor(i / 2) * 166, width: 560, height: 146, borderRadius: 18, background: bg, boxShadow: `0 6px 0 ${d}`, display: "flex", alignItems: "center", gap: 22, padding: "0 36px", boxSizing: "border-box", color: "#fff", fontWeight: 900, fontSize: 34, opacity: Math.min(1, e * 1.4) * dim, transform: `translateY(${(1 - e) * 30 + (mine ? press(f, CLICK) * 5 : 0)}px)` }}>
                 {rev && (mine || oppPick) ? <div style={{ width: 46, height: 46, borderRadius: 23, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={mine ? GREEN : "#d33845"} strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d={mine ? "M5 12.5l4.5 4.5L19 7.5" : "M6 6l12 12M18 6L6 18"} /></svg></div> : <Shape k={k} />}
                 <div style={{ flex: 1 }}>{t}</div>
                 {rev && oppPick ? <Avatar src={AV("p3")} size={70} bg="#d9d6ff" /> : null}
@@ -107,7 +107,7 @@ export const Duel: React.FC = () => {
           <Confetti at={REVEAL} x={1560} y={800} n={60} />
           {/* win card */}
           {f >= RES ? (
-            <AbsoluteFill style={{ background: `rgba(30,24,60,${0.45 * Math.min(1, res)})`, alignItems: "center", justifyContent: "center", paddingLeft: 620 }}>
+            <AbsoluteFill style={{ background: `rgba(30,24,60,${0.45 * Math.min(1, res)})`, alignItems: "center", justifyContent: "center" }}>
               <div style={{ width: 760, padding: "50px 40px 46px", borderRadius: 36, background: "#fff", textAlign: "center", boxShadow: "0 40px 100px rgba(13,22,48,0.35)", transform: `scale(${0.85 + 0.15 * res})`, opacity: Math.min(1, res * 1.4) }}>
                 <Img src={staticFile("av/medal-1.webp")} style={{ width: 150, height: 150, objectFit: "contain", transform: `rotate(${Math.sin(f / 10) * 5}deg)` }} />
                 <div style={{ marginTop: 10, fontFamily: HEAD, fontWeight: 900, fontSize: 76, color: "#2e9d3a" }}>Победа!</div>
@@ -124,7 +124,7 @@ export const Duel: React.FC = () => {
       ) : null}
 
       {/* caption, top left, white panel so it reads on both backgrounds */}
-      <div key={cap[0]} style={{ position: "absolute", left: f < SEARCH_END ? 80 : 70, top: f < SEARCH_END ? 50 : 420, width: 600, zIndex: 40 }}>
+      <div key={cap[0]} style={{ position: "absolute", left: f < SEARCH_END ? 80 : 0, right: f < SEARCH_END ? undefined : 0, top: f < SEARCH_END ? 50 : 28, width: f < SEARCH_END ? 600 : undefined, zIndex: 40, display: "flex", flexDirection: f < SEARCH_END ? "column" : "row", justifyContent: "center", columnGap: 18 }}>
         <Cap text={cap[1]} at={cap[0]} size={f < SEARCH_END ? 64 : 56} color={f < SEARCH_END ? NAVY : "#fff"} />
         <Cap text={cap[2]} at={cap[0] + 8} size={f < SEARCH_END ? 64 : 56} color={f < SEARCH_END ? NAVY : "#fff"} accent={cap[2]} accentColor={f < SEARCH_END ? BLUE : "#ffe27a"} />
       </div>
