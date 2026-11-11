@@ -364,26 +364,19 @@ const LANGS: [string, string, "ru" | "uz" | "en"][] = [["Русский", "v4/fl
 // languages: the site's law reader page (blue toolbar, breadcrumbs with home, A4 sheet); left a list of all
 // languages scrolling inside, the article runs quickly and smoothly through 15 languages
 const FL = (c: string) => staticFile(`flags/${c}.svg`);
-type LDoc = { c: string; n: string; code: string; doc: string; st: string; t: string; p1: string; p2: string; rtl?: boolean };
+type LDoc = { c: string; n: string; code: string; doc: string; st: string; arts: [string, string][]; rtl?: boolean };
 const LD: LDoc[] = [
-  { c: "ru", n: "Русский", code: "RU", doc: "КОНСТИТУЦИЯ РЕСПУБЛИКИ УЗБЕКИСТАН", st: "Документ действует, актуальная редакция", t: ART.ru.t, p1: ART.ru.p1, p2: ART.ru.p2 },
-  { c: "uz", n: "O‘zbekcha", code: "UZ", doc: "O‘ZBEKISTON RESPUBLIKASI KONSTITUTSIYASI", st: "Hujjat amalda, amaldagi tahrir", t: ART.uz.t, p1: ART.uz.p1, p2: ART.uz.p2 },
-  { c: "gb", n: "English", code: "EN", doc: "CONSTITUTION OF THE REPUBLIC OF UZBEKISTAN", st: "Document in force, current version", t: ART.en.t, p1: ART.en.p1, p2: ART.en.p2 },
-  { c: "kz", n: "Қазақша", code: "KZ", doc: "ӨЗБЕКСТАН РЕСПУБЛИКАСЫНЫҢ КОНСТИТУЦИЯСЫ", st: "Құжат күшінде", t: "1-бап.", p1: "Өзбекстан — республикалық басқару нысанындағы егемен, демократиялық, құқықтық, әлеуметтік және зайырлы мемлекет.", p2: "«Өзбекстан Республикасы» және «Өзбекстан» атаулары бірдей мағыналы." },
-  { c: "kg", n: "Кыргызча", code: "KG", doc: "ӨЗБЕКСТАН РЕСПУБЛИКАСЫНЫН КОНСТИТУЦИЯСЫ", st: "Документ күчүндө", t: "1-берене.", p1: "Өзбекстан — республикалык башкаруу формасындагы эгемендүү, демократиялык, укуктук, социалдык жана светтик мамлекет.", p2: "«Өзбекстан Республикасы» жана «Өзбекстан» деген аталыштар бирдей маанидеги." },
-  { c: "tj", n: "Тоҷикӣ", code: "TJ", doc: "КОНСТИТУТСИЯИ ҶУМҲУРИИ ӮЗБЕКИСТОН", st: "Ҳуҷҷат амал мекунад", t: "Моддаи 1.", p1: "Ӯзбекистон давлати соҳибихтиёр, демократӣ, ҳуқуқбунёд, иҷтимоӣ ва дунявӣ бо шакли ҷумҳуриявии идора мебошад.", p2: "Номҳои «Ҷумҳурии Ӯзбекистон» ва «Ӯзбекистон» баробармаъноянд." },
-  { c: "tr", n: "Türkçe", code: "TR", doc: "ÖZBEKİSTAN CUMHURİYETİ ANAYASASI", st: "Belge yürürlükte", t: "Madde 1.", p1: "Özbekistan, cumhuriyet yönetim biçimine sahip egemen, demokratik, hukuk, sosyal ve laik bir devlettir.", p2: "“Özbekistan Cumhuriyeti” ve “Özbekistan” adları eş anlamlıdır." },
-  { c: "de", n: "Deutsch", code: "DE", doc: "VERFASSUNG DER REPUBLIK USBEKISTAN", st: "Dokument in Kraft", t: "Artikel 1.", p1: "Usbekistan ist ein souveräner, demokratischer, sozialer und säkularer Rechtsstaat mit republikanischer Regierungsform.", p2: "Die Bezeichnungen „Republik Usbekistan“ und „Usbekistan“ sind gleichbedeutend." },
-  { c: "fr", n: "Français", code: "FR", doc: "CONSTITUTION DE LA RÉPUBLIQUE D’OUZBÉKISTAN", st: "Document en vigueur", t: "Article 1.", p1: "L’Ouzbékistan est un État souverain, démocratique, de droit, social et laïque, à forme républicaine de gouvernement.", p2: "Les noms « République d’Ouzbékistan » et « Ouzbékistan » sont équivalents." },
-  { c: "es", n: "Español", code: "ES", doc: "CONSTITUCIÓN DE LA REPÚBLICA DE UZBEKISTÁN", st: "Documento vigente", t: "Artículo 1.", p1: "Uzbekistán es un Estado soberano, democrático, de derecho, social y laico con forma republicana de gobierno.", p2: "Los nombres «República de Uzbekistán» y «Uzbekistán» son equivalentes." },
-  { c: "it", n: "Italiano", code: "IT", doc: "COSTITUZIONE DELLA REPUBBLICA DELL’UZBEKISTAN", st: "Documento in vigore", t: "Articolo 1.", p1: "L’Uzbekistan è uno Stato sovrano, democratico, di diritto, sociale e laico, con forma di governo repubblicana.", p2: "Le denominazioni «Repubblica dell’Uzbekistan» e «Uzbekistan» sono equivalenti." },
-  { c: "cn", n: "中文", code: "ZH", doc: "乌兹别克斯坦共和国宪法", st: "文件现行有效", t: "第一条", p1: "乌兹别克斯坦是实行共和政体的主权、民主、法治、社会和世俗国家。", p2: "“乌兹别克斯坦共和国”和“乌兹别克斯坦”两个名称具有同等意义。" },
-  { c: "jp", n: "日本語", code: "JA", doc: "ウズベキスタン共和国憲法", st: "現行の文書", t: "第1条", p1: "ウズベキスタンは、共和制の統治形態をとる主権的、民主的、法治的、社会的かつ世俗的な国家である。", p2: "「ウズベキスタン共和国」と「ウズベキスタン」の名称は同等である。" },
-  { c: "kr", n: "한국어", code: "KO", doc: "우즈베키스탄 공화국 헌법", st: "현행 문서", t: "제1조", p1: "우즈베키스탄은 공화제 정부 형태를 가진 주권적, 민주적, 법치적, 사회적, 세속적 국가이다.", p2: "‘우즈베키스탄 공화국’과 ‘우즈베키스탄’이라는 명칭은 동일한 의미를 가진다." },
-  { c: "sa", n: "العربية", code: "AR", doc: "دستور جمهورية أوزبكستان", st: "الوثيقة سارية المفعول", t: "المادة 1.", p1: "أوزبكستان دولة ذات سيادة، ديمقراطية، قانونية، اجتماعية وعلمانية، ذات شكل جمهوري للحكم.", p2: "تسميتا «جمهورية أوزبكستان» و«أوزبكستان» متساويتان في المعنى.", rtl: true },
+  { c: "ru", n: "Русский", code: "RU", doc: "КОНСТИТУЦИЯ РЕСПУБЛИКИ УЗБЕКИСТАН", st: "Документ действует, актуальная редакция", arts: [["Статья 1.", ART.ru.p1], ["Статья 2.", "Государство выражает волю народа и служит его интересам."], ["Статья 3.", "Государственная граница и территория Узбекистана неприкосновенны и неделимы."], ["Статья 4.", "Государственным языком Республики Узбекистан является узбекский язык."], ["Статья 5.", "Республика Узбекистан имеет государственные символы: Флаг, Герб и Гимн."]] },
+  { c: "uz", n: "O‘zbekcha", code: "UZ", doc: "O‘ZBEKISTON RESPUBLIKASI KONSTITUTSIYASI", st: "Hujjat amalda, amaldagi tahrir", arts: [["1-modda.", ART.uz.p1], ["2-modda.", "Davlat xalq irodasini ifoda etib, uning manfaatlariga xizmat qiladi."], ["3-modda.", "O‘zbekistonning davlat chegarasi va hududi daxlsiz va bo‘linmasdir."], ["4-modda.", "O‘zbekiston Respublikasining davlat tili o‘zbek tilidir."], ["5-modda.", "O‘zbekiston Respublikasi davlat ramzlariga ega: Bayroq, Gerb va Madhiya."]] },
+  { c: "gb", n: "English", code: "EN", doc: "CONSTITUTION OF THE REPUBLIC OF UZBEKISTAN", st: "Document in force, current version", arts: [["Article 1.", ART.en.p1], ["Article 2.", "The State expresses the will of the people and serves their interests."], ["Article 3.", "The state border and territory of Uzbekistan are inviolable and indivisible."], ["Article 4.", "The state language of the Republic of Uzbekistan is Uzbek."], ["Article 5.", "The Republic of Uzbekistan has state symbols: the Flag, the Emblem and the Anthem."]] },
+  { c: "kz", n: "Қазақша", code: "KZ", doc: "ӨЗБЕКСТАН РЕСПУБЛИКАСЫНЫҢ КОНСТИТУЦИЯСЫ", st: "Құжат күшінде", arts: [["1-бап.", "Өзбекстан республикалық басқару нысанындағы егемен, демократиялық, құқықтық, әлеуметтік және зайырлы мемлекет."], ["2-бап.", "Мемлекет халықтың еркін білдіреді және оның мүддесіне қызмет етеді."], ["3-бап.", "Өзбекстанның мемлекеттік шекарасы мен аумағы қол сұғылмайды және бөлінбейді."], ["4-бап.", "Өзбекстан Республикасының мемлекеттік тілі өзбек тілі болып табылады."], ["5-бап.", "Өзбекстан Республикасының мемлекеттік рәміздері бар: Ту, Елтаңба және Әнұран."]] },
+  { c: "tr", n: "Türkçe", code: "TR", doc: "ÖZBEKİSTAN CUMHURİYETİ ANAYASASI", st: "Belge yürürlükte", arts: [["Madde 1.", "Özbekistan, cumhuriyet yönetim biçimine sahip egemen, demokratik, hukuk, sosyal ve laik bir devlettir."], ["Madde 2.", "Devlet, halkın iradesini ifade eder ve onun çıkarlarına hizmet eder."], ["Madde 3.", "Özbekistan’ın devlet sınırı ve toprakları dokunulmaz ve bölünmezdir."], ["Madde 4.", "Özbekistan Cumhuriyeti’nin devlet dili Özbekçedir."], ["Madde 5.", "Özbekistan Cumhuriyeti’nin devlet sembolleri vardır: Bayrak, Arma ve Marş."]] },
+  { c: "de", n: "Deutsch", code: "DE", doc: "VERFASSUNG DER REPUBLIK USBEKISTAN", st: "Dokument in Kraft", arts: [["Artikel 1.", "Usbekistan ist ein souveräner, demokratischer, sozialer und säkularer Rechtsstaat mit republikanischer Regierungsform."], ["Artikel 2.", "Der Staat bringt den Willen des Volkes zum Ausdruck und dient seinen Interessen."], ["Artikel 3.", "Die Staatsgrenze und das Staatsgebiet Usbekistans sind unverletzlich und unteilbar."], ["Artikel 4.", "Staatssprache der Republik Usbekistan ist Usbekisch."], ["Artikel 5.", "Die Republik Usbekistan hat Staatssymbole: Flagge, Wappen und Hymne."]] },
+  { c: "cn", n: "中文", code: "ZH", doc: "乌兹别克斯坦共和国宪法", st: "文件现行有效", arts: [["第一条", "乌兹别克斯坦是实行共和政体的主权、民主、法治、社会和世俗国家。"], ["第二条", "国家表达人民的意志，服务于人民的利益。"], ["第三条", "乌兹别克斯坦的国界和领土不可侵犯、不可分割。"], ["第四条", "乌兹别克斯坦共和国的国语是乌兹别克语。"], ["第五条", "乌兹别克斯坦共和国拥有国家象征：国旗、国徽和国歌。"]] },
+  { c: "sa", n: "العربية", code: "AR", doc: "دستور جمهورية أوزبكستان", st: "الوثيقة سارية المفعول", rtl: true, arts: [["المادة 1.", "أوزبكستان دولة ذات سيادة، ديمقراطية، قانونية، اجتماعية وعلمانية، ذات شكل جمهوري للحكم."], ["المادة 2.", "تعبّر الدولة عن إرادة الشعب وتخدم مصالحه."], ["المادة 3.", "حدود أوزبكستان وأراضيها مصونة وغير قابلة للتجزئة."], ["المادة 4.", "اللغة الرسمية لجمهورية أوزبكستان هي اللغة الأوزبكية."], ["المادة 5.", "لجمهورية أوزبكستان رموز وطنية: العلم والشعار والنشيد الوطني."]] },
 ];
-const MORE_L: [string, string][] = [["in", "हिन्दी"], ["pt", "Português"], ["pl", "Polski"], ["ua", "Українська"], ["tm", "Türkmençe"], ["az", "Azərbaycanca"], ["id", "Bahasa"]];
-const L_FIRST = 50, L_STEP = 12; // first switch, then one language every 0.2 s
+const MORE_L: [string, string][] = [["kg", "Кыргызча"], ["tj", "Тоҷикӣ"], ["fr", "Français"], ["es", "Español"], ["it", "Italiano"], ["jp", "日本語"], ["kr", "한국어"], ["in", "हिन्दी"], ["pt", "Português"], ["pl", "Polski"], ["ua", "Українська"], ["tm", "Türkmençe"], ["az", "Azərbaycanca"], ["id", "Bahasa"]];
+const L_FIRST = 44, L_STEP = 26; // first switch, then one language every ~0.43 s
 const BAR = "linear-gradient(90deg, #1cb0f6, #3db7f4)";
 const Chev: React.FC<{ c?: string }> = ({ c = "#fff" }) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>;
 export const Langs: React.FC = () => {
@@ -393,7 +386,7 @@ export const Langs: React.FC = () => {
   const sw = (k: number) => L_FIRST + (k - 1) * L_STEP;
   const cur = Math.max(0, Math.min(LD.length - 1, Math.floor((f - L_FIRST) / L_STEP) + 1));
   const near = Math.abs(f - sw(Math.max(1, Math.min(LD.length - 1, Math.round((f - L_FIRST) / L_STEP) + 1))));
-  const veil = f < L_FIRST - 6 ? 0 : Math.max(0, 1 - near / 6);
+  const veil = f < L_FIRST - 8 ? 0 : Math.max(0, 1 - near / 8);
   const d = LD[cur];
   const ROW = 66;
   const selY = LD.slice(1).reduce((acc, _, k) => acc + lin(f, sw(k + 1) - 4, sw(k + 1) + 4), 0);
@@ -408,7 +401,7 @@ export const Langs: React.FC = () => {
             <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ВЫБЕРИТЕ ЗАКОН</div><div style={{ fontWeight: 900, fontSize: 23, whiteSpace: "nowrap" }}>Конституция Республики</div></div><Chev />
           </div>
           <div style={{ width: 300, padding: "0 24px", display: "flex", alignItems: "center", gap: 14, borderRight: "2px solid rgba(255,255,255,0.35)" }}>
-            <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ЧАСТЬ 1 ИЗ 10</div><div style={{ fontWeight: 900, fontSize: 23 }}>СТАТЬЯ 1</div></div><Chev />
+            <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ЧАСТЬ 1 ИЗ 10</div><div style={{ fontWeight: 900, fontSize: 23 }}>СТАТЬИ 1-5</div></div><Chev />
           </div>
           <div style={{ width: 150, display: "flex", alignItems: "center", justifyContent: "center", gap: 12, borderRight: "2px solid rgba(255,255,255,0.35)", background: f >= L_FIRST - 4 ? "rgba(255,255,255,0.16)" : "transparent" }}>
             <Img src={FL(d.c)} style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover", border: "2px solid #fff" }} />
@@ -461,16 +454,16 @@ export const Langs: React.FC = () => {
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-2" /></svg>
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M15 14l5-5-5-5M20 9H9a5 5 0 0 0 0 10h2" /></svg>
             </div>
-            <div style={{ opacity: 1 - veil * 0.85, filter: `blur(${veil * 5}px)`, transform: `translateY(${veil * 6}px)`, direction: d.rtl ? "rtl" : "ltr" }}>
+            <div style={{ opacity: 1 - veil * 0.95, filter: `blur(${veil * 2}px)`, direction: d.rtl ? "rtl" : "ltr" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, justifyContent: "flex-end", marginTop: -30, fontWeight: 800, fontSize: 22, color: "#2e9d3a", direction: "ltr" }}>
                 <svg width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2e9d3a" /><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 {d.st}
               </div>
-              <div style={{ marginTop: 34, textAlign: "center", fontWeight: 900, fontSize: 34, color: "#1a237e", lineHeight: 1.25 }}>{d.doc}</div>
+              <div style={{ marginTop: 26, textAlign: "center", fontWeight: 900, fontSize: 32, color: "#1a237e", lineHeight: 1.25 }}>{d.doc}</div>
               <div style={{ marginTop: 8, textAlign: "center", fontWeight: 600, fontSize: 24, color: "#5d6470" }}>30.04.2023</div>
-              <div style={{ marginTop: 34, textAlign: "center", fontWeight: 900, fontSize: 34, color: "#1a237e" }}>{d.t}</div>
-              <div style={{ marginTop: 18, fontWeight: 500, fontSize: 31, lineHeight: 1.6, color: "#2b2b2b", textAlign: "justify", textIndent: 70 }}>{d.p1}</div>
-              <div style={{ marginTop: 12, fontWeight: 500, fontSize: 31, lineHeight: 1.6, color: "#2b2b2b", textAlign: "justify", textIndent: 70 }}>{d.p2}</div>
+              {d.arts.map(([h, t], i) => (
+                <div key={i} style={{ marginTop: i === 0 ? 30 : 14, fontWeight: 500, fontSize: 27, lineHeight: 1.5, color: "#2b2b2b", textAlign: "justify", textIndent: 56 }}><span style={{ fontWeight: 900, color: "#1a237e" }}>{h}</span> {t}</div>
+              ))}
             </div>
           </div>
         </div>
