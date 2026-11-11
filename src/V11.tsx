@@ -14,10 +14,7 @@ import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI,
 const LOGO = "#3db7f4";
 const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const Top: React.FC<{ dark?: boolean }> = ({ dark }) => (
-  <>
-    <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 56, top: 42, height: 30, filter: dark ? "brightness(0) invert(1)" : undefined }} />
-    <div style={{ position: "absolute", right: 56, top: 48, fontFamily: HEAD, fontWeight: 500, fontSize: 18, color: dark ? "rgba(255,255,255,0.78)" : "#6f7682" }}>veoskill.uz</div>
-  </>
+  <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 60, top: 40, height: 46, filter: dark ? "brightness(0) invert(1)" : undefined, zIndex: 39 }} />
 );
 /** Big word, letters rise out of a mask. */
 const Kin: React.FC<{ text: string; at: number; size: number; color?: string; accent?: string; accentColor?: string; stagger?: number }> = ({ text, at, size, color = NAVY, accent, accentColor = BLUE, stagger = 1.4 }) => {
@@ -271,7 +268,6 @@ const G2: React.FC = () => {
   const py = interpolate(f, [206, PICK - 4, PICK + 20], [1000, target.y, target.y + 16], { ...cl, easing: IOE });
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
-      <Top />
       <HBlur id="hb-g2" v={W2 * 46} />
       <AbsoluteFill style={whip("hb-g2", W2 * 46, -W2 * 1700)}>
       <GameTitle t="Истории" />
@@ -320,7 +316,6 @@ const G3: React.FC = () => {
   const W3 = 1 - lin(f, 0, 20, 0, 1, Easing.out(Easing.cubic));
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
-      <Top />
       <HBlur id="hb-g3" v={W3 * 46} />
       <AbsoluteFill style={whip("hb-g3", W3 * 46, W3 * 1700)}>
       <GameTitle t="Верно или неверно" />
@@ -649,7 +644,6 @@ const LexScene: React.FC = () => {
   const cx = 110 + 550, cy = 200 + 370;
   return (
     <AbsoluteFill style={{ background: BG }}>
-      <Top />
       <div style={{ position: "absolute", left: 110, top: 96, zIndex: 30 }}><Cap text="Обычно закон выглядит так." at={6} size={56} /></div>
       <AbsoluteFill style={{ transformOrigin: `${cx}px ${cy}px`, transform: `scale(${1 + push * 0.06})` }}>
         <AbsoluteFill style={{ perspective: 2400 }}>
@@ -708,7 +702,6 @@ const Table: React.FC = () => {
   const push = lin(f, 0, 288, 0, 1, Easing.linear);
   return (
     <AbsoluteFill style={{ background: BG }}>
-      <Top />
       <AbsoluteFill style={{ transform: `scale(${1.0 + push * 0.04})` }}>
       <div style={{ position: "absolute", left: 0, right: 0, top: 120, display: "flex", justifyContent: "center" }}><Cap text="Чем мы удобнее" at={6} size={68} /></div>
       <div style={{ position: "absolute", left: 300, top: 252, width: 1320 }}>
