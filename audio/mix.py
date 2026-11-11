@@ -153,6 +153,13 @@ pops += [(N("S7"), 115)]
 pops += [(N("Counter"), 4), (N("Counter"), 14), (N("Counter"), 100)] + [(N("Counter"), 372 + 6 * i) for i in range(5)]
 for lf in [330]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(N("Counter"), lf) / FPS - i / SR + 0.03, -20)
+# Profile and Premium
+for nm in ["ProfWords", "PremWords"]: pops += [(N(nm), 0), (N(nm), 58)]
+for lf in [60, 96, 120, 150, 172, 205, 260, 396, 430, 470, 494]: at(CL, F(N("Profile"), lf), -16)
+pops += [(N("Profile"), 66), (N("Profile"), 266), (N("Profile"), 436)]
+for lf in [213, 338]: at(CH, F(N("Profile"), lf), -17)
+at(CL, F(N("Premium"), 150), -16)
+pops += [(N("Premium"), 14), (N("Premium"), 20), (N("Premium"), 26)] + [(N("Premium"), 246 + 10 * i) for i in range(6)]
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
 pops += [(N("AiWords"), 0), (N("AiWords"), 58)]
 # other entrances found in the scene code
