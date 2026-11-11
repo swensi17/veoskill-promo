@@ -361,8 +361,8 @@ export const ArticleActions: React.FC = () => {
   const keys: CK[] = [{ at: 0, x: 1200, y: 600, s: 1.0 }, { at: 40, x: 980, y: 560, s: 1.3 }, { at: 70, x: 980, y: 560, s: 1.3 }, { at: 96, x: 800, y: 600, s: 1.6 }, { at: 136, x: 820, y: 610, s: 1.6 }, { at: 168, x: 1560, y: 560, s: 1.35 }, { at: 196, x: 1600, y: 640, s: 1.62 }, { at: 288, x: 1610, y: 660, s: 1.62 }];
   // the cursor stops on every target for the click and the ripple, then moves on
   const kx = [12, HEART - 6, HEART + 8, F1 - 6, F1 + 8, F2 - 6, F2 + 10, 140, DOTS - 6, DOTS + 8, MENU_AT + 22, 278];
-  const px = interpolate(f, kx, [1300, 636, 636, 966, 966, 966, 966, 1100, 1826, 1826, 1700, 1700], { ...cl, easing: IOE });
-  const py = interpolate(f, kx, [760, 466, 466, 644, 644, 745, 745, 380, 466, 466, 548, 548 + 4 * 62], { ...cl, easing: IOE });
+  const px = interpolate(f, kx, [1300, 636, 636, 962, 962, 962, 962, 1100, 1771, 1771, 1700, 1700], { ...cl, easing: IOE });
+  const py = interpolate(f, kx, [760, 436, 436, 642, 642, 742, 742, 380, 434, 434, 548, 548 + 4 * 62], { ...cl, easing: IOE });
   const heart = sp(HEART + 2, 9, 260);
   const pop = lin(f, POP, POP + 10) * (1 - lin(f, 140, 152));
   const menu = sp(MENU_AT, 15, 200);
@@ -462,15 +462,17 @@ export const Collect: React.FC = () => {
   const T = [40, 64, 88]; // ticks: articles 2, 3, 4
   const DL = 122, PDF = 160, GO = 196, SH = 272, COPY = 318, PHONE = 362;
   const cam = { x: 1214, y: 560, s: 0.9 };
-  const camS = cam.s + 0.06 * lin(f, 0, 110, 0, 1, Easing.linear);
+  const camS = cam.s;
   const keys: CK[] = [{ at: 0, x: cam.x, y: cam.y, s: camS }];
   // screen positions of the ticks (world x 636, y 304 / 442 / 656)
-  const scr = (wx: number, wy: number, ff: number) => { const s = cam.s + 0.06 * lin(ff, 0, 110, 0, 1, Easing.linear); return [960 + s * (wx - cam.x), 640 + s * (wy - cam.y)]; };
+  const scr = (wx: number, wy: number, ff: number) => { const s = cam.s; void ff; return [960 + s * (wx - cam.x), 640 + s * (wy - cam.y)]; };
   const [t1x, t1y] = scr(636, 304, T[0]), [t2x, t2y] = scr(636, 442, T[1]), [t3x, t3y] = scr(636, 656, T[2]);
   const BAR_Y = 958, DLX = 924, SHX = 1232;
-  const pk = [10, T[0] - 6, T[1] - 6, T[2] - 6, DL - 6, PDF - 6, GO - 6, 240, SH - 6, COPY - 6, 346];
-  const pxs = [1300, t1x, t2x, t3x, DLX, 808, 1110, 1300, SHX, 1210, 1500];
-  const pys = [800, t1y, t2y, t3y, BAR_Y, 518, 760, 900, BAR_Y, 600, 860];
+  // the cursor arrives 8 frames before each click and stays until the ripple is done
+  const stops: [number, number, number][] = [[T[0], t1x, t1y], [T[1], t2x, t2y], [T[2], t3x, t3y], [DL, DLX, BAR_Y], [PDF, 694, 506], [GO, 1132, 722], [SH, SHX, BAR_Y], [COPY, 1146, 592]];
+  const pk = [10, ...stops.flatMap(([t]) => [t - 8, t + 8]), 346];
+  const pxs = [1300, ...stops.flatMap(([, x]) => [x, x]), 1500];
+  const pys = [800, ...stops.flatMap(([, , y]) => [y, y]), 860];
   const px = interpolate(f, pk, pxs, { ...cl, easing: IOE }), py = interpolate(f, pk, pys, { ...cl, easing: IOE });
   const down = Math.max(...T.map((t) => press(f, t)), press(f, DL), press(f, PDF), press(f, GO), press(f, SH), press(f, COPY));
   const nSel = T.filter((t) => f >= t + 2).length;
@@ -663,8 +665,8 @@ export const Search: React.FC = () => {
   const scroll = lin(f, 228, 334, 0, 520, Easing.bezier(0.45, 0, 0.35, 1));
   // pointer (screen space): ФИЛЬТР in the toolbar, the word field, НАЙТИ, then ВЫБРАТЬ ВСЕ
   const pk = [10, FILT - 6, FILT + 8, TYPE0 - 8, FIND - 6, FIND + 8, RES + 4, ALL - 6, ALL + 10, 260];
-  const pxs = [1500, 1355, 1355, 900, 1150, 1150, 1500, 1572, 1572, 1760];
-  const pys = [560, 368, 368, 330, 840, 840, 700, 632, 632, 760];
+  const pxs = [1500, 1355, 1355, 900, 1148, 1148, 1500, 1572, 1572, 1760];
+  const pys = [560, 368, 368, 330, 784, 784, 700, 632, 632, 760];
   const px = interpolate(f, pk, pxs, { ...cl, easing: IOE }), py = interpolate(f, pk, pys, { ...cl, easing: IOE });
   const down = Math.max(press(f, FILT), press(f, FIND), press(f, ALL));
   const caret = Math.floor(f / 8) % 2 === 0;
