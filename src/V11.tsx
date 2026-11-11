@@ -711,40 +711,53 @@ export const OurAI: React.FC = () => <OurScene kind="ai" />;
 const Table: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
-  const ROWS = [
-    "Объяснение статьи простыми словами",
-    "Пример из жизни к статье",
-    "Заметки и выделение цветом",
-    "Короткие уроки шаг за шагом",
-    "Игры по праву",
-    "Очки опыта и лига",
-    "Законы на 99+ языках",
-    "Уроки, игры и законы в одном месте",
+  // top 10 real advantages over reading a bare law site; two columns of numbered cards on a soft brand gradient
+  const ROWS: [string, string][] = [
+    ["Каждая статья простыми словами", "ИИ объясняет и даёт пример из жизни"],
+    ["Подсказки к терминам", "наведи на слово и сразу поймёшь"],
+    ["Заметки, цвета и закладки", "прямо в тексте закона"],
+    ["Подборки одной ссылкой", "статьи для друга или студентов"],
+    ["Несколько статей одним файлом", "Word, PDF, TXT или HTML"],
+    ["Тест по каждой статье", "проверь, что понял закон"],
+    ["Уроки, игры и казусы", "закон запоминается, а не зубрится"],
+    ["Закон прямо в уроке", "не нужно искать в другой вкладке"],
+    ["XP, лига и соревнования", "учиться интересно каждый день"],
+    ["Всё в одном месте", "законы, уроки и библиотека книг"],
   ];
-  // rows land on half-beats of the 125 BPM track (the scene starts on a beat; 1 beat = 28.8 frames)
   const rowAt = (i: number) => Math.round(28.8 + i * 14.4);
   const push = lin(f, 0, 288, 0, 1, Easing.linear);
+  const RH = 78;
   return (
-    <AbsoluteFill style={{ background: BG }}>
-      <AbsoluteFill style={{ transform: `scale(${1.0 + push * 0.04})` }}>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 120, display: "flex", justifyContent: "center" }}><Cap text="Чем мы удобнее" at={6} size={68} /></div>
-      <div style={{ position: "absolute", left: 300, top: 252, width: 1320 }}>
-        <div style={{ display: "flex", alignItems: "center", height: 60, fontFamily: HEAD, fontWeight: 800, fontSize: 32, opacity: lin(f, 10, 24) }}>
-          <div style={{ flex: 1 }} />
-          <div style={{ width: 200, textAlign: "center", color: "#7c8593" }}>lex.uz</div>
-          <div style={{ width: 200, textAlign: "center", color: LOGO, fontFamily: UI, fontWeight: 900 }}>veoskill</div>
+    <AbsoluteFill style={{ background: BLUE, overflow: "hidden" }}>
+      <AbsoluteFill style={{ transform: "rotate(-10deg) scale(1.3)", opacity: 0.13 }}>
+        {Array.from({ length: 8 }, (_, r) => <div key={r} style={{ position: "absolute", left: -1400, top: -120 + r * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, color: "#fff", transform: `translateX(${(f * (r % 2 ? 1.6 : -1.6)) % 1300 + (r % 2 ? -650 : 0)}px)` }}>{"УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ • ".repeat(6)}</div>)}
+      </AbsoluteFill>
+      <AbsoluteFill style={{ transform: `scale(${1.0 + push * 0.025})` }}>
+        <div style={{ position: "absolute", left: 0, right: 0, top: 36, display: "flex", justifyContent: "center", columnGap: 22 }}>
+          <Cap text="Топ-10 причин," at={4} size={66} color="#fff" />
+          <Cap text="почему с veoskill удобнее." at={12} size={66} color="#fff" accent="с veoskill удобнее." accentColor={NAVY} />
         </div>
-        {ROWS.map((r, i) => {
-          const s = sp(rowAt(i), 14, 220);
-          return (
-            <div key={r} style={{ display: "flex", alignItems: "center", height: 84, borderTop: "2px solid #e3e5e9", transform: `translateY(${(1 - s) * 30}px)`, opacity: Math.min(1, s * 1.3) }}>
-              <div style={{ flex: 1, fontFamily: UI, fontWeight: 800, fontSize: 36, color: INK }}>{r}</div>
-              <div style={{ width: 200, display: "flex", justifyContent: "center" }}><Mark ok={false} s={46} /></div>
-              <div style={{ width: 200, display: "flex", justifyContent: "center", transform: `scale(${1 + press(f, rowAt(i) + 7) * 0.25})` }}><Mark ok s={46} /></div>
-            </div>
-          );
-        })}
-      </div>
+        <div style={{ position: "absolute", left: 210, top: 150, width: 1500, borderRadius: 30, background: "#fff", boxShadow: "0 40px 100px rgba(13,22,48,0.25)", padding: "8px 40px 12px", boxSizing: "border-box", opacity: lin(f, 4, 16) }}>
+          <div style={{ display: "flex", alignItems: "center", height: 64, fontFamily: HEAD, fontWeight: 800, fontSize: 30 }}>
+            <div style={{ flex: 1 }} />
+            <div style={{ width: 190, textAlign: "center", color: "#7c8593" }}>lex.uz</div>
+            <div style={{ width: 190, textAlign: "center", color: LOGO, fontFamily: UI, fontWeight: 900 }}>veoskill</div>
+          </div>
+          {ROWS.map(([t, d], i) => {
+            const s = sp(rowAt(i), 14, 220);
+            return (
+              <div key={t} style={{ display: "flex", alignItems: "center", height: RH, borderTop: "2px solid #eef0f3", transform: `translateY(${(1 - s) * 24}px)`, opacity: Math.min(1, s * 1.3) }}>
+                <div style={{ width: 48, fontFamily: HEAD, fontWeight: 900, fontSize: 28, color: LOGO }}>{i + 1}</div>
+                <div style={{ flex: 1, display: "flex", alignItems: "baseline", gap: 16 }}>
+                  <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 31, color: INK, whiteSpace: "nowrap" }}>{t}</div>
+                  <div style={{ fontFamily: UI, fontWeight: 600, fontSize: 21, color: "#8a8f98", whiteSpace: "nowrap" }}>{d}</div>
+                </div>
+                <div style={{ width: 190, display: "flex", justifyContent: "center" }}><Mark ok={false} s={42} /></div>
+                <div style={{ width: 190, display: "flex", justifyContent: "center", transform: `scale(${1 + press(f, rowAt(i) + 7) * 0.25})` }}><Mark ok s={42} /></div>
+              </div>
+            );
+          })}
+        </div>
       </AbsoluteFill>
     </AbsoluteFill>
   );

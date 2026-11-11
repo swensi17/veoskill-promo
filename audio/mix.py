@@ -104,7 +104,7 @@ for sc, lf in clicks: at(CL, F(sc, lf), -16)
 pops = [(N("IntroMosaic"),112),(N("LessonPath"),303),(N("PhraseBank"),100),(N("PhraseBank"),128),(N("PhraseBank"),156),(N("PhraseBank"),184),(N("Wall"),70),(N("Wall"),116),(N("Wall"),162),(N("Wall"),208),(N("Reader"),348),(N("AIReal"),100),(N("AIReal"),152),(N("AIReal"),206),(N("Langs"),2),(N("Langs"),8),(N("Langs"),14),(N("Langs"),20),(N("S11"),10),(N("S11"),60)]
 pops += [(N("S7b"), 60 + 30 * k) for k in range(6)]
 # Table: 8 rows on half-beats (see rowAt in V11.tsx)
-pops += [(N("Table"), round(28.8 + 14.4 * k)) for k in range(8)]
+pops += [(N("Table"), round(28.8 + 14.4 * k)) for k in range(10)]
 # LexScene: 5 red points, then they flip to green (see LexRow in V11.tsx)
 pops += [(N("LexScene"), round(86.4 + 14.4 * k)) for k in range(5)]
 # kinetic word cuts, on the beat grid (Words per= in V11.tsx)

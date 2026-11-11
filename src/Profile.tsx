@@ -78,7 +78,7 @@ const tabX = (i: number) => EX + 34 + i * TABW + TABW / 2, tabY = BY + 280 + 38;
 const cardX = (i: number) => EX + 30 + (i % 2) * 478 + 231, cardY = (i: number) => BY + 430 + Math.floor(i / 2) * 126 + 55;
 const swX = (i: number) => EX + 30 + (i % 8) * 116 + 50, swY = (i: number) => BY + 430 + Math.floor(i / 8) * 104 + 44;
 const BTN = { dice: EX + EW - 201, ok: EX + EW - 131, close: EX + EW - 61, y: EY + 48 };
-const CARDS: [string, string, string][] = [["Классика", "Знакомый аватар с одеждой и принтами", "p1"], ["Приключение", "Яркий персонаж с выразительными глазами", "me3"], ["Забавный", "Милый герой с большими ушами", "me5"], ["Скетч", "Чёрные линии, 48 причёсок и бороды", "p3"]];
+const CARDS: [string, string, string][] = [["Классика", "Знакомый аватар с одеждой и принтами", "p1"], ["Приключение", "Яркий персонаж с выразительными глазами", "p5"], ["Забавный", "Милый герой с большими ушами", "p0"], ["Скетч", "Чёрные линии, 48 причёсок и бороды", "p3"]];
 const BG2 = ["#e2fbc8", "#dff1ff", "#fbe3d3", "#f7d6ef", "#e6e6e6", "#fdf1b8", "#e5dcff", "#ffffff", "#d3efe6", "#c7e3f6", "#f8d3c8", "#f1e5cb", "#d8d6f2", "#f4c9dc", "#c4dcc0", "#4f617f"];
 
 export const Profile: React.FC = () => {
@@ -89,11 +89,11 @@ export const Profile: React.FC = () => {
   const med = lin(f, T.MED, T.MED + 14, 0, 1, OUTE) * (1 - lin(f, T.MCLOSE + 4, T.MCLOSE + 16));
   const fr = lin(f, T.FR, T.FR + 14, 0, 1, OUTE);
   const tab = f < T.TAB2 + 2 ? 0 : 5;
-  const av = f < T.TAB1 + 2 ? "p1" : f < T.H + 2 ? "me3" : "p3";
-  const card = f < T.TAB1 + 2 ? 0 : f < T.H + 2 ? 1 : 3;
+  const av = "p3";
+  const card: number = 3;
   const bg = mix("#ffe2d1", "#f7d6ef", lin(f, T.B + 2, T.B + 14));
   const clicks: [number, number, number][] = [
-    [T.GEAR, 1190, 92], [T.TAB1, cardX(1), cardY(1)], [T.H, cardX(3), cardY(3)], [T.TAB2, tabX(5), tabY], [T.B, swX(3), swY(3)], [T.OK, BTN.ok, BTN.y],
+    [T.GEAR, 1190, 92], [T.TAB2, tabX(5), tabY], [T.B, swX(3), swY(3)], [T.OK, BTN.ok, BTN.y],
     [T.ALL, 1206, 712], [T.MCLOSE, 460 + 1000 - 61, 190 + 48], [T.FIND, 1560, 222], [T.ADD1, 510 + 900 - 70, 170 + 96 + 150 + 50], [T.ADD2, 510 + 900 - 70, 170 + 96 + 150 + 2 * 100 + 50],
   ];
   const pk = [8, ...clicks.flatMap(([t]) => [t - 12, t + 8]), T.END];
@@ -126,7 +126,7 @@ export const Profile: React.FC = () => {
         {/* header card */}
         <div style={{ position: "absolute", left: 400, top: 20, width: 840, height: 380, borderRadius: 28, background: "linear-gradient(120deg, #f2c4bd, #f7d9cf 60%, #f4cfc7)", overflow: "hidden" }}>
           {[["⇪", 1110 - 400], ["⚙", 1190 - 400]].map(([k, x], i) => <div key={k} style={{ position: "absolute", left: (x as number) - 32, top: 40, width: 64, height: 64, borderRadius: 16, background: "#fff", boxShadow: `0 ${4 - 3 * (i ? press(f, T.GEAR) : 0)}px 0 #e2e2e2`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, color: "#3c3c3c" }}>{k}</div>)}
-          <div style={{ position: "absolute", left: 420 - 85, top: 34, transform: `scale(${1 + 0.12 * Math.sin(lin(f, T.OK + 8, T.OK + 30) * Math.PI)})` }}><AvatarImg size={170} src={f >= T.OK ? "p3" : "p1"} bg={f >= T.OK ? "#f7d6ef" : "#ffe2d1"} ring /></div>
+          <div style={{ position: "absolute", left: 420 - 85, top: 34, transform: `scale(${1 + 0.12 * Math.sin(lin(f, T.OK + 8, T.OK + 30) * Math.PI)})` }}><AvatarImg size={170} src="p3" bg={f >= T.OK ? "#f7d6ef" : "#ffe2d1"} ring /></div>
           <div style={{ position: "absolute", left: 0, right: 0, top: 224, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 40, color: "#3c3c3c" }}>Нодира <Verified size={38} /></div>
           <div style={{ position: "absolute", left: 0, right: 0, top: 278, textAlign: "center", fontWeight: 600, fontSize: 19, color: "#7c6f6a" }}><span style={{ color: "#2e9d3a", fontWeight: 800 }}>В сети</span> · С нами с 6 ноября 2026 г.</div>
           <div style={{ position: "absolute", left: 28, top: 312, display: "flex", gap: 12 }}>{["12 подписки", "48 подписчиков"].map((t) => <div key={t} style={{ padding: "12px 20px", borderRadius: 14, background: "#fff", fontWeight: 900, fontSize: 18, color: BLUE }}>{t}</div>)}</div>
@@ -169,7 +169,7 @@ export const Profile: React.FC = () => {
                     : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6f7682" strokeWidth="2.8" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>}
                 </div>); })}
               <div style={{ position: "absolute", left: 30, top: 96 + 20, width: EW - 60, height: 240, borderRadius: 22, background: bg, overflow: "hidden", display: "flex", justifyContent: "center" }}>
-                <Img key={av} src={staticFile(`av/nobg/${av}.svg`)} style={{ width: 280, height: 280, marginTop: 10, transform: `scale(${0.9 + 0.1 * lin(f, av === "p1" ? 0 : av === "me3" ? T.TAB1 + 2 : T.H + 2, (av === "p1" ? 0 : av === "me3" ? T.TAB1 : T.H) + 14, 0, 1, OUTE)})` }} />
+                <Img key={av} src={staticFile(`av/nobg/${av}.svg`)} style={{ width: 280, height: 280, marginTop: 10, transform: `scale(${1 + 0.05 * Math.sin(lin(f, T.B + 2, T.B + 18) * Math.PI)})` }} />
               </div>
               <div style={{ position: "absolute", left: 30, top: 96 + 280, width: EW - 60, height: 76, borderRadius: 18, background: "#f4f6f9", display: "flex", padding: 4, boxSizing: "border-box" }}>
                 {TABS.map((t, i) => (
