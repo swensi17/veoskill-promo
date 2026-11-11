@@ -585,6 +585,131 @@ export const Collect: React.FC = () => {
     </AbsoluteFill>
   );
 };
+/** Search: "ФИЛЬТР" opens "Фильтр и поиск", type a word, "НАЙТИ", loading, then the results list (as on veoskill.uz/laws/search). */
+const SB = "#1f6fb5"; // the search page's darker blue
+const RESULTS: [string, string][] = [
+  ["О внесении изменений и дополнений в некоторые законодательные акты Республики Узбекистан в связи с принятием закона Республики Узбекистан «О судебной экспертизе»", "«Эксперт имеет право: знакомиться с материалами дела, относящимися к предмету экспертизы, выписывать из них необходимые сведения и…"],
+  ["Бюджетный кодекс Республики Узбекистан", "принимает нормативно-правовые акты по вопросам, входящим в ее полномочия."],
+  ["Водный кодекс Республики Узбекистан", "…цию и техническое обслуживание водохозяйственных объектов, наделенное правом забора и доставки воды водопользователям на договорной основе;"],
+  ["Воздушный кодекс Республики Узбекистан", "…е, общественные и иные негосударственные организации и граждане имеют право принимать участие в разработке и осуществлении мероприятий…"],
+  ["Гражданский кодекс Республики Узбекистан", "…право собственности на имущество, приобретенное по основаниям, не запрещенным законом…"],
+  ["Земельный кодекс Республики Узбекистан", "…право постоянного владения и пользования земельным участком…"],
+];
+const markWord = (t: string, w: string) => {
+  const parts = t.split(new RegExp(`(${w}[а-яё]*)`, "gi"));
+  return parts.map((p, i) => (i % 2 ? <mark key={i} style={{ background: "rgba(255,212,59,0.55)", color: "inherit", borderRadius: 4, padding: "0 2px" }}>{p}</mark> : p));
+};
+const Sel: React.FC<{ label: string; value: string; ph?: boolean; w?: number; active?: number }> = ({ label, value, ph, active = 0 }) => (
+  <div style={{ flex: 1 }}>
+    <div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.1em", color: "#5d6470" }}>{label}</div>
+    <div style={{ marginTop: 8, height: 50, border: `2px solid ${active > 0.5 ? SB : "#cfd8e3"}`, display: "flex", alignItems: "center", padding: "0 16px", fontWeight: 600, fontSize: 19, color: ph ? "#9aa1ab" : "#2b2b2b", boxSizing: "border-box" }}>
+      <span style={{ flex: 1 }}>{value}</span>
+      {ph ? null : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2b2b2b" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>}
+    </div>
+  </div>
+);
+export const Search: React.FC = () => {
+  const f = useCurrentFrame();
+  const sp = useSp();
+  const FILT = 40, TYPE0 = 62, FIND = 112, LOAD = 128, RES = 176, ALL = 196;
+  const WORD = "право";
+  const typed = WORD.slice(0, Math.max(0, Math.min(WORD.length, Math.floor((f - TYPE0) / 4))));
+  const keys: CK[] = [{ at: 0, x: 1300, y: 300, s: 1.2 }];
+  const modal = sp(FILT + 6, 15, 190) * (1 - lin(f, FIND + 6, FIND + 16));
+  const page = lin(f, LOAD - 4, LOAD + 10);
+  const res = lin(f, RES, RES + 12);
+  const scroll = lin(f, 228, 334, 0, 520, Easing.bezier(0.45, 0, 0.35, 1));
+  // pointer (screen space): ФИЛЬТР in the toolbar, the word field, НАЙТИ, then ВЫБРАТЬ ВСЕ
+  const pk = [10, FILT - 6, FILT + 8, TYPE0 - 8, FIND - 6, FIND + 8, RES + 4, ALL - 6, ALL + 10, 260];
+  const pxs = [1500, 1355, 1355, 900, 1150, 1150, 1500, 1572, 1572, 1760];
+  const pys = [560, 368, 368, 330, 840, 840, 700, 632, 632, 760];
+  const px = interpolate(f, pk, pxs, { ...cl, easing: IOE }), py = interpolate(f, pk, pys, { ...cl, easing: IOE });
+  const down = Math.max(press(f, FILT), press(f, FIND), press(f, ALL));
+  const caret = Math.floor(f / 8) % 2 === 0;
+  return (
+    <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
+      {/* reader with the toolbar, dimmed under the modal */}
+      <AbsoluteFill style={{ opacity: 1 - page }}>
+        <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640} />
+        <AbsoluteFill style={{ background: `rgba(30,34,42,${0.4 * Math.min(1, modal * 1.2)})` }} />
+      </AbsoluteFill>
+      {modal > 0.01 ? (
+        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 800, background: "#fff", padding: "30px 30px 34px", boxSizing: "border-box", fontFamily: UI, boxShadow: "0 40px 100px rgba(13,22,48,0.3)", opacity: Math.min(1, modal * 1.4), transform: `translateY(${(1 - modal) * 30}px) scale(${0.95 + 0.05 * modal})` }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ flex: 1, fontWeight: 900, fontSize: 36, color: INK }}>Фильтр и поиск</div>
+              <div style={{ width: 58, height: 58, background: SB, display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg></div>
+            </div>
+            <div style={{ marginTop: 14, fontWeight: 800, fontSize: 15, letterSpacing: "0.1em", color: "#5d6470" }}>СЛОВО ИЛИ ФРАЗА В ТЕКСТЕ</div>
+            <div style={{ marginTop: 8, height: 54, border: `2px solid ${f >= TYPE0 - 6 ? SB : "#cfd8e3"}`, display: "flex", alignItems: "center", padding: "0 18px", fontWeight: 700, fontSize: 24, color: "#2b2b2b", boxSizing: "border-box" }}>
+              {typed}{f >= TYPE0 - 6 && f < FIND ? <span style={{ display: "inline-block", width: 2, height: 28, marginLeft: 2, background: caret ? SB : "transparent" }} /> : null}
+            </div>
+            <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 10, fontWeight: 600, fontSize: 16, color: "#3c3c3c" }}><div style={{ width: 22, height: 22, borderRadius: 11, border: "2px solid #9aa1ab" }} />Точное соответствие</div>
+            <div style={{ marginTop: 16, display: "flex", gap: 18 }}><Sel label="НОМЕР АКТА" value="Например, ЗРУ-588" ph /><Sel label="ВИД АКТА" value="Все виды" /></div>
+            <div style={{ marginTop: 14, display: "flex", gap: 18 }}><Sel label="ГДЕ ИСКАТЬ СЛОВО" value="Везде в тексте" /><Sel label="СТАТУС" value="Действует" /></div>
+            <div style={{ marginTop: 14, display: "flex", gap: 18 }}><Sel label="ЯЗЫК АКТА" value="Русский" /><Sel label="СОРТИРОВКА" value="По названию" /></div>
+            <div style={{ marginTop: 22, display: "flex", gap: 16 }}>
+              <div style={{ flex: 1, height: 60, background: "#f2b3ab", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.08em" }}>ОЧИСТИТЬ</div>
+              <div style={{ flex: 1, height: 60, background: SB, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.08em", transform: `scale(${1 - press(f, FIND) * 0.04})` }}>НАЙТИ</div>
+            </div>
+          </div>
+        </AbsoluteFill>
+      ) : null}
+      {/* results page */}
+      {page > 0.01 ? (
+        <AbsoluteFill style={{ background: "#fff", opacity: page, fontFamily: UI }}>
+          <div style={{ position: "absolute", left: 240, right: 240, top: 380 - scroll }}>
+            <div style={{ fontWeight: 900, fontSize: 21, letterSpacing: "0.06em", color: SB }}>УТОЧНИТЬ РЕЗУЛЬТАТЫ ПО:</div>
+            <div style={{ marginTop: 14, display: "flex", gap: 18 }}>{["По годам", "По месяцам", "По видам", "По статусу"].map((t) => <div key={t} style={{ flex: 1 }}><Sel label="" value={t} /></div>)}</div>
+            <div style={{ marginTop: 14, height: 52, border: "2px solid #cfd8e3", display: "flex", alignItems: "center", padding: "0 18px", fontWeight: 600, fontSize: 19, color: "#9aa1ab" }}>Слово в названии акта</div>
+            <div style={{ marginTop: 26, height: 2, background: "#e6e9ee" }} />
+            {f < RES ? (
+              <div style={{ marginTop: 28 }}>
+                <div style={{ fontWeight: 800, fontSize: 24, color: SB }}>Ищем в базе законов{".".repeat(1 + (Math.floor(f / 8) % 3))}</div>
+                {[0, 1, 2].map((i) => (
+                  <div key={i} style={{ marginTop: 30 }}>
+                    {[0.66, 0.5, 0.83].map((w, k) => <div key={k} style={{ marginTop: 12, width: `${w * 100}%`, height: 18, borderRadius: 9, background: `linear-gradient(90deg, #e8f1fa, #f6f9fd ${(f * 3 + i * 20) % 100}%, #e8f1fa)` }} />)}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ opacity: res }}>
+                <div style={{ marginTop: 26, display: "flex", alignItems: "center" }}>
+                  <div style={{ flex: 1, fontWeight: 800, fontSize: 27, color: SB }}>По запросу «право» найдено 40 документов</div>
+                  <div style={{ height: 60, padding: "0 28px", background: SB, color: "#fff", display: "flex", alignItems: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.06em", transform: `scale(${1 - press(f, ALL) * 0.05})` }}>ВЫБРАТЬ ВСЕ</div>
+                </div>
+                <div style={{ marginTop: 10, fontWeight: 600, fontSize: 18, color: "#6f7682" }}>Показаны первые 40 документов. Уточните условия, чтобы увидеть остальные.</div>
+                {RESULTS.map(([title, snip], i) => {
+                  const e = lin(f, RES + 4 + i * 4, RES + 14 + i * 4);
+                  const on = f >= ALL + 4 + i * 3 ? sp(ALL + 4 + i * 3, 10, 260) : 0;
+                  return (
+                    <div key={i} style={{ marginTop: 18, paddingTop: 22, borderTop: "2px solid #eef0f3", display: "flex", gap: 22, opacity: e, transform: `translateY(${(1 - e) * 16}px)` }}>
+                      <div style={{ width: 26, fontWeight: 700, fontSize: 22, color: "#3c3c3c", paddingTop: 4 }}>{i + 1}</div>
+                      <div style={{ width: 34, height: 34, borderRadius: 17, border: `2.5px solid ${on > 0.5 ? "#2f7be6" : "#9aa1ab"}`, background: on > 0.5 ? "#2f7be6" : "#fff", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transform: `scale(${1 + 0.25 * Math.sin(Math.min(1, on) * Math.PI)})` }}>{on > 0.5 ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : null}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 800, fontSize: 24, lineHeight: 1.35, color: SB }}>{title}</div>
+                        <div style={{ marginTop: 8, fontWeight: 500, fontSize: 19, lineHeight: 1.6, color: "#2b2b2b" }}>{markWord(snip, "прав")}</div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: 18, paddingTop: 2 }}>
+                        <div style={{ fontWeight: 800, fontSize: 19, color: "#2e9d3a", paddingTop: 4 }}>Действует</div>
+                        <FileIc label="PDF" c="#e5322d" />
+                        <div style={{ width: 34, height: 34, borderRadius: 6, background: "#1f4e9c", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 18, fontFamily: "Arial" }}>W</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          <TopCap lines={["Найди закон по слову.", "Сразу по всей базе."]} at={LOAD} accent="Сразу по всей базе." />
+          <Top />
+        </AbsoluteFill>
+      ) : null}
+      {f >= 10 && f < 262 ? <Pointer x={px} y={py} down={down} op={lin(f, 10, 20) * (1 - lin(f, 248, 262))} /> : null}
+      {page < 0.5 ? <Top /> : null}
+    </AbsoluteFill>
+  );
+};
 /** AI: the site's "Объяснение статьи" window (same layout as veoskill.uz): loading, then three blocks written in. */
 const EXPL: [string, string, string, boolean][] = [
   ["target.svg", "КОРОТКО", "Первая статья определяет главные основы государства. Узбекистан признается независимой страной с выборной властью, подчинением закону и заботой о гражданах, а его короткое и полное названия имеют равную силу.", true],
