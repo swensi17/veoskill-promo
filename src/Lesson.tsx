@@ -8,7 +8,7 @@ import { ART } from "./Laws7";
 // build the answer from words, match pairs, find the mistake (a wrong pick costs a heart), a chat story.
 // Real page layout: one 880 px column, progress bar and hearts on top, book button + big button at the bottom.
 const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
-const CX = 640, CW = 880; // content column
+const CX = 520, CW = 880; // content column
 const BTN_Y = 930, BTN_H = 84;
 const MAIN_X = CX + 116 + (CW - 116) / 2;
 const S = { A: 0, B: 150, C: 390, D: 560, E: 760, F: 960, G: 1130, END: 1325 };
@@ -122,7 +122,7 @@ export const Lesson: React.FC = () => {
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
       {/* caption column */}
       <AbsoluteFill style={{ transformOrigin: "1540px 560px", transform: `translateY(${104 * (1 - zc)}px) scale(${0.9 + 0.3 * zc}) translateX(${-150 * zc}px)` }}>
-      <AbsoluteFill style={{ transformOrigin: "1080px 560px", transform: `scale(${1 + 0.3 * zt})` }}>
+      <AbsoluteFill style={{ transformOrigin: "960px 560px", transform: `scale(${1 + 0.3 * zt})` }}>
       <AbsoluteFill style={{ transformOrigin: `${CX + 50}px ${BTN_Y + 42}px`, transform: `scale(${1 + 0.6 * zb})` }}>
       {/* top bar: close, progress, hearts */}
       <svg style={{ position: "absolute", left: CX - 4, top: 46 }} width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#afafaf" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
@@ -341,7 +341,7 @@ export const LessonMore: React.FC = () => {
   // camera over the page: read the case up close, back out, then move in on the check button
   const ck = [0, OPEN + 30, READ0, READ1, ANS + 10, CHK2 - 30, CHK2 + 6, OK2, OK2 + 30];
   const cam = (v: number[]) => interpolate(f, ck, v, { ...cl, easing: IOE });
-  const cx = cam([960, 960, 1080, 1080, 960, 960, 1100, 1100, 960]);
+  const cx = cam([960, 960, 960, 960, 960, 960, 980, 980, 960]);
   const cy = cam([540, 540, 330, 560, 540, 540, 840, 840, 540]);
   const cs = cam([1, 1, 1.42, 1.42, 1, 1, 1.25, 1.25, 1]);
   const scroll = lin(f, SCR0, SCR1, 0, 330, IOE);
