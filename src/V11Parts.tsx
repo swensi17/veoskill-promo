@@ -291,24 +291,29 @@ export const Reader: React.FC = () => {
   );
 };
 /** Hints: click the green bulb ("Подсказки" popover), then hover a dotted term and its explanation pops up (as on veoskill.uz). */
-const HintBox: React.FC<{ x: number; y: number; w: number; title: string; text: string; o: number; arrowX: number }> = ({ x, y, w, title, text, o, arrowX }) => (
+const HintBox: React.FC<{ x: number; y: number; w: number; title: string; text: string; o: number; arrowX: number; read?: number }> = ({ x, y, w, title, text, o, arrowX, read = 1 }) => {
+  const n = Math.round(text.length * read);
+  return (
   <div style={{ position: "absolute", left: x, top: y, width: w, opacity: o, transform: `translateY(${(1 - o) * 10}px)`, fontFamily: UI }}>
     <div style={{ position: "absolute", left: arrowX - 12, top: -11, width: 22, height: 22, background: "#fff", borderLeft: "3px solid #1cb0f6", borderTop: "3px solid #1cb0f6", transform: "rotate(45deg)", borderRadius: "4px 0 0 0" }} />
     <div style={{ background: "#fff", border: "3px solid #1cb0f6", borderRadius: 16, padding: "16px 22px 18px", boxShadow: "0 18px 40px rgba(13,22,48,0.16)" }}>
       <div style={{ fontWeight: 800, fontSize: 21, color: "#3c3c3c" }}>{title}</div>
-      <div style={{ marginTop: 8, fontWeight: 600, fontSize: 18, lineHeight: 1.5, color: "#7c8593" }}>{text}</div>
+      <div style={{ marginTop: 8, fontWeight: 600, fontSize: 18, lineHeight: 1.5, color: "#a3a9b2" }}><span style={{ color: "#3c3c3c" }}>{text.slice(0, n)}</span>{text.slice(n)}</div>
     </div>
   </div>
-);
+  );
+};
 export const Hints: React.FC = () => {
   const f = useCurrentFrame();
   const BULB = 46, POP = 52, HOVER = 176, TIP = 184;
   // starts exactly where Reader's camera ends (so the cross-dissolve is seamless), glides to the bulb,
   // then moves in close on each hint while it is on screen
-  const keys: CK[] = [{ at: 0, x: 1150, y: 580, s: 1.0 }, { at: 40, x: 1350, y: 300, s: 1.25 }, { at: 56, x: 1350, y: 300, s: 1.25 }, { at: 92, x: 1610, y: 270, s: 1.6 }, { at: 132, x: 1610, y: 270, s: 1.62 }, { at: 172, x: 1080, y: 740, s: 1.35 }, { at: 188, x: 1080, y: 740, s: 1.35 }, { at: 224, x: 1150, y: 805, s: 1.7 }, { at: 288, x: 1150, y: 805, s: 1.74 }];
+  // close-ups "read" the hint: the camera drifts along the text while the read words darken
+  const keys: CK[] = [{ at: 0, x: 1150, y: 580, s: 1.0 }, { at: 40, x: 1350, y: 300, s: 1.25 }, { at: 56, x: 1350, y: 300, s: 1.25 }, { at: 84, x: 1560, y: 262, s: 1.75 }, { at: 134, x: 1680, y: 312, s: 1.75 }, { at: 172, x: 1080, y: 740, s: 1.35 }, { at: 188, x: 1080, y: 740, s: 1.35 }, { at: 214, x: 1060, y: 812, s: 1.85 }, { at: 288, x: 1250, y: 872, s: 1.85 }];
+  const readA = lin(f, 80, 132, 0, 1, Easing.linear), readB = lin(f, 208, 282, 0, 1, Easing.linear);
   const kx = [14, BULB - 6, 132, HOVER - 4];
-  const px = interpolate(f, kx, [1500, 1590, 1600, 1080], { ...cl, easing: IOE });
-  const py = interpolate(f, kx, [560, 168, 236, 738], { ...cl, easing: IOE });
+  const px = interpolate(f, kx, [1500, 1590, 1760, 1080], { ...cl, easing: IOE });
+  const py = interpolate(f, kx, [560, 168, 150, 738], { ...cl, easing: IOE });
   const pop = lin(f, POP, POP + 12) * (1 - lin(f, 136, 152));
   const tip = lin(f, TIP, TIP + 12);
   const ul = lin(f, HOVER - 2, HOVER + 6);
@@ -317,10 +322,10 @@ export const Hints: React.FC = () => {
       <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640}>
         {/* bulb pressed: dark ring like on the site */}
         <div style={{ position: "absolute", left: 1551, top: 134, width: 68, height: 60, borderRadius: 14, border: "3px solid #1f5d2a", boxSizing: "border-box", opacity: lin(f, BULB + 2, BULB + 6) }} />
-        <HintBox x={1430} y={214} w={380} o={pop} arrowX={155} title="Подсказки" text="Подсказки к юридическим терминам: наведите на выделенное слово, и появится пояснение." />
+        <HintBox x={1430} y={214} w={380} o={pop} read={readA} arrowX={155} title="Подсказки" text="Подсказки к юридическим терминам: наведите на выделенное слово, и появится пояснение." />
         {/* hovered term: dotted underline becomes solid */}
         <div style={{ position: "absolute", left: 971, top: 742, width: 206, height: 3, borderRadius: 2, background: "#1cb0f6", opacity: ul }} />
-        <HintBox x={930} y={772} w={440} o={tip} arrowX={140} title="Юридическая ответственность" text="Обязанность лица претерпеть неблагоприятные последствия за нарушение закона: штраф, возмещение вреда, лишение свободы." />
+        <HintBox x={930} y={772} w={440} o={tip} read={readB} arrowX={140} title="Юридическая ответственность" text="Обязанность лица претерпеть неблагоприятные последствия за нарушение закона: штраф, возмещение вреда, лишение свободы." />
         {f >= 14 ? <Pointer x={px} y={py} down={press(f, BULB)} op={lin(f, 14, 26)} /> : null}
       </Plane>
       <TopCap lines={["Непонятный термин?", "Наведи и узнай."]} at={8} accent="Наведи и узнай." />
