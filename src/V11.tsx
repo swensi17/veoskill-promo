@@ -5,6 +5,7 @@ import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
 import { Lesson, LessonMore } from "./Lesson";
 import { Duel } from "./Duel";
+import { Books } from "./Books";
 import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, ArticleActions, Collect, Search, AiPick, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
 import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
@@ -773,6 +774,7 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: AiPick, d: 173, xo: 16 },
   { C: AIReal, d: 317, xo: 16 },
   { C: Langs, d: 230, xo: 10 },
+  { C: Books, d: 1008 },
   { C: Table, d: 288, xo: 16 },
   { C: S11, d: 720 },
 ];
