@@ -338,7 +338,7 @@ export const AIReal: React.FC = () => {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
               <div style={{ fontWeight: 800, fontSize: 36, letterSpacing: "-0.01em" }}>Объяснение статьи (Статья 1)</div>
-              <div style={{ width: 54, height: 54, borderRadius: 14, background: "#e3f4fd", display: "flex", alignItems: "center", justifyContent: "center" }}><AiIcon size={36} blink={blinkAt(f)} /></div>
+              <AiIcon size={44} blink={blinkAt(f)} />
             </div>
             <div style={{ display: "flex", gap: 14 }}>
               <div style={{ width: 54, height: 54, borderRadius: 14, background: "#ddf4ff", color: "#1cb0f6", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 28 }}>?</div>
