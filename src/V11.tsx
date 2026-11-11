@@ -3,7 +3,7 @@ import { AbsoluteFill, Easing, Img, Sequence, interpolate, spring, staticFile, u
 import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
-import { Lesson, LessonMore } from "./Lesson";
+import { LessonSlow, LessonMore } from "./Lesson";
 import { Duel } from "./Duel";
 import { Books } from "./Books";
 import { Profile, Premium } from "./Profile";
@@ -772,34 +772,34 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: S4, d: 432 },
   { C: LessonWords, d: 230 },
   { C: LessonPath, d: 403 },
-  { C: Lesson, d: 1325 },
+  { C: LessonSlow, d: 1498 },
   { C: LessonMore, d: 893 },
   { C: G3, d: 230 },
   { C: S7, d: 173 },
   { C: S7b, d: 374 },
-  { C: DuelWords, d: 116 },
+  { C: DuelWords, d: 115 },
   { C: Duel, d: 720, xo: 16 },
   { C: Wall, d: 288 },
-  { C: S9, d: 115, xo: 12 },
+  { C: S9, d: 116, xo: 12 },
   { C: Counter, d: 518, xo: 16 },
   { C: LexScene, d: 317 },
   { C: OurWords, d: 115 },
   { C: LawsHome, d: 202 },
-  { C: Reader, d: 605, k: 1.4, xo: 18 },
-  { C: Hints, d: 403, k: 1.4, xo: 16 },
+  { C: Reader, d: 604, k: 1.4, xo: 18 },
+  { C: Hints, d: 404, k: 1.4, xo: 16 },
   { C: ArticleActions, d: 403, k: 1.4, xo: 16 },
   { C: Collect, d: 806, k: 1.4, xo: 16 },
   { C: Search, d: 490, k: 1.416667 },
   { C: AiWords, d: 173 },
-  { C: AiPick, d: 173, xo: 16 },
-  { C: AIReal, d: 316, xo: 16 },
+  { C: AiPick, d: 172, xo: 16 },
+  { C: AIReal, d: 317, xo: 16 },
   { C: Langs, d: 231, xo: 10 },
   { C: LibWords, d: 115 },
-  { C: Books, d: 1210 },
-  { C: ProfWords, d: 115 },
+  { C: Books, d: 1209 },
+  { C: ProfWords, d: 116 },
   { C: Profile, d: 720, k: 1.3, xo: 16 },
   { C: PremWords, d: 115 },
-  { C: Premium, d: 346, xo: 16 },
+  { C: Premium, d: 345, xo: 16 },
   { C: Table, d: 288, xo: 16 },
   { C: S11, d: 720 },
 ];

@@ -26,8 +26,8 @@ export const lin = (f: number, a: number, b: number, x = 0, y = 1, e = IOE) => i
 // quick press (2 frames), short hold, soft release over 14 frames: the release drives the click ripple in Pointer
 export const press = (f: number, at: number) => lin(f, at, at + 2) * (1 - lin(f, at + 4, at + 18, 0, 1, Easing.out(Easing.quad)));
 /** Time stretch for a whole scene: inside <SlowCtx.Provider value={k}> every useFrame()/useSp()/Cap runs k times slower. */
-export const SlowCtx = React.createContext(1);
-export const useFrame = () => useCurrentFrame() / React.useContext(SlowCtx);
+export const SlowCtx = React.createContext<number | ((f: number) => number)>(1);
+export const useFrame = () => { const k = React.useContext(SlowCtx); const c = useCurrentFrame(); return typeof k === "function" ? k(c) : c / k; };
 export const useSp = () => {
   const f = useFrame();
   const { fps } = useVideoConfig();
