@@ -3,7 +3,7 @@ import { AbsoluteFill, Easing, Img, Sequence, interpolate, spring, staticFile, u
 import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
-import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
+import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, ArticleActions, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
 import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
 // veoskill v10: Maverick-style reel after review. Lessons as a camera flight over the lesson path, three games
@@ -754,7 +754,8 @@ const SCENES: { C: React.FC; d: number; xo?: number }[] = [
   { C: OurWords, d: 115 },
   { C: LawsHome, d: 202 },
   { C: Reader, d: 432, xo: 18 },
-  { C: Hints, d: 288 },
+  { C: Hints, d: 288, xo: 16 },
+  { C: ArticleActions, d: 288 },
   { C: AiWords, d: 173 },
   { C: AIReal, d: 316, xo: 16 },
   { C: Langs, d: 231, xo: 10 },
