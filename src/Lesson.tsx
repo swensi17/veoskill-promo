@@ -376,8 +376,8 @@ export const LessonMore: React.FC = () => {
                 </div>
                 <div style={{ marginTop: 16, fontWeight: 900, fontSize: 25, color: INK }}>Вопросы:</div>
                 {QS.map((q, i) => (
-                  <div key={q} style={{ marginTop: 8, display: "flex", gap: 14, alignItems: "baseline", fontWeight: 700, fontSize: 25, lineHeight: 1.4, color: INK, background: sent === CASE.length + i ? "rgba(255,200,0,0.32)" : "transparent", borderRadius: 8, padding: "0 4px" }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 17, background: "#fff4cc", color: "#c48a00", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 19, flexShrink: 0, transform: "translateY(4px)" }}>{i + 1}</div>{q}
+                  <div key={q} style={{ marginTop: 8, display: "flex", gap: 10, alignItems: "baseline", fontWeight: 700, fontSize: 25, lineHeight: 1.4, color: INK, background: sent === CASE.length + i ? "rgba(255,200,0,0.32)" : "transparent", borderRadius: 8, padding: "0 4px" }}>
+                    <div style={{ fontWeight: 900, flexShrink: 0 }}>{i + 1})</div>{q}
                   </div>
                 ))}
                 {open < 0.99 ? <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 150, background: "linear-gradient(180deg, rgba(255,255,255,0), #fff 50%)", opacity: 1 - open, display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: 22 }}>
@@ -388,7 +388,7 @@ export const LessonMore: React.FC = () => {
               <div style={{ position: "absolute", left: CX, top: 80 + caseH + 60, width: CW, minHeight: 300, borderRadius: 18, border: `3px solid ${f >= OK2 ? GREEN : f >= ANS ? BLUE : "#e5e5e5"}`, background: f >= OK2 ? "#f1ffe6" : "#fff", boxSizing: "border-box", padding: "18px 24px", opacity: lin(lf, 24, 38) }}>
                 {f < ANS ? <div style={{ fontWeight: 600, fontSize: 24, color: "#afafaf" }}>Напишите решение казуса…</div> : ANSW.map((t, i) => (
                   <div key={i} style={{ marginTop: i ? 12 : 0, display: "flex", gap: 14, alignItems: "baseline", fontWeight: 600, fontSize: 23, lineHeight: 1.45, color: INK, opacity: lin(f, ANS + i * 14, ANS + i * 14 + 12), transform: `translateY(${(1 - lin(f, ANS + i * 14, ANS + i * 14 + 12)) * 10}px)` }}>
-                    <div style={{ width: 32, height: 32, borderRadius: 16, background: "#ddf4ff", color: "#1899d6", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 18, flexShrink: 0, transform: "translateY(4px)" }}>{i + 1}</div>{t}
+                    <div style={{ fontWeight: 900, flexShrink: 0 }}>{i + 1})</div>{t}
                   </div>
                 ))}
               </div>
