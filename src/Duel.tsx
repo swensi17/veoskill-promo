@@ -1,5 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
+import { Confetti } from "./Lesson";
 import { NAVY, BLUE, GREEN, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer } from "./Scenes9";
 
 // Play against another learner (veoskill.uz/hub/duels; the word itself is kept out of frame, see docs/RULES.md):
@@ -103,6 +104,7 @@ export const Duel: React.FC = () => {
               </div>
             );
           })}
+          <Confetti at={REVEAL} x={1560} y={800} n={60} />
           {/* win card */}
           {f >= RES ? (
             <AbsoluteFill style={{ background: `rgba(30,24,60,${0.45 * Math.min(1, res)})`, alignItems: "center", justifyContent: "center", paddingLeft: 620 }}>
@@ -126,6 +128,7 @@ export const Duel: React.FC = () => {
         <Cap text={cap[1]} at={cap[0]} size={f < SEARCH_END ? 64 : 56} color={f < SEARCH_END ? NAVY : "#fff"} />
         <Cap text={cap[2]} at={cap[0] + 8} size={f < SEARCH_END ? 64 : 56} color={f < SEARCH_END ? NAVY : "#fff"} accent={cap[2]} accentColor={f < SEARCH_END ? BLUE : "#ffe27a"} />
       </div>
+      <Confetti at={RES + 4} />
       {f >= SEARCH_END + 10 && f < RES - 10 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={press(f, CLICK)} op={lin(f, SEARCH_END + 10, SEARCH_END + 22) * (1 - lin(f, RES - 24, RES - 10))} /></div> : null}
     </AbsoluteFill>
   );
