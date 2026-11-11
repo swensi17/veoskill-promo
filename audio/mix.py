@@ -39,16 +39,33 @@ def put(x, t, g=0.0):
     i = int(round(t * SR)); j = min(len(out), i + len(x))
     out[i:j] += x[: j - i] * db(g)
 
-# ---- music: Mixkit 371 (tech house, 130 BPM, downbeats at 0.012 + k*1.84615 s), edited on bar lines
-M = load(os.path.join(ROOT, "assets/music/mk-371.mp3"))
+# ---- music: Mixkit 1303 (125 BPM, beats at 0.0188 + k*0.48 s in the source).
+# Scene lengths in src/V11.tsx are snapped to the film beat grid: frame 2.8 + k*28.8 (t = 0.0467 + k*0.48 s),
+# so every scene cut lands on a beat. The track is placed 0.0279 s late to match that grid.
+M = load(os.path.join(ROOT, "assets/music/mk-1303.mp3"))
+MUS_OFF = 0.0467 - 0.0188
 def seg(src_from, src_to, at, fi=0.01, fo=0.012, g=0.0):
     a, b = int(src_from * SR), int(src_to * SR)
-    put(fade(M[a:b].copy(), fi, fo), at, g)
-seg(19.228, 29.551, 0.0, fi=0.3, g=-1.5)   # lighter build under the intro
-seg(29.551, 59.089, 10.323)                # drop 1
-seg(42.474, 59.089, 39.861)                # drop 1 again from bar 23
-seg(72.012, 87.705, 56.476)                # build, 9 bars
-seg(88.628, 118.0, 72.169, fo=1.6)         # drop 2 into the ending hit (film ~95.25)
+    x = fade(M[a:b].copy(), fi, fo)
+    put(x, at, g)
+    return x
+JUMP = STARTS[21] / FPS                     # cut on the beat at the start of S11
+seg(0.0, JUMP - MUS_OFF + 0.006, MUS_OFF, fi=0.02, fo=0.006)
+# skip 2 beats so the track's final hit (source 96.02 s) lands ~2.4 s into S11 (logo + QR)
+seg(JUMP - MUS_OFF + 0.96, 101.0, JUMP, fi=0.006, fo=1.6)
+# opening: low-pass sweep that opens up until the first word cut (S2), a "reveal" feel
+from scipy.signal import butter, sosfilt, sosfilt_zi
+_open = STARTS[1] / FPS
+_n = int(_open * SR); _blk = 256
+_zi = None
+for _i in range(0, _n, _blk):
+    _t = _i / _n
+    _fc = 350 * (18000 / 350) ** (_t ** 1.6)
+    _sos = butter(2, min(_fc, SR / 2 - 100), 'low', fs=SR, output='sos')
+    if _zi is None: _zi = np.stack([sosfilt_zi(_sos) * out[0, c] for c in range(2)], axis=-1)
+    for c in range(2):
+        out[_i:_i + _blk, c], _zi[..., c] = sosfilt(_sos, out[_i:_i + _blk, c], zi=_zi[..., c])
+out[: _n] *= np.linspace(db(-3), 1, _n)[:, None]
 # ---- UI sounds on picture frames (absolute frame numbers of VeoskillV9)
 CL = fade(load(os.path.join(ROOT, 'assets/ui/mk-1117.wav')), 0, 0.02)
 POP = fade(load(os.path.join(ROOT, 'assets/ui/mk-2356.wav')), 0, 0.05)
