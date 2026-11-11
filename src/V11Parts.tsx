@@ -780,6 +780,53 @@ export const AiIcon: React.FC<{ size: number; color?: string; spin?: number; bli
 };
 /** blink pulse: 1 for a few frames every ~1.6 s */
 export const blinkAt = (f: number) => { const m = f % 96; return m < 6 ? Math.sin((m / 6) * Math.PI) : 0; };
+/** Before the AI window: the law page, a robot next to every article; hover the robot of Article 1 ("Объяснить статью с помощью ИИ"), click. */
+const PICK_ARTS: [string, string[]][] = [
+  ["1", [ART.ru.p1, ART.ru.p2]],
+  ["2", ["Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами."]],
+  ["3", ["Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику.", "Государственная граница и территория Узбекистана неприкосновенны и неделимы."]],
+  ["4", ["Государственным языком Республики Узбекистан является узбекский язык.", "Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития."]],
+];
+export const AiPick: React.FC = () => {
+  const f = useFrame();
+  const sp = useSp();
+  const HOVER = 92, CLICK = 128;
+  const RX = 1736, RY = 256; // robot of Article 1 (world)
+  const keys: CK[] = [{ at: 0, x: 1214, y: 600, s: 0.95 }, { at: 30, x: 1214, y: 560, s: 0.95 }, { at: 84, x: 1290, y: 330, s: 1.4 }, { at: 172, x: 1300, y: 336, s: 1.46 }];
+  const kx = [20, HOVER - 6, CLICK + 10];
+  const px = interpolate(f, kx, [1400, RX, RX], { ...cl, easing: IOE });
+  const py = interpolate(f, kx, [700, RY, RY], { ...cl, easing: IOE });
+  const tip = lin(f, HOVER, HOVER + 8);
+  const glow = lin(f, HOVER - 4, HOVER + 6);
+  return (
+    <AbsoluteFill style={{ background: BG }}>
+      <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640}>
+        <div style={{ position: "absolute", left: 573, top: 218, width: 1282, height: 990, background: "#fff", padding: "0 60px 0 48px", boxSizing: "border-box", overflow: "hidden" }}>
+          {PICK_ARTS.map(([n, ps], i) => (
+            <div key={n} style={{ marginTop: 14 }}>
+              <div style={{ height: 48, display: "flex", alignItems: "center", gap: 14 }}>
+                <Heart on={0} />
+                <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>Статья {n}.</div>
+                <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 18 }}>
+                  <div style={{ borderRadius: 10, background: i === 0 ? `rgba(28,176,246,${0.14 * glow})` : undefined, padding: 2 }}><AiIcon size={30} color={i === 0 && glow > 0.5 ? "#1cb0f6" : "#4f7fc4"} blink={i === 0 ? blinkAt(f + 30) : 0} /></div>
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="#6f7682"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>
+                </div>
+              </div>
+              {ps.map((t, k) => <div key={k} style={{ ...ART_P, marginTop: 8 }}>{t}</div>)}
+            </div>
+          ))}
+        </div>
+        {/* tooltip, as on the site */}
+        <div style={{ position: "absolute", left: RX - 300, top: RY + 30, width: 340, display: "flex", justifyContent: "flex-end", opacity: tip, transform: `translateY(${(1 - tip) * 6}px)` }}>
+          <div style={{ padding: "8px 14px", borderRadius: 10, background: "#4a4f57", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 18, whiteSpace: "nowrap" }}>Объяснить статью с помощью ИИ</div>
+        </div>
+        {f >= 20 ? <Pointer x={px} y={py} down={press(f, CLICK)} op={lin(f, 20, 30)} /> : null}
+      </Plane>
+      <TopCap lines={["Нажми на робота", "рядом со статьёй."]} at={6} accent="рядом со статьёй." hold={150} />
+      <Top />
+    </AbsoluteFill>
+  );
+};
 export const AIReal: React.FC = () => {
   const f = useFrame();
   const sp = useSp();
