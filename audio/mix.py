@@ -93,49 +93,53 @@ def sh(fr): return fr
 def at(x, frame, g, lead=0.0):
     frame = sh(frame)
     put(x, frame / FPS - onset(x) / SR - lead, g)
-clicks = [(5,300),(5,356),(7,238),(16,132),(17,64),(17,162),(17,204),(17,330)]
+clicks = [(5,300),(5,356),(8,238),(17,132),(18,64),(18,162),(18,204),(18,330)]
 clicks += [(3, 30 * k) for k in range(1, 10)]   # S4 carousel steps
-clicks += [(8,114),(25,50)]                     # G3 "wrong" stamp, Langs start of the language run
+clicks += [(9,114),(26,50)]                     # G3 "wrong" stamp, Langs start of the language run
 for sc, lf in clicks: at(CL, F(sc, lf), -16)
-pops = [(0,112),(5,303),(6,100),(6,128),(6,156),(6,184),(11,70),(11,116),(11,162),(11,208),(17,348),(24,100),(24,152),(24,206),(25,2),(25,8),(25,14),(25,20),(27,10),(27,60)]
-pops += [(10, 60 + 30 * k) for k in range(6)]
+pops = [(0,112),(5,303),(7,100),(7,128),(7,156),(7,184),(12,70),(12,116),(12,162),(12,208),(18,348),(25,100),(25,152),(25,206),(26,2),(26,8),(26,14),(26,20),(28,10),(28,60)]
+pops += [(11, 60 + 30 * k) for k in range(6)]
 # Table: 8 rows on half-beats (see rowAt in V11.tsx)
-pops += [(26, round(28.8 + 14.4 * k)) for k in range(8)]
+pops += [(27, round(28.8 + 14.4 * k)) for k in range(8)]
 # LexScene: 5 red points, then they flip to green (see LexRow in V11.tsx)
-pops += [(14, round(86.4 + 14.4 * k)) for k in range(5)]
+pops += [(15, round(86.4 + 14.4 * k)) for k in range(5)]
 # kinetic word cuts, on the beat grid (Words per= in V11.tsx)
 pops += [(1, round(57.6 * k)) for k in range(4)] + [(4, round(57.6 * k)) for k in range(4)]
-pops += [(9, 0), (9, 58), (12, 58), (15, 0), (15, 58)]
+pops += [(10, 0), (10, 58), (13, 58), (16, 0), (16, 58)]
 # Hints: bulb click, "Подсказки" popover, term tooltip
-clicks2 = [(18, 46)]
+clicks2 = [(19, 46)]
 for sc, lf in clicks2: at(CL, F(sc, lf), -16)
-pops += [(18, 52), (18, 184)]
+pops += [(19, 52), (19, 184)]
 # Article actions: heart click + folder picker, "⋯" click + menu
-for sc, lf in [(19, 56), (19, 86), (19, 108), (19, 164)]: at(CL, F(sc, lf), -16)
-pops += [(19, 62), (19, 170)]
+for sc, lf in [(20, 56), (20, 86), (20, 108), (20, 164)]: at(CL, F(sc, lf), -16)
+pops += [(20, 62), (20, 170)]
 # Collect: 3 ticks, download (format, go), share (copy); entrances of bar, modals, phone
-for sc, lf in [(20, 40), (20, 64), (20, 88), (20, 122), (20, 160), (20, 196), (20, 272), (20, 318)]: at(CL, F(sc, lf), -16)
-pops += [(20, 44), (20, 128), (20, 278), (20, 324), (20, 380), (20, 388), (20, 396)]
-for sc, lf in [(20, 202)]: at(CH, F(sc, lf), -17)
-for sc, lf in [(20, 350)]:
+for sc, lf in [(21, 40), (21, 64), (21, 88), (21, 122), (21, 160), (21, 196), (21, 272), (21, 318)]: at(CL, F(sc, lf), -16)
+pops += [(21, 44), (21, 128), (21, 278), (21, 324), (21, 380), (21, 388), (21, 396)]
+for sc, lf in [(21, 202)]: at(CH, F(sc, lf), -17)
+for sc, lf in [(21, 350)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -19)
 # Search: ФИЛЬТР, НАЙТИ, ВЫБРАТЬ ВСЕ; modal and results appear
-for sc, lf in [(21, 40), (21, 112), (21, 196)]: at(CL, F(sc, lf), -16)
-pops += [(21, 46), (21, 176)]
+for sc, lf in [(22, 40), (22, 112), (22, 196)]: at(CL, F(sc, lf), -16)
+pops += [(22, 46), (22, 176)]
 # AiPick: hover tooltip, click on the robot
-for sc, lf in [(23, 128)]: at(CL, F(sc, lf), -16)
-pops += [(23, 92)]
+for sc, lf in [(24, 128)]: at(CL, F(sc, lf), -16)
+pops += [(24, 92)]
+# Lesson (the real lesson page): every click, then correct / wrong chimes
+for lf in [110, 250, 340, 375, 430, 520, 600, 622, 644, 666, 692, 745, 790, 810, 840, 860, 890, 910, 940, 992, 1012, 1066, 1086, 1250, 1275]: at(CL, F(6, lf), -16)
+pops += [(6, 14), (6, 24), (6, 34), (6, 254), (6, 744 + 2)]
+for sc, lf in [(6, 522), (6, 694), (6, 942), (6, 1088), (6, 1277)]: at(CH, F(sc, lf), -17)
 # AI word cut (AiWords): "А ТЕПЕРЬ", then the AI card
-pops += [(22, 0), (22, 58)]
+pops += [(23, 0), (23, 58)]
 # other entrances found in the scene code
-pops += [(2,180),(6,16),(7,4),(7,18),(7,202),(8,12),(8,216),(10,6),(17,122),(24,4)]
+pops += [(2,180),(7,16),(8,4),(8,18),(8,202),(9,12),(9,216),(11,6),(18,122),(25,4)]
 for sc, lf in pops: at(POP, F(sc, lf), -15)
-for sc, lf in [(6,198),(7,238),(13,250),(17,348),(8,63),(8,170),(10,250),(14,202)]: at(CH, F(sc, lf), -17)
-for sc, lf in [(5,6),(5,200),(5,370),(7,378),(8,190),(12,0),(13,0),(14,0),(16,0),(16,180),(2,0),(3,300),(11,0),(14,50)]:
+for sc, lf in [(7,198),(8,238),(14,250),(18,348),(9,63),(9,170),(11,250),(15,202)]: at(CH, F(sc, lf), -17)
+for sc, lf in [(5,6),(5,200),(5,370),(8,378),(9,190),(13,0),(14,0),(15,0),(17,0),(17,180),(2,0),(3,300),(12,0),(15,50)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -18)
 
 # soft whooshes for G3 card swipes
-for sc, lf in [(8,74),(8,124)]:
+for sc, lf in [(9,74),(9,124)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -23)
 
 out = out[: int(DUR * SR)]
