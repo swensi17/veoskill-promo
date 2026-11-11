@@ -31,6 +31,7 @@ const TOTAL = acc;
 fs.mkdirSync("out/audio", { recursive: true });
 fs.writeFileSync("out/scenes.json", JSON.stringify(scenes.map((s) => s.d)));
 // time stretch per scene (k in SCENES): audio cue frames inside a slowed scene are multiplied by k
+fs.writeFileSync("out/names.json", JSON.stringify(scenes.map((s) => s.name)));
 fs.writeFileSync("out/slow.json", JSON.stringify(scenes.map((s) => s.k)));
 
 const run = (cmd, args, label) => {
