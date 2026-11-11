@@ -537,21 +537,36 @@ export const S10: React.FC = () => {
 const S11: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
-  const logo = sp(10, 15, 140);
-  const qr = sp(60, 14, 150);
-  // calm end card: white, one soft brand-blue glow behind the QR, faint dot grid fading to the edges
-  const glow = lin(f, 0, 40);
-  const mask = "radial-gradient(ellipse 60% 70% at 50% 52%, #000 0%, rgba(0,0,0,0.35) 55%, transparent 85%)";
+  const qr = sp(24, 14, 150);
+  const owl = sp(60, 11, 200);
+  const txt = lin(f, 70, 92);
+  // blue end card: the "УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ" bands drift behind, the QR (with our owl in the middle) in front
+  const rows = 9;
   return (
-    <AbsoluteFill style={{ background: "#ffffff", overflow: "hidden" }}>
-      <AbsoluteFill style={{ backgroundImage: "radial-gradient(rgba(13,22,48,0.10) 1.6px, transparent 1.8px)", backgroundSize: "36px 36px", backgroundPosition: `0 ${-f * 0.15}px`, WebkitMaskImage: mask, maskImage: mask, opacity: 0.8 * glow }} />
-      <div style={{ position: "absolute", left: 960 - 700, top: 640 - 460, width: 1400, height: 920, borderRadius: "50%", background: `radial-gradient(closest-side, rgba(61,183,244,0.16), rgba(61,183,244,0.05) 60%, transparent)`, opacity: glow, transform: `scale(${0.96 + 0.04 * glow})` }} />
-      <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 960 - 380, top: 170, width: 760, opacity: logo, transform: `translateY(${(1 - logo) * 40}px) scale(${0.94 + 0.06 * logo})` }} />
-      <div style={{ position: "absolute", top: 380, width: "100%" }}><div style={{ display: "flex", justifyContent: "center" }}><Cap text="Учись играя. Начни сегодня." at={36} size={60} accent="Начни сегодня." /></div></div>
-      <div style={{ position: "absolute", left: 960 - 216, top: 500, width: 432, padding: 52, borderRadius: 40, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.16)", boxSizing: "border-box", transform: `scale(${qr})`, opacity: qr }}>
-        <Img src={staticFile("brand/qr.svg")} style={{ width: 328, height: 328, display: "block" }} />
+    <AbsoluteFill style={{ background: BLUE, overflow: "hidden" }}>
+      <AbsoluteFill style={{ transform: "rotate(-12deg) scale(1.35)", opacity: 0.22 + 0.1 * lin(f, 0, 30) }}>
+        {Array.from({ length: rows }, (_, k) => (
+          <div key={k} style={{ position: "absolute", left: -1400, top: -170 + k * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, letterSpacing: "-0.03em", color: "#fff", transform: `translateX(${((f * (k % 2 ? 1.6 : -1.6)) % 1300) + (k % 2 ? -650 : 0)}px)` }}>{BAND.repeat(6)}</div>
+        ))}
+      </AbsoluteFill>
+      <AbsoluteFill style={{ background: "radial-gradient(ellipse 42% 55% at 50% 50%, rgba(28,176,246,0.92) 0%, rgba(28,176,246,0.6) 55%, rgba(28,176,246,0) 100%)" }} />
+      <Top dark />
+      {/* QR card: a blue arc spins around it like a loader; the code draws in from the centre, then breathes gently */}
+      <div style={{ position: "absolute", left: 960 - 284, top: 176, width: 568, height: 568, borderRadius: 60, padding: 14, boxSizing: "border-box", background: "rgba(13,90,150,0.45)", transform: `scale(${(0.6 + 0.4 * qr) * (1 + 0.012 * Math.sin(f / 18))})`, opacity: Math.min(1, qr * 1.5), boxShadow: "0 40px 110px rgba(13,22,48,0.35)", overflow: "hidden" }}>
+        <div style={{ position: "absolute", left: "50%", top: "50%", width: 900, height: 900, marginLeft: -450, marginTop: -450, background: "conic-gradient(from 0deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,0) 170deg, #7fd6ff 270deg, #ffffff 345deg, rgba(255,255,255,0) 360deg)", transform: `rotate(${f * 1.2}deg)` }} />
+                <div style={{ position: "relative", width: 540, height: 540, padding: 50, borderRadius: 48, background: "#fff", boxSizing: "border-box" }}>
+          <div style={{ position: "relative", width: 440, height: 440, clipPath: `circle(${lin(f, 30, 70, 0, 75, Easing.out(Easing.cubic))}% at 50% 50%)` }}>
+            <Img src={staticFile("brand/qr-h.svg")} style={{ width: 440, height: 440, display: "block" }} />
+            {/* a light sweep passes across the code every ~2 s */}
+            <div style={{ position: "absolute", inset: 0, background: `linear-gradient(115deg, transparent ${((f * 1.6) % 160) - 40}%, rgba(28,176,246,0.28) ${((f * 1.6) % 160) - 25}%, transparent ${((f * 1.6) % 160) - 10}%)` }} />
+          </div>
+          <div style={{ position: "absolute", left: 270 - 56, top: 270 - 56, width: 112, height: 112, borderRadius: 30, background: "#fff", padding: 8, boxSizing: "border-box", transform: `scale(${owl * (1 + 0.04 * Math.sin(f / 10))}) rotate(${(1 - owl) * -20}deg)` }}>
+            <Img src={staticFile("brand/owl-mark.png")} style={{ width: 96, height: 96, borderRadius: 24, display: "block" }} />
+          </div>
+        </div>
       </div>
-      <div style={{ position: "absolute", top: 940, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 700, fontSize: 36, color: NAVY, opacity: lin(f, 80, 100) }}>Наведи камеру · <span style={{ color: BLUE }}>veoskill.uz</span></div>
+      <div style={{ position: "absolute", top: 790, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 56, color: "#fff", opacity: txt, transform: `translateY(${(1 - txt) * 20}px)` }}>Отсканируйте QR-код</div>
+      <div style={{ position: "absolute", top: 870, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 700, fontSize: 40, color: "rgba(255,255,255,0.92)", opacity: lin(f, 84, 104) }}>и переходите на veoskill.uz</div>
     </AbsoluteFill>
   );
 };
@@ -756,7 +771,7 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: AIReal, d: 316, xo: 16 },
   { C: Langs, d: 231, xo: 10 },
   { C: Table, d: 288, xo: 16 },
-  { C: S11, d: 360 },
+  { C: S11, d: 720 },
 ];
 const starts: number[] = [];
 let acc = 0;
