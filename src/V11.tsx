@@ -747,11 +747,8 @@ const Table: React.FC = () => {
             const s = sp(rowAt(i), 14, 220);
             return (
               <div key={t} style={{ display: "flex", alignItems: "center", height: RH, borderTop: "2px solid #eef0f3", transform: `translateY(${(1 - s) * 24}px)`, opacity: Math.min(1, s * 1.3) }}>
-                <div style={{ width: 48, fontFamily: HEAD, fontWeight: 900, fontSize: 28, color: LOGO }}>{i + 1}</div>
-                <div style={{ flex: 1, display: "flex", alignItems: "baseline", gap: 16 }}>
-                  <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 31, color: INK, whiteSpace: "nowrap" }}>{t}</div>
-                  <div style={{ fontFamily: UI, fontWeight: 600, fontSize: 21, color: "#8a8f98", whiteSpace: "nowrap" }}>{d}</div>
-                </div>
+                <div style={{ width: 60, fontFamily: HEAD, fontWeight: 900, fontSize: 36, color: LOGO }}>{i + 1}</div>
+                <div style={{ flex: 1, fontFamily: UI, fontWeight: 900, fontSize: 38, color: INK, whiteSpace: "nowrap" }}>{t}{void d}</div>
                 <div style={{ width: 190, display: "flex", justifyContent: "center" }}><Mark ok={false} s={42} /></div>
                 <div style={{ width: 190, display: "flex", justifyContent: "center", transform: `scale(${1 + press(f, rowAt(i) + 7) * 0.25})` }}><Mark ok s={42} /></div>
               </div>
