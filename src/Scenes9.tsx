@@ -23,7 +23,8 @@ const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 export const OUTE = Easing.bezier(0.16, 1, 0.3, 1);
 export const IOE = Easing.bezier(0.65, 0, 0.35, 1);
 export const lin = (f: number, a: number, b: number, x = 0, y = 1, e = IOE) => interpolate(f, [a, b], [x, y], { easing: e, ...cl });
-export const press = (f: number, at: number) => lin(f, at, at + 4) * (1 - lin(f, at + 6, at + 12));
+// quick press (2 frames), short hold, soft release over 14 frames: the release drives the click ripple in Pointer
+export const press = (f: number, at: number) => lin(f, at, at + 2) * (1 - lin(f, at + 4, at + 18, 0, 1, Easing.out(Easing.quad)));
 export const useSp = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -59,8 +60,15 @@ export const Cap: React.FC<{ text: string; at: number; size?: number; color?: st
   );
 };
 export const Pointer: React.FC<{ x: number; y: number; down?: number; op?: number }> = ({ x, y, down = 0, op = 1 }) => (
-  <div style={{ position: "absolute", left: x, top: y, zIndex: 80, opacity: op, transform: `scale(${1 - down * 0.14})`, transformOrigin: "4px 4px" }}>
-    <svg width="46" height="56" viewBox="0 0 22 27" style={{ filter: "drop-shadow(0 8px 12px rgba(0,0,0,0.25))" }}><path d="M2 2 L2 21 L7 16.5 L10.5 24.5 L14 23 L10.6 15.2 L17 15 Z" fill={NAVY} stroke="#fff" strokeWidth="1.6" strokeLinejoin="round" /></svg>
+  <div style={{ position: "absolute", left: x, top: y, zIndex: 80, opacity: op }}>
+    {/* click ripple (Telegram-like): a soft disc and a ring grow out of the tip while the press releases */}
+    {down > 0.01 ? (
+      <>
+        <div style={{ position: "absolute", left: 4 - 40, top: 4 - 40, width: 80, height: 80, borderRadius: "50%", background: "rgba(28,176,246,0.22)", transform: `scale(${0.35 + 0.9 * (1 - down)})`, opacity: Math.min(1, down * 1.6) }} />
+        <div style={{ position: "absolute", left: 4 - 40, top: 4 - 40, width: 80, height: 80, borderRadius: "50%", border: "3px solid rgba(28,176,246,0.8)", boxSizing: "border-box", transform: `scale(${0.3 + 1.2 * (1 - down)})`, opacity: down }} />
+      </>
+    ) : null}
+    <svg width="46" height="56" viewBox="0 0 22 27" style={{ position: "relative", transform: `scale(${1 - down * 0.14})`, transformOrigin: "4px 4px", filter: "drop-shadow(0 8px 12px rgba(0,0,0,0.25))" }}><path d="M2 2 L2 21 L7 16.5 L10.5 24.5 L14 23 L10.6 15.2 L17 15 Z" fill={NAVY} stroke="#fff" strokeWidth="1.6" strokeLinejoin="round" /></svg>
   </div>
 );
 const Check: React.FC<{ s?: number; c?: string; w?: number }> = ({ s = 30, c = "#fff", w = 3.4 }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>;

@@ -334,6 +334,7 @@ export const Hints: React.FC = () => {
   );
 };
 /** Article actions: heart -> "В избранное" with the folder picker; "⋯" -> the article menu (as on veoskill.uz). */
+const FOLDERS: [string, string][] = [["Экзамен", "#1cb0f6"], ["Курсовая работа", "#ffc800"], ["Повторить", GREEN]];
 const ART_P = { fontFamily: UI, fontWeight: 500, fontSize: 25, lineHeight: 1.36, color: "#2b2b2b", textAlign: "justify" as const, textIndent: 80 };
 const Heart: React.FC<{ on: number; size?: number }> = ({ on, size = 30 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.2-9.3C1.6 7.8 3.8 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 3.4 0 5.6 3.3 4.4 6.7-1.7 4.7-9.2 9.3-9.2 9.3z" fill={on > 0.5 ? "#ff4b4b" : "none"} stroke={on > 0.5 ? "#ff4b4b" : "#9aa1ab"} strokeWidth="2" strokeLinejoin="round" /></svg>
@@ -349,13 +350,14 @@ const MENU: [React.ReactNode, string][] = [
 export const ArticleActions: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
-  const HEART = 56, POP = 62, DOTS = 164, MENU_AT = 170;
+  const HEART = 56, POP = 62, DOTS = 164, MENU_AT = 170, F1 = 86, F2 = 108;
   const keys: CK[] = [{ at: 0, x: 1200, y: 600, s: 1.0 }, { at: 40, x: 980, y: 560, s: 1.3 }, { at: 70, x: 980, y: 560, s: 1.3 }, { at: 96, x: 800, y: 600, s: 1.6 }, { at: 136, x: 820, y: 610, s: 1.6 }, { at: 168, x: 1560, y: 560, s: 1.35 }, { at: 196, x: 1600, y: 640, s: 1.62 }, { at: 288, x: 1610, y: 660, s: 1.62 }];
-  const kx = [12, HEART - 6, 130, DOTS - 6, MENU_AT + 22, 278];
-  const px = interpolate(f, kx, [1300, 636, 900, 1826, 1700, 1700], { ...cl, easing: IOE });
-  const py = interpolate(f, kx, [760, 466, 380, 466, 548, 548 + 4 * 62], { ...cl, easing: IOE });
+  // the cursor stops on every target for the click and the ripple, then moves on
+  const kx = [12, HEART - 6, HEART + 8, F1 - 6, F1 + 8, F2 - 6, F2 + 10, 140, DOTS - 6, DOTS + 8, MENU_AT + 22, 278];
+  const px = interpolate(f, kx, [1300, 636, 636, 966, 966, 966, 966, 1100, 1826, 1826, 1700, 1700], { ...cl, easing: IOE });
+  const py = interpolate(f, kx, [760, 466, 466, 644, 644, 745, 745, 380, 466, 466, 548, 548 + 4 * 62], { ...cl, easing: IOE });
   const heart = sp(HEART + 2, 9, 260);
-  const pop = lin(f, POP, POP + 10) * (1 - lin(f, 132, 142));
+  const pop = lin(f, POP, POP + 10) * (1 - lin(f, 140, 152));
   const menu = sp(MENU_AT, 15, 200);
   const hover = lin(f, MENU_AT + 22, 278, 0, 4, Easing.linear);
   const Y3 = 440;
@@ -384,7 +386,7 @@ export const ArticleActions: React.FC = () => {
           ))}
         </div>
         {/* favourites: folder picker */}
-        <div style={{ position: "absolute", left: 606, top: Y3 + 58, width: 330, opacity: pop, transform: `translateY(${(1 - pop) * 10}px)`, fontFamily: UI }}>
+        <div style={{ position: "absolute", left: 606, top: Y3 + 58, width: 390, opacity: pop, transform: `translateY(${(1 - pop) * 10}px)`, fontFamily: UI }}>
           <div style={{ background: "#fff", borderRadius: 18, boxShadow: "0 22px 50px rgba(13,22,48,0.2)", border: "1px solid #eef0f3", padding: "16px 16px 10px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ padding: "6px 10px", borderRadius: 8, background: "#3c3c3c", color: "#fff", fontWeight: 800, fontSize: 16 }}>В избранное</div>
@@ -394,12 +396,19 @@ export const ArticleActions: React.FC = () => {
               <div style={{ flex: 1, height: 44, borderRadius: 12, border: "2px solid #e6e9ee", display: "flex", alignItems: "center", padding: "0 14px", color: "#9aa1ab", fontWeight: 600, fontSize: 17 }}>Найти папку</div>
               <div style={{ width: 44, height: 44, borderRadius: 12, background: "#1cb0f6", boxShadow: "0 3px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg></div>
             </div>
-            {[150, 110, 170].map((w, i) => (
-              <div key={i} style={{ height: 50, display: "flex", alignItems: "center", gap: 14, borderTop: i ? "1px solid #f0f1f4" : undefined, marginTop: i ? 0 : 10 }}>
-                <div style={{ width: 22, height: 22, borderRadius: 6, background: "#e9ebef" }} />
-                <div style={{ width: w, height: 14, borderRadius: 7, background: `linear-gradient(90deg, #e9ebef, #f5f6f8 ${50 + 40 * Math.sin(f / 9 + i)}%, #e9ebef)` }} />
-              </div>
-            ))}
+            {FOLDERS.map(([name, c], i) => {
+              const on = i === 0 ? sp(F1, 10, 260) * (f >= F1 ? 1 : 0) : i === 2 ? sp(F2, 10, 260) * (f >= F2 ? 1 : 0) : 0;
+              return (
+                <div key={name} style={{ height: 50, display: "flex", alignItems: "center", gap: 12, borderTop: i ? "1px solid #f0f1f4" : undefined, marginTop: i ? 0 : 10, borderRadius: 10, background: `rgba(28,176,246,${0.07 * Math.min(1, on)})`, padding: "0 4px" }}>
+                  <svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z" fill={c} /></svg>
+                  <div style={{ flex: 1, fontWeight: 700, fontSize: 18, color: "#3c3c3c", whiteSpace: "nowrap" }}>{name}</div>
+                  <Tick on={on} size={26} />
+                </div>
+              );
+            })}
+            <div style={{ height: 34, display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 16, color: GLIP, opacity: lin(f, F2 + 8, F2 + 16) }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={GLIP} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Сохранено в 2 папки
+            </div>
           </div>
         </div>
         {/* article menu */}
@@ -414,7 +423,7 @@ export const ArticleActions: React.FC = () => {
             })}
           </div>
         ) : null}
-        {f >= 12 ? <Pointer x={px} y={py} down={Math.max(press(f, HEART), press(f, DOTS))} op={lin(f, 12, 22)} /> : null}
+        {f >= 12 ? <Pointer x={px} y={py} down={Math.max(press(f, HEART), press(f, F1), press(f, F2), press(f, DOTS))} op={lin(f, 12, 22)} /> : null}
       </Plane>
       <TopCap lines={["Сохраняй статьи.", "Всё под рукой."]} at={8} accent="Всё под рукой." />
       <Top />

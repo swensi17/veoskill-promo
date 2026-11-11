@@ -109,7 +109,7 @@ clicks2 = [(18, 46)]
 for sc, lf in clicks2: at(CL, F(sc, lf), -16)
 pops += [(18, 52), (18, 184)]
 # Article actions: heart click + folder picker, "⋯" click + menu
-for sc, lf in [(19, 56), (19, 164)]: at(CL, F(sc, lf), -16)
+for sc, lf in [(19, 56), (19, 86), (19, 108), (19, 164)]: at(CL, F(sc, lf), -16)
 pops += [(19, 62), (19, 170)]
 # Collect: 3 ticks, download (format, go), share (copy); entrances of bar, modals, phone
 for sc, lf in [(20, 40), (20, 64), (20, 88), (20, 122), (20, 160), (20, 196), (20, 272), (20, 318)]: at(CL, F(sc, lf), -16)
