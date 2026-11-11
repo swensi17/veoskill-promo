@@ -134,8 +134,9 @@ for lf in [110, 250, 340, 375, 430, 520, 600, 622, 644, 666, 692, 745, 790, 810,
 pops += [(N("Lesson"), 14), (N("Lesson"), 24), (N("Lesson"), 34), (N("Lesson"), 254), (N("Lesson"), 744 + 2)]
 for sc, lf in [(N("Lesson"), 522), (N("Lesson"), 694), (N("Lesson"), 942), (N("Lesson"), 1088), (N("Lesson"), 1277)]: at(CH, F(sc, lf), -17)
 # LessonMore: term pick, check, next, answer field, check; AI check and success
-for lf in [110, 142, 192, 300, 500]: at(CL, F(N("LessonMore"), lf), -16)
-for lf in [144, 552]: at(CH, F(N("LessonMore"), lf), -17)
+for lf in [110, 142, 192, 268, 608]: at(CL, F(N("LessonMore"), lf), -16)
+for lf in [144, 664]: at(CH, F(N("LessonMore"), lf), -17)
+pops += [(N("LessonMore"), 548)]
 # Duel: opponent found, answer click, reveal, win card
 pops += [(N("Duel"), 128), (N("Duel"), 214), (N("Duel"), 470)]
 at(CL, F(N("Duel"), 330), -16)
