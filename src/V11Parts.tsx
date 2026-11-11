@@ -361,40 +361,55 @@ export const AIReal: React.FC = () => {
 
 // ================= languages =================
 const LANGS: [string, string, "ru" | "uz" | "en"][] = [["Русский", "v4/flag-ru.svg", "ru"], ["O‘zbekcha", "v4/flag-uz.svg", "uz"], ["English", "v4/flag-en.svg", "en"]];
+// "Law" in other languages, orbiting the headline (Google-style: calm white, items floating around one line of text)
+const ORBIT = ["Gesetz", "Loi", "Ley", "Legge", "Lei", "Kanun", "Prawo", "Νόμος", "قانون", "法律", "कानून", "Hukum", "Wet", "Lag", "Закон", "Luật", "법률", "Törvény"];
 export const Langs: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
   const big = Math.max(1, Math.round(lin(f, 4, 50, 1, 99, Easing.out(Easing.cubic))));
   const plus = sp(50, 10, 220);
-  const cur = f < 120 ? 0 : f < 170 ? 1 : 2;
-  const sw = (at: number) => lin(f, at - 8, at + 8);
-  const fadeT = f < 120 ? 0 : f < 170 ? sw(120) : sw(170);
-  const a = ART[LANGS[cur][2]];
+  const head = sp(2, 14, 150);
+  // ring: 3 main languages with flags + 18 smaller words, slowly turning on an ellipse
+  const items: { label: string; flag?: string; main: boolean; a0: number }[] = [
+    ...LANGS.map(([name, flag], i) => ({ label: name, flag, main: true, a0: [2.3, -2.1, -0.45][i] })), // kept clear of the button below the headline
+    ...ORBIT.map((w, i) => ({ label: w, main: false, a0: (i / ORBIT.length) * Math.PI * 2 + 0.17 })),
+  ];
+  const turn = f * 0.0045;
+  const BTN_AT = 112, CLICK = 158;
+  const btn = sp(BTN_AT, 13, 190);
+  const pr = press(f, CLICK);
+  const done = lin(f, CLICK + 4, CLICK + 14);
+  const curIn = lin(f, BTN_AT + 10, CLICK - 2, 0, 1, Easing.bezier(0.25, 0.1, 0.25, 1));
+  const cx = 1240 - 300 * curIn, cy = 960 - 170 * curIn;
   return (
-    <AbsoluteFill style={{ background: BG }}>
+    <AbsoluteFill style={{ background: "#ffffff", overflow: "hidden" }}>
       <Top />
-      <div style={{ position: "absolute", left: 116, top: 270, display: "flex", alignItems: "flex-start", fontFamily: HEAD, fontWeight: 900, fontSize: 300, lineHeight: 0.9, letterSpacing: "-0.05em", color: LOGO, transform: `scale(${0.8 + 0.2 * sp(4, 12, 160)})`, transformOrigin: "0 100%", fontVariantNumeric: "tabular-nums" }}>{big}<span style={{ display: "inline-block", marginLeft: 6, fontSize: 200, opacity: Math.min(1, plus * 1.5), transform: `scale(${plus})`, transformOrigin: "0 60%" }}>+</span></div>
-      <div style={{ position: "absolute", left: 124, top: 610 }}>
-        <Cap text="языков законов." at={54} size={72} />
-        <div style={{ marginTop: 10, fontFamily: HEAD, fontWeight: 500, fontSize: 34, color: "#5d6470", opacity: lin(f, 64, 84) }}>Читай закон на удобном языке.</div>
-      </div>
-      {LANGS.map(([name, flag], i) => {
-        const s = sp(2 + i * 6, 13, 180);
-        const on = i === cur;
+      {items.map((it, i) => {
+        const a = it.a0 + turn;
+        const rx = it.main ? 640 : 780, ry = it.main ? 330 : 400;
+        const depth = (Math.sin(a) + 1) / 2; // 0 back (top), 1 front (bottom)
+        const s = sp(it.main ? 2 + i * 6 : 6 + i * 2, 15, 120);
+        const k = 1.8 - 0.8 * s;
+        const x = 960 + Math.cos(a) * rx * k, y = 540 + Math.sin(a) * ry * k + Math.sin(f / 40 + i) * 6;
+        const sc = (it.main ? 1 : 0.78 + 0.22 * depth) * (0.7 + 0.3 * s);
+        const op = Math.min(1, s * 1.4) * (it.main ? 1 : 0.45 + 0.4 * depth);
         return (
-          <div key={name} style={{ position: "absolute", left: 900 + i * 246, top: 200, width: 230, height: 96, borderRadius: 22, background: on ? "#fff" : "rgba(255,255,255,0.7)", border: `3px solid ${on ? BLUE : SWAN}`, boxShadow: on ? "0 20px 50px rgba(28,120,246,0.22)" : "0 10px 24px rgba(13,22,48,0.06)", display: "flex", alignItems: "center", gap: 14, padding: "0 18px", boxSizing: "border-box", fontFamily: UI, fontWeight: 900, fontSize: 26, color: on ? INK : "#7c8593", transform: `translateY(${(1 - s) * 50}px) scale(${on ? 1.04 : 1})`, opacity: s }}>
-            <Img src={staticFile(flag)} style={{ width: 40, height: 30, borderRadius: 6, objectFit: "cover" }} />{name}
+          <div key={it.label} style={{ position: "absolute", left: x, top: y, transform: `translate(-50%, -50%) scale(${sc})`, opacity: op, zIndex: it.main ? 3 : 1, display: "flex", alignItems: "center", gap: 14, padding: it.main ? "18px 28px" : "12px 22px", borderRadius: 999, background: "#fff", border: `2px solid ${it.main ? "rgba(61,183,244,0.45)" : "#eceef2"}`, boxShadow: it.main ? "0 18px 44px rgba(28,120,246,0.16)" : "0 10px 26px rgba(13,22,48,0.07)", fontFamily: UI, fontWeight: it.main ? 900 : 800, fontSize: it.main ? 32 : 28, color: it.main ? INK : "#6f7682", whiteSpace: "nowrap" }}>
+            {it.flag ? <Img src={staticFile(it.flag)} style={{ width: 42, height: 30, borderRadius: 6, objectFit: "cover" }} /> : null}{it.label}
           </div>
         );
       })}
-      {(() => { const s = sp(20, 13, 180); return <div style={{ position: "absolute", left: 900 + 3 * 246, top: 200, width: 132, height: 96, borderRadius: 22, border: `3px dashed ${SWAN}`, boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: UI, fontWeight: 900, fontSize: 28, color: LOGO, transform: `translateY(${(1 - s) * 50}px)`, opacity: s }}>+96</div>; })()}
-      <div style={{ position: "absolute", left: 900, top: 340, width: 870, height: 560, borderRadius: 34, background: "#fff", boxShadow: "0 40px 100px rgba(13,22,48,0.14)", padding: "50px 56px", boxSizing: "border-box", fontFamily: UI, opacity: sp(10, 15, 140), transform: `translateY(${(1 - sp(10, 15, 140)) * 60}px)` }}>
-        <div style={{ opacity: 1 - (fadeT < 0.5 ? fadeT * 2 : (1 - fadeT) * 2) * 0.9, filter: `blur(${(fadeT < 0.5 ? fadeT * 2 : (1 - fadeT) * 2) * 6}px)` }}>
-          <div style={{ fontWeight: 900, fontSize: 64, color: INK }}>{a.t}</div>
-          <div style={{ marginTop: 22, fontWeight: 600, fontSize: 32, lineHeight: 1.5, color: "#4b4b4b" }}>{a.p1}</div>
-          <div style={{ marginTop: 18, fontWeight: 600, fontSize: 32, lineHeight: 1.5, color: "#4b4b4b" }}>{a.p2}</div>
+      <div style={{ position: "absolute", top: 300, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", zIndex: 5 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", fontFamily: HEAD, fontWeight: 900, fontSize: 230, lineHeight: 0.9, letterSpacing: "-0.05em", color: LOGO, transform: `scale(${0.85 + 0.15 * head})`, opacity: Math.min(1, head * 1.5), fontVariantNumeric: "tabular-nums" }}>{big}<span style={{ display: "inline-block", marginLeft: 4, fontSize: 160, opacity: Math.min(1, plus * 1.5), transform: `scale(${plus})`, transformOrigin: "0 60%" }}>+</span></div>
+        <div style={{ marginTop: 18 }}><Cap text="языков законов." at={40} size={64} /></div>
+      </div>
+      <div style={{ position: "absolute", left: 960, top: 760, zIndex: 6, transform: `translate(-50%, -50%) scale(${(0.8 + 0.2 * btn) * (1 - pr * 0.05)})`, opacity: Math.min(1, btn * 1.4) }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "22px 40px", borderRadius: 999, background: done > 0.5 ? LOGO : "#e3f4fd", color: done > 0.5 ? "#fff" : "#0d6fa3", fontFamily: UI, fontWeight: 900, fontSize: 34, boxShadow: `0 16px 40px rgba(28,120,246,${0.12 + 0.18 * done})`, whiteSpace: "nowrap" }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" /></svg>
+          {done > 0.5 ? "Статья на O‘zbekcha" : "Перевести статью"}
         </div>
       </div>
+      {f > BTN_AT + 8 ? <Pointer x={cx} y={cy} down={pr} op={lin(f, BTN_AT + 8, BTN_AT + 18) * (1 - lin(f, CLICK + 30, CLICK + 44))} /> : null}
     </AbsoluteFill>
   );
 };
