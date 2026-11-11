@@ -7,7 +7,7 @@ import { NAVY, BLUE, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Cap, Poin
 const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const SERIF = "'Times New Roman', Georgia, serif";
 const ORANGE = "#c8711f";
-const T = { OPEN: 196, LOAD: 206, READ: 262, SEL0: 300, SEL1: 340, POP: 346, GREEN: 404, SHARE: 446, NEXT: 548, GEAR: 604, SEPIA: 664, PLUS: 712, CLOSE: 760, PHONE: 790, END: 1008 };
+const T = { OPEN: 196, PROD: 206, CART: 268, RDB: 318, LOAD: 330, READ: 386, SEL0: 496, SEL1: 536, POP: 542, GREEN: 600, SHARE: 642, NEXT: 744, GEAR: 800, SEPIA: 860, PLUS: 908, CLOSE: 956, PHONE: 986, END: 1204 };
 
 type Cover = [string, string, string];
 const SHELF: [string, string, Cover[]][] = [
@@ -55,7 +55,9 @@ const PALETTE = ["#cfd3d8", "#e2b8f2", "#b9b8f4", "#f6cf9b", "#a8e6f4", "#f6aa8e
 export const Books: React.FC = () => {
   const f = useFrame();
   const sp = useSp();
-  const lib = 1 - lin(f, T.OPEN + 4, T.LOAD + 6);
+  const lib = 1 - lin(f, T.OPEN + 4, T.PROD + 10);
+  const prod = lin(f, T.PROD - 2, T.PROD + 14) * (1 - lin(f, T.LOAD, T.LOAD + 10));
+  const inCart = f >= T.CART + 2;
   const load = lin(f, T.LOAD, T.LOAD + 8) * (1 - lin(f, T.READ - 6, T.READ + 4));
   const pct = Math.round(lin(f, T.LOAD + 4, T.READ - 8, 0, 100, Easing.out(Easing.quad)));
   const read = lin(f, T.READ - 6, T.READ + 8) * (1 - lin(f, T.PHONE - 20, T.PHONE));
@@ -71,11 +73,11 @@ export const Books: React.FC = () => {
   const settings = lin(f, T.GEAR + 4, T.GEAR + 18, 0, 1, OUTE) * (1 - lin(f, T.CLOSE, T.CLOSE + 12));
   const toast = lin(f, T.SHARE + 4, T.SHARE + 14) * (1 - lin(f, T.SHARE + 80, T.SHARE + 92));
   // reader camera (world = 1920x1080 reader page)
-  const ck = [T.READ, T.SEL0 - 30, T.SEL0, T.SHARE + 30, T.NEXT - 10, T.NEXT + 30, T.GEAR, T.GEAR + 30, T.CLOSE, T.PHONE];
+  const ck = [T.READ, T.READ + 34, T.SEL0 - 44, T.SEL0 - 14, T.SEL0, T.SHARE + 30, T.NEXT - 10, T.NEXT + 30, T.GEAR, T.GEAR + 30, T.CLOSE, T.PHONE];
   const cam = (v: number[]) => interpolate(f, ck, v, { ...cl, easing: IOE });
-  const cx = cam([960, 1250, 1250, 1250, 960, 960, 960, 1540, 1540, 960]);
-  const cy = cam([560, 470, 470, 520, 560, 560, 560, 520, 520, 560]);
-  const cs = cam([1, 1.55, 1.55, 1.45, 1, 1, 1, 1.4, 1.4, 1]);
+  const cx = cam([960, 700, 700, 1250, 1250, 1250, 960, 960, 960, 1540, 1540, 960]);
+  const cy = cam([560, 420, 700, 470, 470, 520, 560, 560, 560, 520, 520, 560]);
+  const cs = cam([1, 1.6, 1.6, 1.55, 1.55, 1.45, 1, 1, 1, 1.4, 1.4, 1]);
   // cursor (world coords inside the reader; library and phone use their own)
   const clicks: [number, number, number][] = [[T.SEL0, 1250, 412], [T.GREEN, 1412, 503], [T.SHARE, 1150, 760], [T.NEXT, 1842, 660], [T.GEAR, 1714, 158], [T.SEPIA, 1580, 268], [T.PLUS, 1837, 565], [T.CLOSE, 1714, 158]];
   const pk = [T.READ + 6, ...clicks.flatMap(([t], i) => (i === 0 ? [t - 10, T.SEL1 + 6] : [t - 12, t + 8])), T.PHONE - 20];
@@ -87,7 +89,7 @@ export const Books: React.FC = () => {
   const lcam = lin(f, 20, 170, 0, 1, IOE);
   const lpx = interpolate(f, [16, T.OPEN - 12, T.OPEN + 8], [1500, 950, 950], { ...cl, easing: IOE });
   const lpy = interpolate(f, [16, T.OPEN - 12, T.OPEN + 8], [900, 380, 380], { ...cl, easing: IOE });
-  const caps: [number, string, string][] = [[0, "Библиотека:", "книги и курсы."], [T.READ, "Удобная", "читалка."], [T.POP, "Выделяй и делись", "ссылкой на фрагмент."], [T.GEAR, "Настрой", "под себя."], [T.PHONE, "Читай", "и на телефоне."]];
+  const caps: [number, string, string][] = [[0, "Библиотека:", "книги и курсы."], [T.PROD, "Купи книгу", "или добавь в корзину."], [T.READ, "Удобная", "читалка."], [T.POP, "Выделяй и делись", "ссылкой на фрагмент."], [T.GEAR, "Настрой", "под себя."], [T.PHONE, "Читай", "и на телефоне."]];
   let ci = 0; caps.forEach(([t], i) => { if (f >= t) ci = i; });
   const phone = sp(T.PHONE + 4, 16, 120);
   return (
@@ -122,6 +124,44 @@ export const Books: React.FC = () => {
             <div style={{ position: "absolute", left: 36, top: 968, fontFamily: SERIF, fontStyle: "italic", fontWeight: 700, fontSize: 30, color: "#3c3c3c" }}>Конституционное</div>
           </AbsoluteFill>
           <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={lpx} y={lpy} down={press(f, T.OPEN)} op={lin(f, 16, 26)} /></div>
+        </AbsoluteFill>
+      ) : null}
+
+      {/* ===== book page: price, add to cart, read a fragment */}
+      {prod > 0.001 ? (
+        <AbsoluteFill style={{ background: "#fff", opacity: prod, fontFamily: UI }}>
+          <AbsoluteFill style={{ transformOrigin: "1500px 700px", transform: `scale(${1 + 0.18 * lin(f, T.PROD + 10, T.CART - 14) * (1 - lin(f, T.CART + 20, T.RDB - 14))})` }}>
+            <div style={{ position: "absolute", left: 24, right: 24, top: 130, height: 70, display: "flex", alignItems: "center", gap: 18 }}>
+              <Img src={staticFile("brand/veoskill.webp")} style={{ height: 50 }} />
+              <div style={{ height: 50, padding: "0 22px", borderRadius: 10, background: BLUE, color: "#fff", display: "flex", alignItems: "center", fontWeight: 800, fontSize: 20 }}>Каталог</div>
+              <div style={{ flex: 1, height: 50, borderRadius: 10, border: `2px solid ${BLUE}`, display: "flex", alignItems: "center", paddingLeft: 18, color: "#9aa1ab", fontWeight: 600, fontSize: 19 }}>Искать материалы</div>
+              <div style={{ position: "relative", width: 92, textAlign: "center", fontWeight: 700, fontSize: 15, color: "#3c3c3c" }}><div style={{ fontSize: 26 }}>🛍</div>Корзина
+                {inCart ? <div style={{ position: "absolute", right: 14, top: -6, width: 26, height: 26, borderRadius: 13, background: "#ff6a1a", color: "#fff", fontWeight: 900, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", transform: `scale(${sp(T.CART + 2, 9, 260)})` }}>1</div> : null}
+              </div>
+            </div>
+            <div style={{ position: "absolute", left: 36, top: 220, fontWeight: 600, fontSize: 18, color: "#6f7682" }}>Материалы / Конституционное / <span style={{ color: "#2b2b2b" }}>Second Treatise of Government</span></div>
+            <div style={{ position: "absolute", left: 36, top: 268 }}><Book c={["#2a2f33", "#e6d6a0", "Second Treatise of Government"]} w={300} /></div>
+            <div style={{ position: "absolute", left: 36, top: 700, width: 300, height: 60, borderRadius: 12, background: BLUE, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 22, transform: `translateY(${press(f, T.RDB) * 4}px)` }}>Читать фрагмент</div>
+            <div style={{ position: "absolute", left: 386, top: 268, width: 1000 }}>
+              <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 48, color: "#2b2b2b" }}>Second Treatise of Government</div>
+              <div style={{ marginTop: 10, fontWeight: 600, fontSize: 24, color: "#6f7682" }}>Автор <span style={{ color: BLUE }}>VEOSKILL</span></div>
+              <div style={{ marginTop: 28, display: "flex", gap: 56 }}>{[["★ 5,0", "1 оценка"], ["132", "страницы"], ["PDF", "1,4 МБ"], ["4 стр.", "фрагмент"]].map(([a, b]) => <div key={b} style={{ textAlign: "center" }}><div style={{ fontWeight: 900, fontSize: 30, color: a.startsWith("★") ? "#2e9d3a" : "#2b2b2b" }}>{a}</div><div style={{ fontWeight: 600, fontSize: 17, color: "#6f7682" }}>{b}</div></div>)}</div>
+              <div style={{ marginTop: 34, fontWeight: 900, fontSize: 30, color: "#2b2b2b" }}>О материале</div>
+              <div style={{ marginTop: 10, fontWeight: 500, fontSize: 23, lineHeight: 1.55, color: "#3c3c3c" }}>«Второй трактат о правлении» Джона Локка (1690): естественное состояние, собственность, общественный договор, разделение властей. Основа конституционализма и теории прав человека.</div>
+            </div>
+            <div style={{ position: "absolute", left: 1500, top: 268, width: 384 }}>
+              <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 46, color: "#2b2b2b" }}>24 999 сум</div>
+              <div style={{ marginTop: 18, height: 68, borderRadius: 14, background: BLUE, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 24 }}>Купить</div>
+              <div style={{ marginTop: 14, height: 68, borderRadius: 14, background: "#58cc02", boxShadow: inCart ? "0 0 0 4px #b8f08a" : undefined, color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 24, transform: `translateY(${press(f, T.CART) * 4}px)` }}>
+                {inCart ? <><div>В корзине</div><div style={{ fontSize: 15, fontWeight: 600, opacity: 0.9 }}>Перейти</div></> : "🛍 Добавить в корзину"}
+              </div>
+              <div style={{ marginTop: 22, borderRadius: 16, background: "#f4f7fb", padding: "18px 22px" }}>
+                <div style={{ fontWeight: 900, fontSize: 22, color: "#2b2b2b" }}>Что вы получите</div>
+                {["Доступ сразу после оплаты", "Чтение на сайте и в приложении", "Книга остаётся в вашей библиотеке"].map((t) => <div key={t} style={{ marginTop: 12, fontWeight: 600, fontSize: 18, color: "#3c3c3c" }}><span style={{ color: BLUE, marginRight: 10 }}>✓</span>{t}</div>)}
+              </div>
+            </div>
+          </AbsoluteFill>
+          <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={interpolate(f, [T.PROD, T.CART - 12, T.CART + 8, T.RDB - 12, T.RDB + 8], [960, 1692, 1692, 186, 186], { ...cl, easing: IOE })} y={interpolate(f, [T.PROD, T.CART - 12, T.CART + 8, T.RDB - 12, T.RDB + 8], [600, 488, 488, 730, 730], { ...cl, easing: IOE })} down={Math.max(press(f, T.CART), press(f, T.RDB))} op={lin(f, T.PROD, T.PROD + 10)} /></div>
         </AbsoluteFill>
       ) : null}
 

@@ -361,7 +361,10 @@ const G3: React.FC = () => {
 };
 
 // ================= S7 kinetic words between sections =================
-const S7: React.FC = () => <Words per={57.6} items={[["ИГРАЕШЬ.", "#e7ffd6", GLIP], ["ЗАПОМИНАЕШЬ.", BLUE, "#fff"]]} />;
+const S7: React.FC = () => <Words per={57.6} items={[["ИГРАЕШЬ.", "#e7ffd6", GLIP], ["ЗАПОМИНАЕШЬ.", BLUE, "#fff"], ["РАСТЁШЬ В ЛИГЕ.", BG, NAVY, "В ЛИГЕ."]]} />;
+/** Blue section cuts before each new part of the site. */
+const DuelWords: React.FC = () => <Words per={57.6} items={[["А ТЕПЕРЬ", BG, NAVY], ["СОРЕВНОВАНИЯ.", BLUE, "#fff"]]} />;
+const LibWords: React.FC = () => <Words per={57.6} items={[["А ТАКЖЕ", BG, NAVY], ["СВОЯ БИБЛИОТЕКА.", BLUE, "#fff"]]} />;
 const S9: React.FC = () => <Words per={57.6} items={[["А ТЕПЕРЬ", BG, NAVY], ["ЗАКОНЫ.", NAVY, "#fff"]]} />;
 /** Word cut before the AI window: "А ТЕПЕРЬ" (1 beat), then a blue card with the AI mark (2 beats). */
 const AiWords: React.FC = () => {
@@ -756,15 +759,16 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: Lesson, d: 1325 },
   { C: LessonMore, d: 893 },
   { C: G3, d: 230 },
-  { C: Duel, d: 720 },
-  { C: S7, d: 115 },
-  { C: S7b, d: 375, xo: 16 },
+  { C: S7, d: 173 },
+  { C: S7b, d: 374 },
+  { C: DuelWords, d: 116 },
+  { C: Duel, d: 720, xo: 16 },
   { C: Wall, d: 288 },
   { C: S9, d: 115, xo: 12 },
-  { C: Counter, d: 346, xo: 16 },
-  { C: LexScene, d: 316 },
-  { C: OurWords, d: 116 },
-  { C: LawsHome, d: 201 },
+  { C: Counter, d: 345, xo: 16 },
+  { C: LexScene, d: 317 },
+  { C: OurWords, d: 115 },
+  { C: LawsHome, d: 202 },
   { C: Reader, d: 605, k: 1.4, xo: 18 },
   { C: Hints, d: 403, k: 1.4, xo: 16 },
   { C: ArticleActions, d: 403, k: 1.4, xo: 16 },
@@ -774,7 +778,8 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: AiPick, d: 173, xo: 16 },
   { C: AIReal, d: 317, xo: 16 },
   { C: Langs, d: 230, xo: 10 },
-  { C: Books, d: 1008 },
+  { C: LibWords, d: 115 },
+  { C: Books, d: 1210 },
   { C: Table, d: 288, xo: 16 },
   { C: S11, d: 720 },
 ];
