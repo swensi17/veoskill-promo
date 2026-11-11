@@ -9,10 +9,11 @@ const LOGO = "#3db7f4";
 const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const WALL = ["l-home", "l-reader", "article", "c2", "l-select", "m-ok", "home", "on-0", "l-marked", "mem-end", "laws-search", "c0", "on-5", "reader", "on-2"];
 const W = (n: string) => staticFile(`wall/${n}.jpg`);
+/** Brand mark, top left. zIndex 39: a TopCap band (40) covers it while a caption is on screen, so the logo shows only once the caption has gone. */
 const Top: React.FC<{ dark?: boolean }> = ({ dark }) => (
   <>
-    <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 56, top: 42, height: 30, filter: dark ? "brightness(0) invert(1)" : undefined, zIndex: 50 }} />
-    <div style={{ position: "absolute", right: 56, top: 48, fontFamily: HEAD, fontWeight: 500, fontSize: 18, color: dark ? "rgba(255,255,255,0.78)" : "#6f7682", zIndex: 50 }}>veoskill.uz</div>
+    {dark ? null : <div style={{ position: "absolute", left: 0, top: 0, right: 0, height: 170, background: "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0) 100%)", zIndex: 38 }} />}
+    <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 60, top: 40, height: 46, filter: dark ? "brightness(0) invert(1)" : undefined, zIndex: 39 }} />
   </>
 );
 
@@ -209,15 +210,21 @@ const Plane: React.FC<{ keys: CK[]; layers: Layer[]; cy?: number; children?: Rea
     </AbsoluteFill>
   );
 };
-const TopCap: React.FC<{ lines: [string, string?]; at: number; accent?: string }> = ({ lines, at, accent }) => (
-  <>
-    <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(243,242,238,1) 0%, rgba(243,242,238,1) 22%, rgba(243,242,238,0) 34%)", zIndex: 40 }} />
-    <div style={{ position: "absolute", left: 110, top: 96, zIndex: 45, display: "flex", gap: 18, alignItems: "baseline" }}>
-      <Cap text={lines[0]} at={at} size={60} />
-      {lines[1] ? <Cap text={lines[1]} at={at + 10} size={60} accent={accent} /> : null}
-    </div>
-  </>
-);
+/** Caption at the top: big (for older viewers), holds ~3.5 s, then glides up and fades; the logo under its band shows after. */
+const TopCap: React.FC<{ lines: [string, string?]; at: number; accent?: string; hold?: number }> = ({ lines, at, accent, hold = 210 }) => {
+  const f = useCurrentFrame();
+  const out = lin(f, at + hold, at + hold + 26, 0, 1, Easing.bezier(0.5, 0, 0.75, 0));
+  if (out >= 1) return null;
+  return (
+    <>
+      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(243,242,238,1) 0%, rgba(243,242,238,1) 25%, rgba(243,242,238,0) 38%)", zIndex: 40, opacity: 1 - out }} />
+      <div style={{ position: "absolute", left: 100, right: 100, top: 70, zIndex: 45, display: "flex", flexWrap: "wrap", columnGap: 22, rowGap: 0, alignItems: "baseline", opacity: 1 - out, transform: `translateY(${-out * 70}px)` }}>
+        <Cap text={lines[0]} at={at} size={78} />
+        {lines[1] ? <Cap text={lines[1]} at={at + 10} size={78} accent={accent} /> : null}
+      </div>
+    </>
+  );
+};
 const Toast: React.FC<{ text: string; at: number }> = ({ text, at }) => {
   const sp = useSp();
   const s = sp(at, 15, 170);
@@ -810,10 +817,8 @@ export const AIReal: React.FC = () => {
           </div>
         </div>
       </AbsoluteFill>
-      <div style={{ opacity: 1 - capOut }}>
-        <TopCap lines={["Непонятная статья?", "Объяснит искусственный интеллект."]} at={8} accent="искусственный интеллект." />
-      </div>
-      <div style={{ opacity: 1 - capOut }}><Top /></div>
+      <TopCap lines={["Непонятная статья?", "Объяснит искусственный интеллект."]} at={8} hold={78} accent="искусственный интеллект." />
+      <Top />
     </AbsoluteFill>
   );
 };

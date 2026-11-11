@@ -35,8 +35,7 @@ export const Chrome: React.FC<{ label?: string; dark?: boolean }> = ({ label, da
   const c = dark ? "rgba(255,255,255,0.78)" : "#6f7682";
   return (
     <>
-      <div style={{ position: "absolute", left: 56, top: 44, fontFamily: UI, fontWeight: 900, fontSize: 26, color: dark ? "#fff" : BLUE }}>veoskill</div>
-      <div style={{ position: "absolute", right: 56, top: 50, fontFamily: HEAD, fontWeight: 500, fontSize: 18, color: c }}>veoskill.uz</div>
+      <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 60, top: 40, height: 46, filter: dark ? "brightness(0) invert(1)" : undefined }} />
       {label ? (
         <div style={{ position: "absolute", left: 56, bottom: 46, display: "flex", alignItems: "center", gap: 14, fontFamily: HEAD, fontWeight: 600, fontSize: 19, color: c }}>
           <div style={{ width: 28, height: 2, background: c }} />
