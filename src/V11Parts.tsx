@@ -156,9 +156,7 @@ export const Counter: React.FC = () => {
             <circle cx={tip[0]} cy={tip[1]} r={9} fill="#fff" opacity={0.9} />
           </svg>
           <div style={{ position: "absolute", left: 0, right: 0, top: 250, display: "flex", justifyContent: "center", opacity: lin(f, 92, 110, 0, 1, OUTE), transform: `translateY(${(1 - lin(f, 92, 116, 0, 1, OUTE)) * 18}px)` }}>
-            <div style={{ padding: "10px 24px", borderRadius: 30, border: "2px solid rgba(61,183,244,0.75)", fontFamily: HEAD, fontWeight: 700, fontSize: 24, letterSpacing: "0.14em", color: "#fff", display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ width: 10, height: 10, borderRadius: 5, background: LOGO }} />ЗАКОНЫ И КОДЕКСЫ
-            </div>
+            <div style={{ fontFamily: HEAD, fontWeight: 800, fontSize: 34, letterSpacing: "0.16em", color: "#fff" }}>ЗАКОНЫ И КОДЕКСЫ</div>
           </div>
           <div style={{ position: "absolute", left: 0, right: 0, top: 330, display: "flex", justifyContent: "center", fontFamily: HEAD, fontWeight: 800, fontSize: SIZE, letterSpacing: "-0.04em", transform: `scale(${1 + burst * 0.04})` }}>
             <div style={{ display: "flex", filter: `drop-shadow(0 0 ${done ? 34 * (1 - burst * 0.4) : 14}px rgba(61,183,244,0.5))` }}>
