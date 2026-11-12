@@ -153,12 +153,11 @@ for lf in [290, 444, 604]: at(CL, F(N("Duel"), lf), -16)
 for lf in [302, 456, 616, 704, 900]: at(CH, F(N("Duel"), lf), -17)
 for lf in [352, 508]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(N("Duel"), lf) / FPS - i / SR + 0.03, -22)
-# Forum: page rises, cards, open a thread, replies, typing, GIF picker, send, likes, an answer
+# Forum (Reddit-style thread): drone flight up, landing, up-vote, reply box, GIF, send, second up-vote, votes roll in
 put(WH, F(N("Forum"), 0) / FPS + 0.03, -20)
-pops += [(N("Forum"), 18 + 6 * k) for k in range(6)]
-for lf in [142, 296, 336, 470, 520, 560, 640]: at(CL, F(N("Forum"), lf), -16)
-pops += [(N("Forum"), 206), (N("Forum"), 248), (N("Forum"), 474), (N("Forum"), 564), (N("Forum"), 780)]
-for lf in [298, 642, 676]: at(CH, F(N("Forum"), lf), -17)
+for lf in [172, 262, 424, 466, 508, 596]: at(CL, F(N("Forum"), lf), -16)
+pops += [(N("Forum"), 118), (N("Forum"), 266), (N("Forum"), 470), (N("Forum"), 512)]
+for lf in [174, 598, 640]: at(CH, F(N("Forum"), lf), -17)
 # section word cuts
 for nm in ["DuelWords", "ForumWords"]: pops += [(N(nm), 0), (N(nm), 58)]
 pops += [(N("S7"), 115)]

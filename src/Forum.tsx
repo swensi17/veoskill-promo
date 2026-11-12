@@ -1,254 +1,188 @@
 import React from "react";
-import { tr, uzt } from "./i18n";
+import { tr } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
-import { NAVY, GREEN, UI, OUTE, IOE, lin, press, useSp, useFrame, Pointer, TopLine } from "./Scenes9";
+import { UI, IOE, lin, press, useSp, useFrame, Pointer, TopLine } from "./Scenes9";
 
-// Forum (veoskill.uz/hub/forum): the page rises from below, the threads come in, the cursor opens a hot thread,
-// replies and a GIF arrive, the learner types a message, picks a GIF and sends it, likes count up, someone answers.
-// Menu has no "Дуэли"/"Профиль" and no "NEOLEX" author (docs/RULES.md).
+// Forum, Reddit-style thread (no side menu). Like the lesson path at the start: a drone camera flies low
+// over the tilted thread from the bottom up, rises and flattens on the post; the learner up-votes it, opens
+// a reply under the top comment, types, adds a GIF, sends; the reply lands in the thread and collects votes.
+// No "Дуэли"/"Профиль"/"NEOLEX" in frame (docs/RULES.md).
 const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
-const S = (n: string) => staticFile(`site/${n}`);
 const AV = (n: string) => staticFile(`av/${n}.svg`);
-const BLUE = "#1cb0f6";
-const LINE = "#e5e9ef";
+const INK = "#1a1a1b", META = "#6a7681", LINE = "#e3e7eb", BLUE = "#1cb0f6", UP = "#58cc02";
 export const FORUM_FRAMES = 864;
 
-// timeline (scene frames)
-const T = { HOVER: 118, OPEN: 142, R1: 206, R2: 248, VOTE: 296, FOCUS: 336, TYPE0: 356, GIFBTN: 470, PICK: 520, SEND: 560, LIKE: 640, MYLIKES: 676, TYPING: 716, R3: 780 };
+const T = { LAND: 118, VOTE: 172, DOWN0: 196, REPLY: 262, TYPE0: 312, GIFBTN: 424, PICK: 466, SEND: 508, VOTE2: 596, MYV: 636 };
+const X0 = 410, W = 1100;                 // thread column (page coordinates = screen coordinates when flat)
 
-const NAV: [string, string][] = [["icons_hub_home.webp", tr("КАБИНЕТ")], ["stickers_module.webp", tr("МОДУЛИ")], ["icons_duel_scales.webp", tr("ЗАКОНЫ")], ["icons_hub_stats.webp", tr("СТАТИСТИКА")], ["icons_hub_achievements.webp", tr("ДОСТИЖЕНИЯ")], ["icons_hub_store.webp", tr("МАГАЗИН")], ["icons_hub_forum.webp", tr("ФОРУМ")]];
-// threads: title, text, picture, hot, author avatar, author, when, up, down, replies
-type Th = [string, string, string, boolean, string, string, string, number, number, number];
-const THREADS: Th[] = [
-  [tr("Сессия через две недели, а вы уже на какой странице?"), tr("Пишите честно, сколько страниц конспекта прочитали и как учите статьи."), "stickers_key-book.webp", true, "p2", tr("Сардор"), tr("6 дн. назад"), 6, 1, 3],
-  [uzt("Sessiyaga ikki hafta qoldi, siz qayerdasiz?"), uzt("Konspektning nechinchi betidasiz, halol yozing. Moddalarni qanday yodlaysiz?"), "stickers_key-fire.webp", true, "p4", tr("Малика"), tr("6 дн. назад"), 5, 1, 6],
-  [tr("Какая статья Уголовного кодекса самая странная на ваш взгляд?"), tr("Не обязательно самая страшная. Может, самая смешная или та, которую невозможно понять."), "icons_duel_scales.webp", false, "p0", tr("Азиз"), tr("2 нед. назад"), 0, 1, 1],
-  ["Worst law exam question you ever got", "Tell us the question and what you wrote. Funny answers are welcome.", "stickers_heart-pro.webp", false, "p5", tr("Тимур"), tr("2 нед. назад"), 1, 0, 0],
-  [uzt("Qaysi kodeksni o'qish eng qiyin?"), uzt("Fuqarolik kodeksimi, Jinoyat kodeksimi yoki Mehnat kodeksi? Nima uchun?"), "stickers_module.webp", false, "p3", tr("Дильноза"), tr("2 нед. назад"), 0, 1, 0],
-  ["How do you actually memorize articles of the law?", "Flashcards or just reading it ten times? Share what works for you.", "icons_hub_achievements.webp", false, "p2", tr("Санжар"), tr("2 нед. назад"), 0, 1, 0],
-];
-const OPENED = 2;
-const GIFS = ["v4/owl-q.png", "v4/owl-read.png", "real/mascot1.webp", "site/stickers_key-fire.webp", "site/stickers_heart-pro.webp", "site/icons_hub_achievements.webp"];
-const GIF_PICK = 1;
-
-const Up: React.FC<{ on?: boolean; n: number; c?: string }> = ({ on, n, c = "#5d6470" }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 24, color: on ? "#58cc02" : c }}>
-    <svg width="26" height="26" viewBox="0 0 24 24" fill={on ? "#58cc02" : "none"} stroke={on ? "#58cc02" : "#9aa3b0"} strokeWidth="2.4" strokeLinejoin="round"><path d="M12 3l8 9h-5v9H9v-9H4z" /></svg>{n}
-  </div>
-);
-const Down: React.FC<{ n: number }> = ({ n }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 24, color: "#5d6470" }}>
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9aa3b0" strokeWidth="2.4" strokeLinejoin="round"><path d="M12 21l8-9h-5V3H9v9H4z" /></svg>{n}
-  </div>
-);
-const Bubble: React.FC<{ n: number }> = ({ n }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 24, color: "#5d6470" }}>
-    <svg width="28" height="26" viewBox="0 0 24 22" fill="none" stroke="#9aa3b0" strokeWidth="2.2" strokeLinejoin="round"><path d="M3 4h18v12H9l-5 4v-4H3z" /></svg>{n}
-  </div>
-);
-
-/** One thread card like the site: speech-bubble card (hot ones in yellow), meta row underneath. */
-const Card: React.FC<{ t: Th; x: number; y: number; e: number; hover: number }> = ({ t, x, y, e, hover }) => {
-  const [title, text, pic, hot, av, author, when, up, down, rep] = t;
+/** Number that rolls up when it changes at `at`. */
+const Roll: React.FC<{ from: number; to: number; at: number; f: number; color: string }> = ({ from, to, at, f, color }) => {
+  const u = lin(f, at, at + 10, 0, 1, Easing.bezier(0.3, 0, 0.2, 1));
   return (
-    <div style={{ position: "absolute", left: x, top: y, width: 500, opacity: Math.min(1, e * 1.5), transform: `translateY(${(1 - e) * 80 - hover * 10}px) scale(${1 + hover * 0.03})` }}>
-      <div style={{ position: "relative", height: 178, borderRadius: 26, background: "#fff", border: `4px solid ${hot ? "#ffc800" : LINE}`, boxShadow: hot ? "0 7px 0 #ffc800" : `0 7px 0 ${LINE}${hover > 0.1 ? ", 0 24px 50px rgba(28,176,246,0.25)" : ""}`, boxSizing: "border-box", padding: "18px 22px 0 92px" }}>
-        <Img src={S(pic)} style={{ position: "absolute", left: 18, top: 50, width: 60, height: 60, objectFit: "contain" }} />
-        {hot ? <div style={{ fontWeight: 900, fontSize: 15, letterSpacing: "0.12em", color: "#ff9600", marginBottom: 4 }}>🔥 {tr("ГОРЯЧЕЕ")}</div> : <div style={{ height: 10 }} />}
-        <div style={{ fontWeight: 900, fontSize: 23, lineHeight: 1.22, color: "#3c3c3c", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{title}</div>
-        <div style={{ marginTop: 8, fontWeight: 600, fontSize: 18, lineHeight: 1.35, color: "#77808c", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{text}</div>
-        <div style={{ position: "absolute", left: 40, bottom: -18, width: 24, height: 24, background: "#fff", borderRight: `4px solid ${hot ? "#ffc800" : LINE}`, borderBottom: `4px solid ${hot ? "#ffc800" : LINE}`, transform: "rotate(45deg)" }} />
-      </div>
-      <div style={{ marginTop: 26, display: "flex", alignItems: "center", gap: 12, paddingLeft: 16 }}>
-        <Img src={AV(av)} style={{ width: 40, height: 40, borderRadius: 20, background: "#eef1f5" }} />
-        <div style={{ fontWeight: 900, fontSize: 21, color: "#4b4b4b" }}>{author}</div>
-        <div style={{ fontWeight: 600, fontSize: 17, color: "#9aa3b0" }}>{when}</div>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 16 }}><Up on={hot && up > 5} n={up} /><Down n={down} /><Bubble n={rep} /></div>
-      </div>
+    <span style={{ position: "relative", display: "inline-block", height: "1.2em", lineHeight: "1.2em", overflow: "hidden", verticalAlign: "middle", minWidth: "1.3em", textAlign: "center", color }}>
+      <span style={{ display: "block", transform: `translateY(${-u * 100}%)` }}>{from}</span>
+      <span style={{ display: "block", transform: `translateY(${-u * 100}%)` }}>{to}</span>
+    </span>
+  );
+};
+const Arrow: React.FC<{ up?: boolean; on?: boolean; s?: number }> = ({ up = true, on, s = 26 }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill={on ? UP : "none"} stroke={on ? UP : "#7c8893"} strokeWidth="2.2" strokeLinejoin="round" style={{ transform: up ? undefined : "rotate(180deg)" }}><path d="M12 3.5l7.5 8.5H15v8.5H9V12H4.5z" /></svg>
+);
+/** Vote pill: ▲ n ▼ (n rolls when the learner votes at `at`). */
+const Votes: React.FC<{ n: number; at?: number; f: number; big?: boolean; pop?: number }> = ({ n, at, f, big, pop = 0 }) => {
+  const on = at !== undefined && f >= at;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, height: big ? 52 : 40, padding: "0 12px", borderRadius: 26, background: on ? "#eaffd9" : big ? "#eef1f4" : "transparent", fontWeight: 800, fontSize: big ? 22 : 19, transform: `scale(${1 + 0.12 * pop})` }}>
+      <Arrow on={on} s={big ? 26 : 22} />
+      {at !== undefined ? <Roll from={n} to={n + 1} at={at} f={f} color={on ? "#3f9a00" : INK} /> : <span style={{ color: INK }}>{n}</span>}
+      <Arrow up={false} s={big ? 26 : 22} />
     </div>
   );
 };
-
-/** A message in the thread. */
-const Msg: React.FC<{ av: string; name: string; when: string; e: number; me?: boolean; children: React.ReactNode; likes?: number; likeOn?: boolean; pop?: number; y: number }> = ({ av, name, when, e, me, children, likes = 0, likeOn, pop = 0, y }) => (
-  <div style={{ position: "absolute", left: 0, top: y, width: 1500, display: "flex", gap: 18, opacity: Math.min(1, e * 1.6), transform: `translateY(${(1 - e) * -30}px) scale(${0.96 + 0.04 * e})`, transformOrigin: "0 0" }}>
-    <Img src={AV(av)} style={{ width: 56, height: 56, borderRadius: 28, background: me ? "#ffd5cc" : "#eef1f5", flexShrink: 0 }} />
-    <div style={{ flex: 1 }}>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-        <div style={{ fontWeight: 900, fontSize: 22, color: me ? BLUE : "#3c3c3c" }}>{name}</div>
-        <div style={{ fontWeight: 600, fontSize: 17, color: "#9aa3b0" }}>{when}</div>
-      </div>
-      <div style={{ marginTop: 6, display: "inline-block", maxWidth: 1000, padding: "14px 20px", borderRadius: "6px 22px 22px 22px", background: me ? "#e8f6fe" : "#f4f6f9", fontWeight: 600, fontSize: 23, lineHeight: 1.4, color: "#2b2b2b" }}>{children}</div>
-      <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 19, color: likeOn ? "#ff4b4b" : "#9aa3b0", transform: `scale(${1 + 0.6 * pop})`, transformOrigin: "20% 50%" }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill={likeOn ? "#ff4b4b" : "none"} stroke={likeOn ? "#ff4b4b" : "#9aa3b0"} strokeWidth="2.2"><path d="M12 21s-7-4.4-9.3-8.6C1 9 3 5 6.8 5c2.2 0 3.6 1.3 5.2 3 1.6-1.7 3-3 5.2-3C21 5 23 9 21.3 12.4 19 16.6 12 21 12 21z" /></svg>{likes}
-        </div>
-        <div style={{ fontWeight: 800, fontSize: 18, color: "#9aa3b0" }}>{tr("Ответить")}</div>
-      </div>
-    </div>
+const Gif: React.FC<{ src: string; f: number; w: number }> = ({ src, f, w }) => (
+  <div style={{ position: "relative", width: w, height: w * 0.62, borderRadius: 14, overflow: "hidden", background: "linear-gradient(160deg, #f3f8fc, #e3eef7)", border: `1.5px solid ${LINE}` }}>
+    <Img src={staticFile(src)} style={{ position: "absolute", left: "50%", top: "52%", height: w * 0.52, objectFit: "contain", transform: `translate(-50%, -50%) translateY(${Math.sin(f / 7) * 4}px) rotate(${Math.sin(f / 10) * 4}deg)` }} />
+    <div style={{ position: "absolute", right: 8, bottom: 8, padding: "1px 8px", borderRadius: 6, background: "rgba(26,26,27,0.7)", color: "#fff", fontWeight: 800, fontSize: 13, letterSpacing: "0.06em" }}>GIF</div>
   </div>
 );
-
-const Gif: React.FC<{ src: string; f: number; w?: number }> = ({ src, f, w = 260 }) => (
-  <div style={{ position: "relative", width: w, height: w * 0.75, borderRadius: 16, overflow: "hidden", background: "linear-gradient(160deg, #fff3c4, #ffe1b8)" }}>
-    <Img src={staticFile(src)} style={{ position: "absolute", left: "50%", top: "50%", width: w * 0.62, height: w * 0.62, objectFit: "contain", transform: `translate(-50%, -50%) translateY(${Math.sin(f / 6) * 6}px) rotate(${Math.sin(f / 9) * 6}deg)` }} />
-    <div style={{ position: "absolute", left: 10, bottom: 10, padding: "2px 10px", borderRadius: 8, background: "rgba(0,0,0,0.55)", color: "#fff", fontWeight: 900, fontSize: 15, letterSpacing: "0.08em" }}>GIF</div>
+/** A comment: avatar, name · time, text, actions. */
+const Comment: React.FC<{ x: number; y: number; av: string; name: string; when: string; me?: boolean; votes: React.ReactNode; e?: number; glow?: number; children: React.ReactNode }> = ({ x, y, av, name, when, me, votes, e = 1, glow = 0, children }) => (
+  <div style={{ position: "absolute", left: x, top: y, width: X0 + W - x, opacity: Math.min(1, e * 1.6), transform: `translateY(${(1 - e) * 16}px)` }}>
+    {glow > 0.01 ? <div style={{ position: "absolute", left: -16, top: -10, right: 0, bottom: -10, borderRadius: 16, background: `rgba(28,176,246,${0.10 * glow})`, boxShadow: `inset 3px 0 0 rgba(28,176,246,${glow})` }} /> : null}
+    <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 12 }}>
+      <Img src={AV(av)} style={{ width: 40, height: 40, borderRadius: 20, background: me ? "#ffd5cc" : "#eef1f5" }} />
+      <div style={{ fontWeight: 800, fontSize: 21, color: me ? BLUE : INK }}>{name}</div>
+      <div style={{ fontWeight: 600, fontSize: 19, color: META }}>· {when}</div>
+    </div>
+    <div style={{ position: "relative", marginLeft: 52, marginTop: 6, fontWeight: 500, fontSize: 23, lineHeight: 1.45, color: INK }}>{children}</div>
+    <div style={{ position: "relative", marginLeft: 40, marginTop: 4, display: "flex", alignItems: "center", gap: 14, fontWeight: 800, fontSize: 18, color: META }}>
+      {votes}<span>{tr("Ответить")}</span><span>{tr("Поделиться")}</span>
+    </div>
   </div>
 );
 
 export const Forum: React.FC = () => {
   const f = useFrame();
   const sp = useSp();
-  // page rises from below with a slight 3D tilt
-  const rise = lin(f, 0, 42, 0, 1, Easing.bezier(0.2, 0.8, 0.2, 1));
-  const open = lin(f, T.OPEN, T.OPEN + 30, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
-  const hover = lin(f, T.HOVER - 12, T.HOVER, 0, 1, OUTE) * (1 - open);
-  // typing
-  const MSG = tr("Согласен! А ещё статья про самоуправство, тоже странная 😂");
-  const typed = MSG.slice(0, Math.max(0, Math.min(MSG.length, Math.floor((f - T.TYPE0) * MSG.length / (T.GIFBTN - 16 - T.TYPE0)))));
+  // ---------- thread layout (page coordinates)
+  const POST_Y = 120, C_Y = 730;
+  const MSG = tr("Согласен! Я бы добавил ещё статью про самоуправство 😂");
+  const boxOpen = sp(T.REPLY + 4, 18, 170) * (1 - lin(f, T.SEND + 2, T.SEND + 16, 0, 1, IOE));
   const sent = f >= T.SEND + 4;
-  const draft = sent ? "" : typed;
-  const picker = sp(T.GIFBTN + 4, 15, 190) * (1 - lin(f, T.PICK + 6, T.PICK + 18));
-  const gifIn = f >= T.PICK + 4 && !sent;
-  // the thread had 4 up-votes, the learner adds the 5th; the learner likes Тимур's GIF; then others like the learner's message
-  const votes = 4 + (f >= T.VOTE + 2 ? 1 : 0);
-  const votePop = Math.sin(lin(f, T.VOTE + 2, T.VOTE + 22) * Math.PI);
-  const timLike = f >= T.LIKE + 2, timPop = Math.sin(lin(f, T.LIKE + 2, T.LIKE + 20) * Math.PI);
-  const myLikes = Math.round(lin(f, T.MYLIKES, T.MYLIKES + 70, 0, 9, Easing.out(Easing.cubic)));
-  const nMsg = 1 + (f >= T.R1 ? 1 : 0) + (f >= T.R2 ? 1 : 0) + (sent ? 1 : 0) + (f >= T.R3 ? 1 : 0);
-  // layout (inside the page, 1920 x 1220)
-  const MX = 360;
-  const COMP = { x: MX, y: 380, w: 1520, h: 210 };
-  const BTN = { gif: [MX + 110, COMP.y + 166], send: [MX + 1460, COMP.y + 166] };
-  const cardPos = (i: number) => [MX + (i % 3) * 530, 190 + Math.floor(i / 3) * 290];
-  const [ocx, ocy] = cardPos(OPENED);
-  // messages stack (newest on top), each block has a fixed height; a new one pushes the others down smoothly
-  const L0 = 630, GAP = 22;
-  const eR1 = sp(T.R1, 14, 200), eR2 = sp(T.R2, 14, 200), eMe = sp(T.SEND + 4, 13, 200), eR3 = sp(T.R3, 14, 200);
-  const eTy = lin(f, T.TYPING, T.TYPING + 10) * (1 - lin(f, T.R3 - 6, T.R3 + 4));
-  const stack: [string, number, number][] = [["ty", 54, eTy], ["r3", 150, f >= T.R3 ? eR3 : 0], ["me", 300, sent ? eMe : 0], ["r2", 262, f >= T.R2 ? eR2 : 0], ["r1", 150, f >= T.R1 ? eR1 : 0]];
-  const Y: Record<string, number> = {}; let acc = L0;
-  stack.forEach(([k, h, e]) => { Y[k] = acc; acc += (h + GAP) * Math.min(1, e); });
-  const heart = (k: string, h: number) => [MX + 92, Y[k] + h - 22];
-  // camera keyframes: tx, ty, scale (page -> screen: x * K + tx)
-  type Cam = [number, number, number];
-  const A: Cam = [105.6, 110, 0.89];                       // forum list
-  const B: Cam = [960 - 1100 * 1.06, 560 - 470 * 1.06, 1.06]; // thread
-  const C: Cam = [960 - 860 * 1.3, 540 - 470 * 1.3, 1.3];      // typing: close on the start of the message box
-  const C2: Cam = [960 - 900 * 1.2, 560 - 600 * 1.2, 1.2];    // GIF picker
-  const C3: Cam = [960 - 1250 * 1.1, 540 - 480 * 1.1, 1.1];    // the send button comes into view
-  const D: Cam = [960 - 1100 * 1.0, -240, 1.0];               // after sending: the box and the conversation
-  const keys: [number, Cam][] = [[0, A], [T.OPEN + 20, A], [T.OPEN + 70, B], [T.FOCUS - 6, B], [T.FOCUS + 34, C], [T.GIFBTN - 4, C], [T.GIFBTN + 22, C2], [T.PICK + 8, C2], [T.SEND - 12, C3], [T.SEND + 10, C3], [T.SEND + 50, D]];
-  const ease = Easing.bezier(0.65, 0, 0.35, 1);
+  const mine = sent ? sp(T.SEND + 6, 16, 170) : 0;
+  const slot = Math.max(250 * boxOpen, 250 * mine);   // the reply box, then the sent reply, under the top comment
+  const yC1 = C_Y, yKids = C_Y + 176;
+  const yTim = yKids + slot + (slot > 1 ? 18 : 0);
+  const yC2 = yTim + 262, yC2a = yC2 + 134, yC3 = yC2a + 160;
+  const typed = MSG.slice(0, Math.max(0, Math.min(MSG.length, Math.floor((f - T.TYPE0) * MSG.length / (T.GIFBTN - 14 - T.TYPE0)))));
+  const tray = sp(T.GIFBTN + 4, 16, 190) * (1 - lin(f, T.PICK + 6, T.PICK + 18));
+  const gifIn = f >= T.PICK + 4;
+  const myVotes = Math.round(lin(f, T.MYV, T.MYV + 90, 1, 14, Easing.out(Easing.cubic)));
+  // ---------- camera: drone flight from the bottom of the thread up to the post, then it lands and works
+  type Cam = [number, number, number]; // focus y, scale, tilt
+  const keys: [number, Cam][] = [
+    [0, [1900, 1.7, 56]], [T.LAND, [POST_Y + 330, 1.0, 0]], [T.DOWN0, [POST_Y + 330, 1.0, 0]], [T.DOWN0 + 46, [C_Y + 240, 1.0, 0]],
+    [T.REPLY + 6, [C_Y + 240, 1.0, 0]], [T.REPLY + 44, [yKids + 120, 1.32, 0]], [T.SEND + 8, [yKids + 120, 1.32, 0]], [T.SEND + 52, [yKids + 200, 1.05, 0]],
+    [T.VOTE2 - 34, [yKids + 260, 1.0, 0]], [T.VOTE2 + 20, [yKids + 260, 1.0, 0]], [T.MYV + 10, [yKids + 130, 1.12, 0]], [FORUM_FRAMES, [yKids + 120, 1.16, 0]],
+  ];
   let cam: Cam = keys[keys.length - 1][1];
   for (let k = 0; k < keys.length - 1; k++) {
     const [t0, c0] = keys[k], [t1, c1] = keys[k + 1];
-    if (f >= t0 && f < t1) { const u = ease((f - t0) / Math.max(1, t1 - t0)); cam = [c0[0] + (c1[0] - c0[0]) * u, c0[1] + (c1[1] - c0[1]) * u, c0[2] + (c1[2] - c0[2]) * u]; break; }
+    if (f >= t0 && f < t1) {
+      const u = (k === 0 ? Easing.bezier(0.35, 0, 0.2, 1) : Easing.bezier(0.65, 0, 0.35, 1))((f - t0) / Math.max(1, t1 - t0));
+      cam = [c0[0] + (c1[0] - c0[0]) * u, c0[1] + (c1[1] - c0[1]) * u, c0[2] + (c1[2] - c0[2]) * u];
+      break;
+    }
   }
-  const [TX, TY, K] = cam;
-  const scr = (x: number, y: number) => [TX + x * K, TY + y * K];
+  const [cy, sc, rx] = cam;
+  const fog = rx / 56;
+  const scr = (x: number, y: number) => [960 + (x - 960) * sc, 560 + (y - cy) * sc];
+  // ---------- cursor (all clicks happen with the page flat)
   const clicks: [number, number, number][] = [
-    [T.OPEN, ocx + 250, ocy + 90], [T.VOTE, MX + 325, 278], [T.FOCUS, MX + 700, COMP.y + 70], [T.GIFBTN, BTN.gif[0], BTN.gif[1]],
-    [T.PICK, MX + 100 + (GIF_PICK % 3) * 150 + 65, COMP.y + 250 + Math.floor(GIF_PICK / 3) * 130 + 60], [T.SEND, BTN.send[0], BTN.send[1]],
-    [T.LIKE, ...heart("r2", 262) as [number, number]],
+    [T.VOTE, X0 + 26, POST_Y + 367], [T.REPLY, X0 + 200, yC1 + 133], [T.GIFBTN, X0 + 112, yKids + 196], [T.PICK, X0 + 112 + 160 + 60, yKids + 300],
+    [T.SEND, X0 + W - 80, yKids + 196], [T.VOTE2, X0 + 63, yC2 + 100],
   ];
-  const pk = [40, ...clicks.flatMap(([t]) => [t - 16, t + 8]), T.LIKE + 50];
+  const pk = [T.LAND - 20, ...clicks.flatMap(([t]) => [t - 16, t + 8]), T.VOTE2 + 50];
   const pts = clicks.map(([, x, y]) => scr(x, y));
   const px = interpolate(f, pk, [1500, ...pts.flatMap(([x]) => [x, x]), 1500], { ...cl, easing: IOE });
   const py = interpolate(f, pk, [1000, ...pts.flatMap(([, y]) => [y, y]), 1000], { ...cl, easing: IOE });
   const down = Math.max(...clicks.map(([t]) => press(f, t)));
-  const caps: [number, string, string][] = [[0, tr("Форум"), tr("для тех, кто учит право.")], [T.R1 - 20, tr("Спрашивай"), tr("и обсуждай.")], [T.FOCUS, tr("Пиши сообщения"), tr("и отправляй гифки.")]];
+  const caps: [number, string, string][] = [[0, tr("Форум"), tr("для тех, кто учит право.")], [T.REPLY - 10, tr("Отвечай"), tr("и делись гифками.")], [T.VOTE2 - 30, tr("Голосуй"), tr("за лучшие ответы.")]];
   let ci = 0; caps.forEach(([t], i) => { if (f >= t) ci = i; });
-  const th = THREADS[OPENED];
+  const votePop = Math.sin(lin(f, T.VOTE, T.VOTE + 18) * Math.PI);
   return (
-    <AbsoluteFill style={{ background: "#fff", fontFamily: UI, overflow: "hidden", perspective: 2000 }}>
-      <AbsoluteFill style={{ transformOrigin: "0 0", transform: `translate(${TX}px, ${TY + (1 - rise) * 900}px) rotateX(${(1 - rise) * 14}deg) scale(${K})`, opacity: Math.min(1, rise * 2) }}>
-        {/* sidebar */}
-        <div style={{ position: "absolute", left: 0, top: 0, width: 300, height: 1220, background: "linear-gradient(180deg, #eaf6ff, #f6fbff)" }}>
-          <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 60, top: 30, height: 46 }} />
-          {NAV.map(([ic, t], i) => {
-            const on = i === NAV.length - 1;
-            return (
-              <div key={t} style={{ position: "absolute", left: 18, top: 110 + i * 70, width: 264, height: 58, borderRadius: 16, border: on ? `3px solid ${BLUE}` : "3px solid transparent", background: on ? "#e3f4fe" : "transparent", display: "flex", alignItems: "center", gap: 16, paddingLeft: 12, boxSizing: "border-box", fontWeight: 800, fontSize: 19, letterSpacing: "0.08em", color: on ? BLUE : "#5d6470" }}>
-                <Img src={S(ic)} style={{ width: 40, height: 40, objectFit: "contain" }} />{t}
+    <AbsoluteFill style={{ background: "#f6f7f8", overflow: "hidden", fontFamily: UI }}>
+      <AbsoluteFill style={{ perspective: 1100 }}>
+        <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 3200, transformOrigin: "0 0", transform: `translate(960px, 560px) rotateX(${rx}deg) scale(${sc}) translate(-960px, ${-cy}px)` }}>
+          {/* dot grid under the thread, only while flying */}
+          <div style={{ position: "absolute", left: -900, top: -400, width: 3720, height: 4000, backgroundImage: "radial-gradient(rgba(20,60,110,0.16) 2.4px, transparent 2.8px)", backgroundSize: "48px 48px", opacity: fog }} />
+          {/* thread column */}
+          <div style={{ position: "absolute", left: X0 - 40, top: POST_Y - 40, width: W + 80, height: yC3 + 260 - POST_Y, borderRadius: 30, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.08)" }} />
+          {/* ===== post */}
+          <div style={{ position: "absolute", left: X0, top: POST_Y, width: W }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <div style={{ width: 52, height: 52, borderRadius: 26, background: "#e3f4fe", display: "flex", alignItems: "center", justifyContent: "center" }}><Img src={staticFile("site/icons_duel_scales.webp")} style={{ width: 38, height: 38, objectFit: "contain" }} /></div>
+              <div style={{ fontWeight: 900, fontSize: 22, color: INK }}>{tr("Уголовное право")}</div>
+              <div style={{ fontWeight: 600, fontSize: 20, color: META }}>· {tr("Азиз")} · {tr("2 нед. назад")}</div>
+            </div>
+            <div style={{ marginTop: 22, fontWeight: 900, fontSize: 44, lineHeight: 1.18, color: INK }}>{tr("Какая статья Уголовного кодекса самая странная на ваш взгляд?")}</div>
+            <div style={{ marginTop: 14, display: "inline-block", padding: "4px 14px", borderRadius: 14, background: "#e3f4fe", color: "#1789c4", fontWeight: 800, fontSize: 18 }}>{tr("Обсуждение")}</div>
+            <div style={{ marginTop: 16, fontWeight: 500, fontSize: 25, lineHeight: 1.5, color: "#30363d" }}>{tr("Не обязательно самая страшная. Может, самая смешная или та, которую невозможно понять. Пишите номер и почему.")}</div>
+            <div style={{ marginTop: 26, display: "flex", alignItems: "center", gap: 14 }}>
+              <Votes n={41} at={T.VOTE + 2} f={f} big pop={votePop} />
+              <div style={{ display: "flex", alignItems: "center", gap: 10, height: 52, padding: "0 18px", borderRadius: 26, background: "#eef1f4", fontWeight: 800, fontSize: 21, color: INK }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c8893" strokeWidth="2.2" strokeLinejoin="round"><path d="M4 5h16v11H10l-5 4v-4H4z" /></svg>{18 + (sent ? 1 : 0)}
               </div>
-            );
-          })}
-          <div style={{ position: "absolute", left: 14, top: 760, width: 272, height: 150, borderRadius: 20, background: "linear-gradient(135deg, #1cb0f6, #3db7f4)", color: "#fff", padding: "18px 20px", boxSizing: "border-box" }}>
-            <div style={{ fontWeight: 700, fontSize: 15, opacity: 0.85 }}>{tr("Текущий план")}</div>
-            <div style={{ fontWeight: 900, fontSize: 26 }}>Premium</div>
-            <div style={{ marginTop: 6, fontWeight: 600, fontSize: 14, opacity: 0.9 }}>{tr("Полный доступ открыт. Энергия и возможности без лимитов.")}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, height: 52, padding: "0 18px", borderRadius: 26, background: "#eef1f4", fontWeight: 800, fontSize: 21, color: INK }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c8893" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 5l6 6-6 6M20 11H9a5 5 0 00-5 5v3" /></svg>{tr("Поделиться")}
+              </div>
+            </div>
           </div>
+          {/* add-a-comment field */}
+          <div style={{ position: "absolute", left: X0, top: C_Y - 110, width: W, height: 64, borderRadius: 32, border: `2px solid ${LINE}`, display: "flex", alignItems: "center", paddingLeft: 26, boxSizing: "border-box", fontWeight: 600, fontSize: 21, color: META }}>{tr("Добавить комментарий")}</div>
+          {/* thread lines */}
+          <div style={{ position: "absolute", left: X0 + 19, top: yC1 + 46, width: 2, height: yTim + 30 - (yC1 + 46), background: LINE }} />
+          <div style={{ position: "absolute", left: X0 + 19, top: yC2 + 46, width: 2, height: yC2a + 30 - (yC2 + 46), background: LINE }} />
+          {/* ===== comments */}
+          <Comment x={X0} y={yC1} av="p4" name={tr("Малика")} when={tr("3 ч")} votes={<Votes n={24} f={f} />}>{tr("По-моему, статья про мелкое хулиганство. Там столько условий, что без юриста не разберёшься.")}</Comment>
+          {/* reply box under the top comment */}
+          {boxOpen > 0.01 ? (
+            <div style={{ position: "absolute", left: X0 + 56, top: yKids, width: W - 56, height: 230 * boxOpen, overflow: "hidden", opacity: Math.min(1, boxOpen * 1.5) }}>
+              <div style={{ position: "absolute", inset: 0, borderRadius: 22, border: `2px solid ${BLUE}`, boxShadow: "0 0 0 5px rgba(28,176,246,0.12)", background: "#fff" }} />
+              <div style={{ position: "absolute", left: 24, top: 18, right: 24, fontWeight: 500, fontSize: 24, lineHeight: 1.45, color: typed ? INK : META }}>
+                {typed || `${tr("Ответ для")} ${tr("Малика")}`}{f >= T.TYPE0 - 10 && f < T.GIFBTN && Math.floor(f / 14) % 2 ? <span style={{ color: BLUE }}>|</span> : null}
+              </div>
+              {gifIn ? <div style={{ position: "absolute", left: 24, top: 64, transform: `scale(${sp(T.PICK + 4, 14, 220)})`, transformOrigin: "0 0" }}><Gif src="v4/owl-read.png" f={f} w={140} /></div> : null}
+              <div style={{ position: "absolute", left: 22, bottom: 16, display: "flex", gap: 12 }}>
+                <div style={{ height: 36, padding: "0 12px", borderRadius: 10, border: `2px solid ${f >= T.GIFBTN ? BLUE : "#c3ccd5"}`, color: f >= T.GIFBTN ? BLUE : META, display: "flex", alignItems: "center", fontWeight: 900, fontSize: 15 }}>GIF</div>
+              </div>
+              <div style={{ position: "absolute", right: 22, bottom: 14, height: 42, padding: "0 22px", borderRadius: 21, background: typed.length > 3 ? BLUE : "#c9d3dc", color: "#fff", display: "flex", alignItems: "center", fontWeight: 800, fontSize: 19, transform: `scale(${1 - 0.05 * press(f, T.SEND)})` }}>{tr("Ответить")}</div>
+            </div>
+          ) : null}
+          {/* GIF tray */}
+          {tray > 0.01 ? (
+            <div style={{ position: "absolute", left: X0 + 100, top: yKids + 236, display: "flex", gap: 12, padding: 14, borderRadius: 20, background: "#fff", boxShadow: "0 24px 60px rgba(13,22,48,0.18)", border: `1.5px solid ${LINE}`, opacity: Math.min(1, tray * 1.5), transform: `translateY(${(1 - tray) * -14}px)`, zIndex: 5 }}>
+              {["v4/owl-q.png", "v4/owl-read.png", "real/mascot1.webp", "site/stickers_key-fire.webp"].map((g, i) => <div key={g} style={{ borderRadius: 16, outline: i === 1 && f >= T.PICK - 4 ? `3px solid ${BLUE}` : "none", outlineOffset: 2 }}><Gif src={g} f={f + i * 9} w={140} /></div>)}
+            </div>
+          ) : null}
+          {/* the learner's reply */}
+          {sent ? (
+            <Comment x={X0 + 56} y={yKids} av="p1" name={tr("Ты")} when={tr("только что")} me e={mine} glow={1 - lin(f, T.SEND + 60, T.SEND + 120)} votes={<Votes n={myVotes} f={f} pop={Math.sin(lin(f, T.MYV, T.MYV + 14) * Math.PI)} />}>
+              {MSG}<div style={{ marginTop: 10 }}><Gif src="v4/owl-read.png" f={f} w={190} /></div>
+            </Comment>
+          ) : null}
+          <Comment x={X0 + 56} y={yTim} av="p5" name={tr("Тимур")} when={tr("2 ч")} votes={<Votes n={9} f={f} />}>
+            {tr("Каждый раз, когда открываю этот кодекс:")}<div style={{ marginTop: 10 }}><Gif src="v4/owl-q.png" f={f} w={190} /></div>
+          </Comment>
+          <Comment x={X0} y={yC2} av="p2" name={tr("Сардор")} when={tr("2 ч")} votes={<Votes n={15} at={T.VOTE2 + 2} f={f} pop={Math.sin(lin(f, T.VOTE2, T.VOTE2 + 18) * Math.PI)} />}>{tr("Статья про самоуправство. Читал три раза, так и не понял, где граница.")}</Comment>
+          <Comment x={X0 + 56} y={yC2a} av="p3" name={tr("Дильноза")} when={tr("1 ч")} votes={<Votes n={4} f={f} />}>{tr("Согласна, без примера там вообще никак.")}</Comment>
+          <Comment x={X0} y={yC3} av="p0" name={tr("Санжар")} when={tr("40 мин")} votes={<Votes n={7} f={f} />}>{tr("А мне нравится, как в кодексе описан «крайний случай». Звучит как название фильма.")}</Comment>
         </div>
-
-        {/* ===== list of threads */}
-        {open < 1 ? (
-          <div style={{ position: "absolute", inset: 0, opacity: 1 - open, transform: `translateX(${-open * 200}px)` }}>
-            <div style={{ position: "absolute", left: MX, top: 50, fontWeight: 900, fontSize: 56, color: "#3c3c3c" }}>{tr("Форум")}</div>
-            <div style={{ position: "absolute", left: 1080, top: 52, width: 380, height: 66, borderRadius: 16, border: `3px solid ${LINE}`, display: "flex", alignItems: "center", gap: 14, paddingLeft: 22, boxSizing: "border-box", fontWeight: 600, fontSize: 22, color: "#9aa3b0" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>{tr("Поиск по веткам")}
-            </div>
-            <div style={{ position: "absolute", left: 1480, top: 52, width: 190, height: 66, borderRadius: 16, border: `3px solid ${LINE}`, boxShadow: `0 4px 0 ${LINE}`, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, boxSizing: "border-box", fontWeight: 900, fontSize: 22, color: "#4b4b4b" }}>{tr("Фильтр")}</div>
-            <div style={{ position: "absolute", left: 1690, top: 52, width: 66, height: 66, borderRadius: 16, border: `3px solid ${LINE}`, boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4b4b4b" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" /></svg></div>
-            <div style={{ position: "absolute", left: 1776, top: 50, width: 70, height: 70, borderRadius: 16, background: GREEN, boxShadow: "0 5px 0 #46a302", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M3 17.3V21h3.7L18 9.7 14.3 6zM20.7 7a1 1 0 000-1.4l-2.3-2.3a1 1 0 00-1.4 0L15.2 5 19 8.8z" /></svg></div>
-            {THREADS.map((t, i) => { const [x, y] = cardPos(i); return <Card key={i} t={t} x={x} y={y} e={sp(18 + i * 6, 15, 170)} hover={i === OPENED ? hover : 0} />; })}
-          </div>
-        ) : null}
-
-        {/* ===== opened thread */}
-        {open > 0 ? (
-          <div style={{ position: "absolute", inset: 0, opacity: open, transform: `translateX(${(1 - open) * 260}px)` }}>
-            <div style={{ position: "absolute", left: MX, top: 40, display: "flex", alignItems: "center", gap: 18, fontWeight: 800, fontSize: 24, color: "#77808c" }}>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="2.4" strokeLinejoin="round"><path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z" /></svg>›<span>{tr("Форум")}</span>›<span style={{ color: "#3c3c3c" }}>{th[0]}</span>
-            </div>
-            <div style={{ position: "absolute", left: MX, top: 100, display: "flex", alignItems: "center", gap: 22 }}>
-              <Img src={S(th[2])} style={{ width: 80, height: 80, objectFit: "contain" }} />
-              <div style={{ fontWeight: 900, fontSize: 40, color: "#3c3c3c", maxWidth: 1380 }}>{th[0]}</div>
-            </div>
-            <div style={{ position: "absolute", left: MX, top: 200, fontWeight: 600, fontSize: 25, color: "#4b4b4b" }}>{th[1]}</div>
-            <div style={{ position: "absolute", left: MX, top: 256, display: "flex", alignItems: "center", gap: 14 }}>
-              <Img src={AV(th[4])} style={{ width: 40, height: 40, borderRadius: 20, background: "#eef1f5" }} />
-              <div style={{ fontWeight: 800, fontSize: 21, color: "#4b4b4b" }}>{th[5]}</div>
-              <div style={{ fontWeight: 600, fontSize: 19, color: "#9aa3b0" }}>· {th[6]}</div>
-              <div style={{ marginLeft: 30, padding: "4px 14px", borderRadius: 14, border: "3px solid #58cc02", background: f >= T.VOTE + 2 ? "#eaffd9" : "#fff", transform: `scale(${1 + 0.18 * votePop})` }}><Up on={f >= T.VOTE + 2} n={votes} /></div>
-              <div style={{ padding: "4px 14px", borderRadius: 14, border: "3px solid #ff8a8a" }}><Down n={1} /></div>
-              <div style={{ fontWeight: 800, fontSize: 21, color: "#4b4b4b" }}>{nMsg} {tr("сообщ.")}</div>
-            </div>
-            {/* composer */}
-            <div style={{ position: "absolute", left: COMP.x, top: COMP.y, width: COMP.w, height: COMP.h, borderRadius: 22, border: `3px solid ${f >= T.FOCUS ? BLUE : "#bfe9ff"}`, boxShadow: f >= T.FOCUS && !sent ? "0 0 0 6px rgba(28,176,246,0.12)" : "none", background: "#fff", boxSizing: "border-box" }}>
-              <div style={{ position: "absolute", left: 26, top: 22, right: 26, fontWeight: 600, fontSize: 25, color: draft ? "#2b2b2b" : "#9aa3b0" }}>
-                {draft || tr("Вступить в беседу")}{draft && !gifIn && f < T.GIFBTN && Math.floor(f / 15) % 2 ? <span style={{ color: BLUE }}>|</span> : null}
-              </div>
-              {gifIn ? <div style={{ position: "absolute", left: 26, top: 70, transform: `scale(${sp(T.PICK + 4, 14, 220)})`, transformOrigin: "0 0" }}><Gif src={GIFS[GIF_PICK]} f={f} w={110} /></div> : null}
-              <div style={{ position: "absolute", left: 26, bottom: 18, display: "flex", gap: 24, alignItems: "center" }}>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5d6470" strokeWidth="2"><circle cx="12" cy="12" r="4" /><path d="M16 12v1.5a2.5 2.5 0 005 0V12a9 9 0 10-3.5 7.1" /></svg>
-                <div style={{ width: 52, height: 36, borderRadius: 10, border: `2.5px solid ${f >= T.GIFBTN && !sent ? BLUE : "#5d6470"}`, color: f >= T.GIFBTN && !sent ? BLUE : "#5d6470", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 16, boxSizing: "border-box" }}>GIF</div>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5d6470" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9.5h.01M15 9.5h.01" strokeLinecap="round" /></svg>
-              </div>
-              <div style={{ position: "absolute", right: 120, bottom: 14, padding: "10px 22px", borderRadius: 14, background: "#f4f6f9", fontWeight: 800, fontSize: 21, color: "#4b4b4b" }}>{tr("Отмена")}</div>
-              <div style={{ position: "absolute", right: 30, bottom: 12, width: 60, height: 52, display: "flex", alignItems: "center", justifyContent: "center", transform: `translateX(${press(f, T.SEND) * 8}px)` }}>
-                <svg width="44" height="44" viewBox="0 0 24 24" fill={typed.length > 3 ? BLUE : "#c4c9d1"}><path d="M3 20.5l18-8.5L3 3.5v6.6l12 1.9-12 1.9z" /></svg>
-              </div>
-              {/* GIF picker */}
-              {picker > 0.01 ? (
-                <div style={{ position: "absolute", left: 70, top: 230, width: 500, padding: 20, borderRadius: 22, background: "#fff", boxShadow: "0 30px 70px rgba(13,22,48,0.22)", border: `2px solid ${LINE}`, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, opacity: Math.min(1, picker * 1.5), transform: `translateY(${(1 - picker) * -20}px) scale(${0.9 + 0.1 * picker})`, transformOrigin: "20% 0", zIndex: 30 }}>
-                  {GIFS.map((g, i) => <div key={g} style={{ borderRadius: 18, outline: i === GIF_PICK && f >= T.PICK - 4 ? `4px solid ${BLUE}` : "none" }}><Gif src={g} f={f + i * 7} w={145} /></div>)}
-                </div>
-              ) : null}
-            </div>
-            {/* messages, newest on top */}
-            <div style={{ position: "absolute", left: MX, top: 0, width: 1500 }}>
-              {eTy > 0.01 ? <div style={{ position: "absolute", left: 0, top: Y.ty, display: "flex", alignItems: "center", gap: 14, fontWeight: 700, fontSize: 20, color: "#9aa3b0", opacity: eTy }}><Img src={AV("p3")} style={{ width: 40, height: 40, borderRadius: 20, background: "#d9d6ff" }} />{tr("Наргиза печатает")}{[0, 1, 2].map((k) => <span key={k} style={{ display: "inline-block", width: 9, height: 9, borderRadius: 5, background: "#9aa3b0", transform: `translateY(${Math.sin(f / 5 - k) * 4}px)` }} />)}</div> : null}
-              {f >= T.R3 ? <Msg y={Y.r3} av="p3" name={tr("Наргиза")} when={tr("только что")} e={eR3}>{tr("Ахаха, точно! Там столько оговорок 🔥")}</Msg> : null}
-              {sent ? <Msg y={Y.me} av="p1" name={tr("Ты")} when={tr("только что")} e={eMe} me likes={myLikes} likeOn={myLikes > 0} pop={Math.sin(lin(f, T.MYLIKES, T.MYLIKES + 16) * Math.PI)}>{MSG}<div style={{ marginTop: 10 }}><Gif src={GIFS[GIF_PICK]} f={f} w={200} /></div></Msg> : null}
-              {f >= T.R2 ? <Msg y={Y.r2} av="p5" name={tr("Тимур")} when={tr("2 мин. назад")} e={eR2} likes={3 + (timLike ? 1 : 0)} likeOn={timLike} pop={timPop}><Gif src={GIFS[0]} f={f} w={220} /></Msg> : null}
-              {f >= T.R1 ? <Msg y={Y.r1} av="p4" name={tr("Малика")} when={tr("5 мин. назад")} e={eR1} likes={4}>{tr("Мне кажется, статья про мелкое хулиганство. Там столько условий 😅")}</Msg> : null}
-            </div>
-          </div>
-        ) : null}
       </AbsoluteFill>
+      {/* soft fog at the top while the camera flies low */}
+      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(246,247,248,1) 0%, rgba(246,247,248,0) 45%)", opacity: fog }} />
       <TopLine key={caps[ci][0]} a={caps[ci][1]} b={caps[ci][2]} at={caps[ci][0]} size={66} />
-      <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, 40, 56) * (1 - lin(f, T.SEND + 40, T.SEND + 60))} /></div>
+      <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, T.LAND - 20, T.LAND) * (1 - lin(f, T.VOTE2 + 30, T.VOTE2 + 50))} /></div>
     </AbsoluteFill>
   );
 };
