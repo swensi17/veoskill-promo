@@ -105,7 +105,7 @@ export const Profile: React.FC = () => {
   const lsFill = lin(f, T.MED + 50, T.MED + 100, 0.2, 1, Easing.bezier(0.3, 0, 0.2, 1));
   const caps: [number, string, string][] = [[0, tr("Твоя страница"), tr("в veoskill.")], [T.ED, tr("Создай аватар"), tr("как хочешь.")], [T.MED, tr("Медали"), tr("за каждый шаг.")], [T.FR, tr("Находи друзей"), tr("и учись вместе.")]];
   let ci = 0; caps.forEach(([t], i) => { if (f >= t) ci = i; });
-  const NAV: [string, string][] = [["icons_hub_home.webp", tr("КАБИНЕТ")], ["stickers_module.webp", tr("МОДУЛИ")], ["icons_duel_scales.webp", tr("ЗАКОНЫ")], ["icons_hub_stats.webp", tr("СТАТИСТИКА")], ["icons_hub_achievements.webp", tr("ДОСТИЖЕНИЯ")], ["icons_hub_store.webp", tr("МАГАЗИН")], ["icons_hub_docs.webp", tr("МАТЕРИАЛЫ")], ["icons_hub_forum.webp", tr("ФОРУМ")]];
+  const NAV: [string, string][] = [["icons_hub_home.webp", tr("КАБИНЕТ")], ["stickers_module.webp", tr("МОДУЛИ")], ["icons_duel_scales.webp", tr("ЗАКОНЫ")], ["icons_hub_stats.webp", tr("СТАТИСТИКА")], ["icons_hub_achievements.webp", tr("ДОСТИЖЕНИЯ")], ["icons_hub_store.webp", tr("МАГАЗИН")], ["icons_hub_forum.webp", tr("ФОРУМ")]];
   const FRIENDS: [string, string, string][] = [[tr("Ясмин"), "yasmin", "p5"], [tr("Аяна Каримова"), "ayana_karimova", "p0"], [tr("Сардор"), "sardor", "p2"], [tr("Тута Джейн"), "tuta_jain", "p4"], [tr("Асад Асадов"), "asad", "me1"]];
   return (
     <AbsoluteFill style={{ background: "#fff", fontFamily: UI, overflow: "hidden" }}>

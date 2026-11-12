@@ -147,17 +147,20 @@ for sc, lf in [(N("LessonSlow"), 522), (N("LessonSlow"), 694), (N("LessonSlow"),
 for lf in [110, 142, 192, 268, 680]: at(CL, F(N("LessonMore"), lf), -16)
 for lf in [144, 690]: at(CH, F(N("LessonMore"), lf), -17)
 pops += [(N("LessonMore"), 606), (N("LessonMore"), 620), (N("LessonMore"), 634)]
-# Duel: opponent found, answer click, reveal, win card
-pops += [(N("Duel"), 128), (N("Duel"), 214), (N("Duel"), 470)]
-at(CL, F(N("Duel"), 330), -16)
-for lf in [352, 472]: at(CH, F(N("Duel"), lf), -17)
-# Books: open a book, select (popup), colour, share, next page, gear, sepia, size, close; phone in
-for lf in [196, 268, 318, 600, 642, 744, 800, 860, 908, 956]: at(CL, F(N("Books"), lf), -16)
-pops += [(N("Books"), 6), (N("Books"), 206), (N("Books"), 270), (N("Books"), 542), (N("Books"), 646), (N("Books"), 804)]
-for lf in [386, 990]:
-    i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(N("Books"), lf) / FPS - i / SR + 0.03, -20)
+# Duel: opponent found, three rounds (click, reveal), win card, XP counter lands
+pops += [(N("Duel"), 128), (N("Duel"), 214), (N("Duel"), 700), (N("Duel"), 796)]
+for lf in [290, 444, 604]: at(CL, F(N("Duel"), lf), -16)
+for lf in [302, 456, 616, 704, 900]: at(CH, F(N("Duel"), lf), -17)
+for lf in [352, 508]:
+    i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(N("Duel"), lf) / FPS - i / SR + 0.03, -22)
+# Forum: page rises, cards, open a thread, replies, typing, GIF picker, send, likes, an answer
+put(WH, F(N("Forum"), 0) / FPS + 0.03, -20)
+pops += [(N("Forum"), 18 + 6 * k) for k in range(6)]
+for lf in [142, 336, 470, 520, 560]: at(CL, F(N("Forum"), lf), -16)
+pops += [(N("Forum"), 214), (N("Forum"), 262), (N("Forum"), 474), (N("Forum"), 564), (N("Forum"), 744)]
+for lf in [300, 600]: at(CH, F(N("Forum"), lf), -17)
 # section word cuts
-for nm in ["DuelWords", "LibWords"]: pops += [(N(nm), 0), (N(nm), 58)]
+for nm in ["DuelWords", "ForumWords"]: pops += [(N(nm), 0), (N(nm), 58)]
 pops += [(N("S7"), 115)]
 # Counter: word cut, tiles
 pops += [(N("Counter"), 4), (N("Counter"), 14), (N("Counter"), 100)] + [(N("Counter"), 372 + 6 * i) for i in range(5)]
@@ -250,12 +253,22 @@ VO_LANG = os.environ.get("VO_LANG", "ru")
 if VO_LANG in ("ru", "uz"):
     if VO_LANG == "uz": VO_CUTS = VO_CUTS_UZ
     V = load(os.path.join(ROOT, f"assets/vo/vo-roger-{VO_LANG}.mp3"))
-    # cut lists were timed when Wall started at 97.0 s; lines from Wall on follow the scene if the competition grows
-    _shift = (STARTS[N("Wall")] / FPS - 97.0) if N("Wall") >= 0 else 0.0
+    # cut lists were timed on the timeline below (scene starts, seconds); each line is re-anchored to its scene,
+    # so lines follow when scenes grow, shrink or move, and a line whose scene is gone (the old library) is dropped
+    ORIG = [("IntroMosaic", 0.0), ("S2", 3.88), ("S3", 7.73), ("S4", 12.53), ("LessonWords", 19.73), ("LessonPath", 23.57), ("LessonSlow", 30.28), ("LessonMore", 55.25), ("G3", 70.13), ("S7", 73.97), ("S7b", 76.85), ("DuelWords", 83.08), ("Duel", 85.0), ("Wall", 97.0), ("S9", 101.8), ("Counter", 103.73), ("LexScene", 112.37), ("OurWords", 117.65), ("LawsHome", 119.57), ("LexTrySelect", 122.93), ("Reader", 125.33), ("LexTryHover", 135.4), ("Hints", 137.8), ("ArticleActions", 144.53), ("LexTryCollect", 151.25), ("Collect", 153.65), ("LexTrySearch", 167.08), ("Search", 169.48), ("AiWords", 177.65), ("LexTryAi", 180.53), ("AiPick", 182.93), ("AIReal", 185.8), ("Langs", 191.08), ("LibWords", 194.93), ("Books", 196.85), ("ProfWords", 217.0), ("Profile", 218.93), ("PremWords", 230.93), ("Premium", 232.85), ("Table", 238.6), ("S11", 243.4)]
+    def anchor(t):
+        nm, st = [o for o in ORIG if o[1] <= t + 1e-6][-1]
+        return None if N(nm) < 0 else STARTS[N(nm)] / FPS + (t - st)
     for a, b, t in VO_CUTS:
-        if t >= 97.0: t += _shift
+        t = anchor(t)
+        if t is None: continue
         x = fade(V[int(a * SR):int(b * SR)].copy(), 0.015, 0.03)
         i = int(round(t * SR)); j = min(len(VO), i + len(x)); VO[i:j] += x[: j - i]
+    _fv = os.path.join(ROOT, f"assets/vo/vo-forum-{VO_LANG}.mp3")
+    if os.path.exists(_fv) and N("ForumWords") >= 0:
+        x = fade(load(_fv), 0.015, 0.05); x = x[np.argmax(np.abs(x).max(axis=1) > 0.01):]     # trim leading silence
+        x *= np.sqrt((V ** 2).mean()) / max(1e-9, np.sqrt((x[np.abs(x).max(axis=1) > 1e-3] ** 2).mean()))  # match the main take
+        i = int((STARTS[N("ForumWords")] / FPS + 0.3) * SR); j = min(len(VO), i + len(x)); VO[i:j] += x[: j - i]
     r = np.sqrt((VO[np.abs(VO).max(axis=1) > 1e-3] ** 2).mean())
     VO *= db(-17) / r                                   # voice RMS -17 dBFS before mastering
     on = (np.abs(VO).max(axis=1) > 1e-3).astype(float)

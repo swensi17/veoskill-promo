@@ -6,7 +6,7 @@ import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
 import { LessonSlow, LessonMore } from "./Lesson";
 import { Duel } from "./Duel";
-import { Books } from "./Books";
+import { Forum } from "./Forum";
 import { Profile, Premium } from "./Profile";
 import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, LexTrySelect, LexTryHover, LexTrySearch, LexTryCollect, LexTryAi, ArticleActions, Collect, Search, AiPick, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
 import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
@@ -369,7 +369,7 @@ const S7: React.FC = () => <Words per={57.6} items={[[tr("ИГРАЕШЬ."), "#e
 const DuelWords: React.FC = () => <Words per={57.6} items={[[tr("А ТЕПЕРЬ"), BG, NAVY], [tr("СОРЕВНОВАНИЯ."), BLUE, "#fff"]]} />;
 const ProfWords: React.FC = () => <Words per={57.6} items={[[tr("А ЕЩЁ"), BG, NAVY], [tr("ТВОЯ СТРАНИЦА."), BLUE, "#fff"]]} />;
 const PremWords: React.FC = () => <Words per={57.6} items={[[tr("И, КОНЕЧНО,"), BG, NAVY], ["PREMIUM.", NAVY, "#fff"]]} />;
-const LibWords: React.FC = () => <Words per={57.6} items={[[tr("А ТАКЖЕ"), BG, NAVY], [tr("СВОЯ БИБЛИОТЕКА."), BLUE, "#fff"]]} />;
+const ForumWords: React.FC = () => <Words per={57.6} items={[[tr("А ТАКЖЕ"), BG, NAVY], [tr("НАШ ФОРУМ."), BLUE, "#fff"]]} />;
 const S9: React.FC = () => <Words per={57.6} items={[[tr("А ТЕПЕРЬ"), BG, NAVY], [tr("ЗАКОНЫ."), NAVY, "#fff"]]} />;
 /** Word cut before the AI window: "А ТЕПЕРЬ" (1 beat), then a blue card with the AI mark (2 beats). */
 const AiWords: React.FC = () => {
@@ -724,7 +724,7 @@ const Table: React.FC = () => {
     [tr("Тест по каждой статье"), ""],
     [tr("Уроки, игры и казусы по праву"), ""],
     [tr("Конституция открыта прямо в уроке"), ""],
-    [tr("Библиотека книг для юриста"), ""],
+    [tr("Форум, чтобы обсуждать право"), ""],
     [tr("XP, лига и соревнования"), ""],
   ];
   const rowAt = (i: number) => Math.round(72 + i * 14.4);
@@ -801,8 +801,8 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: AiPick, d: 172, xo: 16 },
   { C: AIReal, d: 317, xo: 16 },
   { C: Langs, d: 231, xo: 10 },
-  { C: LibWords, d: 115 },
-  { C: Books, d: 1209 },
+  { C: ForumWords, d: 115 },
+  { C: Forum, d: 864 },
   { C: ProfWords, d: 116 },
   { C: Profile, d: 720, k: 1.3, xo: 16 },
   { C: PremWords, d: 115 },
