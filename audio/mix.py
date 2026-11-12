@@ -187,7 +187,7 @@ for sc, lf in [(N("G3"),74),(N("G3"),124)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -23)
 
 # ---- voiceover: one ElevenLabs take (voice Roger), cut on sentence pauses and placed on the scenes
-# (cut list from tools/vo/cut-vo.py). Russian cut only: VO_LANG=uz (build --uz) leaves the voice out.
+# (cut lists from tools/vo/cut-vo.py). VO_LANG=ru (default) or uz (build --uz) picks the take and its cut list.
 # Music is ducked under the voice (-9 dB, 0.12 s attack, 0.6 s release).
 VO_CUTS = [  # (source from, source to, film time)
     (  0.000,   5.410,    0.5),  # intro: boring books
@@ -217,9 +217,39 @@ VO_CUTS = [  # (source from, source to, film time)
     (164.320, 170.890,  243.6),  # QR, learn by playing
 
 ]
+VO_CUTS_UZ = [  # Uzbek take, same scenes
+    (  0.000,   6.980,    0.5),
+    (  6.980,  16.090,    8.0),
+    ( 16.090,  23.350,   20.0),
+    ( 23.350,  46.840,   30.5),
+    ( 46.840,  57.620,   55.5),
+    ( 57.620,  60.650,   70.4),
+    ( 60.650,  69.685,   74.1),
+    ( 69.685,  78.830,   83.3),
+    ( 78.830,  82.645,   97.4),
+    ( 82.645,  90.550,  101.9),
+    ( 90.550,  98.970,  112.6),
+    ( 98.970, 103.830,  123.1),
+    (103.830, 109.840,  127.9),
+    (109.840, 113.280,  135.5),
+    (113.280, 116.650,  139.0),
+    (116.650, 120.705,  145.0),
+    (120.705, 133.425,  153.9),
+    (133.425, 138.745,  169.6),
+    (138.745, 147.575,  177.8),
+    (147.575, 150.990,  191.3),
+    (150.990, 165.620,  195.2),
+    (165.620, 175.200,  217.2),
+    (175.200, 181.920,  231.1),
+    (181.920, 184.610,  238.8),
+    (184.610, 191.349,  243.6),
+
+]
 VO = np.zeros_like(out)
-if os.environ.get("VO_LANG", "ru") == "ru":
-    V = load(os.path.join(ROOT, "assets/vo/vo-roger-ru.mp3"))
+VO_LANG = os.environ.get("VO_LANG", "ru")
+if VO_LANG in ("ru", "uz"):
+    if VO_LANG == "uz": VO_CUTS = VO_CUTS_UZ
+    V = load(os.path.join(ROOT, f"assets/vo/vo-roger-{VO_LANG}.mp3"))
     for a, b, t in VO_CUTS:
         x = fade(V[int(a * SR):int(b * SR)].copy(), 0.015, 0.03)
         i = int(round(t * SR)); j = min(len(VO), i + len(x)); VO[i:j] += x[: j - i]
