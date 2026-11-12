@@ -457,7 +457,6 @@ export const S7b: React.FC = () => {
   const silver = sp(T0 + 6 * B + 10, 12, 160);
   return (
     <AbsoluteFill style={{ background: BG }}>
-      <SoftBg f={f} />
       <TopLine a={tr("+15 XP за урок.")} b={tr("Поднимайся в лиге.")} at={0} size={66} accentColor={BLUE} />
       {/* league badges like the site */}
       <div style={{ position: "absolute", left: 960 - 380, top: 170, display: "flex", alignItems: "center", gap: 22 }}>
@@ -504,13 +503,14 @@ export const S7b: React.FC = () => {
                 {myRank === 1 ? <Img src={staticFile("av/medal-1.webp")} style={{ width: 46 }} /> : null}
                 <div style={{ marginLeft: "auto", fontWeight: 900, fontSize: 32, color: flash > 0.2 ? "#e0a800" : DEEP, transform: `scale(${1 + flash * 0.18})`, fontVariantNumeric: "tabular-nums" }}>{mine} XP</div>
               </div>
-              {/* +15 XP: a clean badge slides out beside the "Ты" row, rises a little and fades */}
+              {/* +15 chips fly from the lesson side into the "Ты" row */}
               {Array.from({ length: 6 }, (_, k) => {
                 const land = T0 + k * B;
-                if (f < land - 6 || f > land + 30) return null;
-                const e = sp(land - 6, 12, 200);
-                const out = lin(f, land + 16, land + 30);
-                return <div key={k} style={{ position: "absolute", left: 790, top: rowTop(exact) + 22 - out * 30, zIndex: 9, opacity: Math.min(1, e * 1.5) * (1 - out), transform: `translateX(${(1 - e) * -30}px) scale(${0.85 + 0.15 * e})`, transformOrigin: "0% 50%" }}><XpPill text="+15 XP" size={28} /></div>;
+                if (f < land - 18 || f > land + 2) return null;
+                const t = lin(f, land - 18, land, 0, 1, Easing.bezier(0.5, 0, 0.7, 1));
+                const ty = rowTop(exact) + 22;
+                const sx = 800, sy = -200;
+                return <div key={k} style={{ position: "absolute", left: sx + (560 - sx) * t, top: sy + (ty - sy) * t - Math.sin(t * Math.PI) * 160, padding: "10px 22px", borderRadius: 20, background: YEL, color: "#fff", fontFamily: UI, fontWeight: 900, fontSize: 32, boxShadow: "0 6px 0 #d19a00, 0 14px 30px rgba(0,0,0,0.15)", transform: `scale(${1.15 - t * 0.35})`, opacity: 1 - lin(f, land - 5, land + 1), zIndex: 9, whiteSpace: "nowrap" }}>+15 XP</div>;
               })}
             </>
           );
