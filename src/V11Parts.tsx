@@ -118,7 +118,7 @@ const Digit: React.FC<{ d: number; size: number; color: string; dim: boolean; bl
   );
 };
 /** Stat card drawn at 1920x1080 and scaled into a tile: caps label, big blue value, several lines rising together. */
-const StatCard: React.FC<{ label: string; value: React.ReactNode; at: number; dur?: number; seed: number; vs?: number }> = ({ label, value, at, dur = 150, seed, vs = 300 }) => {
+export const StatCard: React.FC<{ label: string; value: React.ReactNode; at: number; dur?: number; seed: number; vs?: number }> = ({ label, value, at, dur = 150, seed, vs = 300 }) => {
   const f = useFrame();
   const p = lin(f, at, at + dur, 0, 1, Easing.bezier(0.25, 0.6, 0.25, 1));
   const cols = ["#0d8fd0", "#1cb0f6", "#3db7f4", "#84d8ff", "#bfe9ff"];

@@ -2,6 +2,7 @@ import React from "react";
 import { tr } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
 import { Confetti } from "./Lesson";
+import { StatCard } from "./V11Parts";
 import { NAVY, BLUE, GREEN, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Pointer, TopLine } from "./Scenes9";
 
 // Play against another learner (veoskill.uz/hub/duels; the word itself is kept out of frame, see docs/RULES.md):
@@ -28,46 +29,17 @@ const Avatar: React.FC<{ src: string; size: number; bg: string; badge?: "ok" | "
   </div>
 );
 
-/** Win card in the statistics style (like the "today in the base" tiles): result on top,
- *  then the XP earned counts up while five brand-blue lines grow underneath. */
-const WinCard: React.FC<{ f: number; res: number }> = ({ f, res }) => {
-  const W = 900, H = 640, CH = 250;
-  const p = lin(f, RES + 14, RES + 120, 0, 1, Easing.bezier(0.25, 0.6, 0.25, 1));
-  const xp = Math.round(30 * lin(f, RES + 14, RES + 90, 0, 1, Easing.out(Easing.cubic)));
-  const cols = ["#0d8fd0", "#1cb0f6", "#3db7f4", "#84d8ff", "#bfe9ff"];
-  const lines = cols.map((c, k) => {
-    const pts = Array.from({ length: 40 }, (_, i) => {
-      const x = i / 39;
-      const g = Math.pow(x, 1.5 + k * 0.25) * (0.92 - k * 0.13) + Math.sin(x * 8 + k * 2) * 0.025 * x;
-      return [30 + x * (W - 60), CH - 10 - g * (CH - 40)] as [number, number];
-    });
-    const n = Math.max(2, Math.round(p * pts.length));
-    return { c, k, tip: pts[n - 1], d: pts.slice(0, n).map((q, i) => `${i ? "L" : "M"}${q[0].toFixed(1)} ${q[1].toFixed(1)}`).join(" ") };
-  });
-  return (
-    <div style={{ position: "relative", width: W, height: H, borderRadius: 36, background: "#fff", overflow: "hidden", boxShadow: "0 40px 100px rgba(8,26,70,0.35)", transform: `rotateX(${(1 - res) * 30}deg) scale(${0.85 + 0.15 * res})`, opacity: Math.min(1, res * 1.4), fontFamily: UI }}>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 34, display: "flex", alignItems: "center", justifyContent: "center", gap: 26 }}>
-        <Avatar src={AV("p1")} size={96} bg="#ffd5cc" />
-        <div style={{ textAlign: "center" }}>
-          <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 60, lineHeight: 1, color: "#2e9d3a" }}>{tr("Победа!")}</div>
-          <div style={{ marginTop: 8, fontFamily: HEAD, fontWeight: 900, fontSize: 52, lineHeight: 1, color: NAVY, fontVariantNumeric: "tabular-nums" }}>700 : 0</div>
-        </div>
-        <Avatar src={AV("p3")} size={96} bg="#d9d6ff" />
-      </div>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 200, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 28, letterSpacing: "0.16em", color: "#0d8fd0" }}>{tr("ОПЫТ ЗА ПОБЕДУ")}</div>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 238, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 120, lineHeight: 1, letterSpacing: "-0.03em", color: "#1cb0f6", fontVariantNumeric: "tabular-nums" }}>+{xp} XP</div>
-      <svg style={{ position: "absolute", left: 0, bottom: 0 }} width={W} height={CH}>
-        {lines.slice().reverse().map(({ c, d, tip, k }) => (
-          <g key={k}>
-            {k === 0 ? <path d={`${d} L${tip[0]} ${CH} L30 ${CH} Z`} fill={c} opacity={0.08} /> : null}
-            <path d={d} fill="none" stroke={c} strokeWidth={k === 0 ? 7 : 5} strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx={tip[0]} cy={tip[1]} r={k === 0 ? 11 : 7} fill={c} />
-          </g>
-        ))}
-      </svg>
-    </div>
-  );
-};
+const BlueBurst: React.FC<{ t: number }> = ({ t }) => (
+  <AbsoluteFill style={{ pointerEvents: "none", zIndex: 45 }}>
+    {Array.from({ length: 120 }, (_, i) => {
+      const r = (q: number) => { const v = Math.sin(i * q) * 43758.5453; return v - Math.floor(v); };
+      const a = r(12.9) * Math.PI * 2, sp0 = 500 + r(78.2) * 900;
+      const x = 960 + Math.cos(a) * sp0 * t, y = 420 + Math.sin(a) * sp0 * t * 0.8 - 300 * t + 900 * t * t;
+      const w = 12 + r(4.4) * 16, h = 18 + r(9.1) * 18;
+      return <div key={i} style={{ position: "absolute", left: x, top: y, width: w, height: h, borderRadius: r(2.2) > 0.6 ? w : 4, background: ["#0d8fd0", "#1cb0f6", "#3db7f4", "#84d8ff", "#bfe9ff"][i % 5], transform: `rotate(${r(5.5) * 360 + t * 400}deg)` }} />;
+    })}
+  </AbsoluteFill>
+);
 
 export const Duel: React.FC = () => {
   const f = useFrame();
@@ -88,6 +60,10 @@ export const Duel: React.FC = () => {
   const pk = [SEARCH_END + 10, CLICK - 14, CLICK + 10, RES - 20];
   const px = interpolate(f, pk, [1400, 1250, 1250, 1400], { ...cl, easing: IOE });
   const py = interpolate(f, pk, [1060, 966, 966, 1010], { ...cl, easing: IOE });
+  // after the win card: full-screen XP counter (same look as the "today in the base" counter)
+  const XP0 = RES + 96;
+  const xpIn = lin(f, XP0, XP0 + 22, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
+  const xpN = Math.round(30 * lin(f, XP0 + 14, XP0 + 104, 0, 1, Easing.bezier(0.2, 0.6, 0.25, 1)));
   const cap: [number, string, string] = f < SEARCH_END ? [6, tr("Соревнуйся"), tr("с другими.")] : f < RES ? [SEARCH_END + 6, tr("Отвечай"), tr("быстрее соперника.")] : [RES + 6, tr("Побеждай"), tr("и расти в лиге.")];
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
@@ -163,15 +139,31 @@ export const Duel: React.FC = () => {
           {/* win card */}
           {f >= RES ? (
             <AbsoluteFill style={{ background: `rgba(8,26,70,${0.45 * Math.min(1, res)})`, alignItems: "center", justifyContent: "center", perspective: 1600 }}>
-              <WinCard f={f} res={res} />
+              <div style={{ width: 760, padding: "50px 40px 46px", borderRadius: 36, background: "#fff", textAlign: "center", boxShadow: "0 40px 100px rgba(8,26,70,0.35)", transform: `rotateX(${(1 - res) * 30}deg) scale(${0.85 + 0.15 * res})`, opacity: Math.min(1, res * 1.4) }}>
+                <Img src={staticFile("av/medal-1.webp")} style={{ width: 150, height: 150, objectFit: "contain", transform: `rotate(${Math.sin(f / 10) * 5}deg)` }} />
+                <div style={{ marginTop: 10, fontFamily: HEAD, fontWeight: 900, fontSize: 76, color: "#2e9d3a" }}>{tr("Победа!")}</div>
+                <div style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "center", gap: 30 }}>
+                  <Avatar src={AV("p1")} size={110} bg="#ffd5cc" />
+                  <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 64, color: NAVY }}>700 : 0</div>
+                  <Avatar src={AV("p3")} size={110} bg="#d9d6ff" />
+                </div>
+              </div>
             </AbsoluteFill>
           ) : null}
         </AbsoluteFill>
       ) : null}
 
+      {f >= XP0 ? (
+        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", zIndex: 40 }}>
+          <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, transformOrigin: "50% 50%", transform: `scale(${0.4 + 0.6 * xpIn})`, opacity: Math.min(1, xpIn * 2), borderRadius: 70 * (1 - xpIn), overflow: "hidden", boxShadow: "0 40px 120px rgba(8,26,70,0.35)" }}>
+            <StatCard label={tr("ОПЫТ ЗА ПОБЕДУ")} value={`+${xpN} XP`} at={XP0 + 14} dur={90} seed={1} vs={300} />
+          </div>
+        </AbsoluteFill>
+      ) : null}
       {/* caption, top left, white panel so it reads on both backgrounds */}
-      <TopLine key={cap[0]} a={cap[1]} b={cap[2]} at={cap[0]} dark={f >= SEARCH_END} size={f < SEARCH_END ? 66 : 54} band={f >= SEARCH_END ? "rgba(150,120,170,0.0)" : undefined} />
+      <TopLine key={cap[0]} a={cap[1]} b={cap[2]} at={cap[0]} dark={f >= SEARCH_END && f < XP0 + 10} size={f < SEARCH_END ? 66 : 54} band={f >= SEARCH_END ? "rgba(150,120,170,0.0)" : undefined} />
       <Confetti at={RES + 4} />
+      {f >= XP0 + 104 && f < XP0 + 240 ? <BlueBurst t={(f - XP0 - 104) / 60} /> : null}
       {f >= SEARCH_END + 10 && f < RES - 10 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={press(f, CLICK)} op={lin(f, SEARCH_END + 10, SEARCH_END + 22) * (1 - lin(f, RES - 24, RES - 10))} /></div> : null}
     </AbsoluteFill>
   );
