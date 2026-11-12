@@ -103,7 +103,8 @@ export const Lesson: React.FC = () => {
   const px = interpolate(f, pk, pxs, { ...cl, easing: IOE }), py = interpolate(f, pk, pys, { ...cl, easing: IOE });
   const down = Math.max(...clicks.filter(([t]) => t !== S.B + 108).map(([t]) => press(f, t)));
   // reading the theory: camera moves in on the text block that is being read (out again before each click)
-  const rd = (a: number, b: number) => lin(f, S.B + a, S.B + a + 8, 0, 1, IOE) * (1 - lin(f, S.B + b - 6, S.B + b, 0, 1, IOE));
+  const SOFT = Easing.bezier(0.45, 0, 0.25, 1);
+  const rd = (a: number, b: number) => lin(f, S.B + a - 4, S.B + a + 14, 0, 1, SOFT) * (1 - lin(f, S.B + b - 12, S.B + b, 0, 1, SOFT));
   const zt = Math.max(rd(14, 34), rd(44, 62), rd(74, 104));
   // hover on the book button before clicking it: camera moves to the button, a tip explains it
   const HOV = S.B + 108;
@@ -130,7 +131,7 @@ export const Lesson: React.FC = () => {
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
       {/* caption column */}
       <AbsoluteFill style={{ transformOrigin: "1540px 560px", transform: `translateY(${104 * (1 - zc)}px) scale(${0.9 + 0.3 * zc}) translateX(${-150 * zc}px)` }}>
-      <AbsoluteFill style={{ transformOrigin: "960px 560px", transform: `scale(${1 + 0.3 * zt})` }}>
+      <AbsoluteFill style={{ transformOrigin: "960px 560px", transform: `scale(${1 + 0.18 * zt})` }}>
       <AbsoluteFill style={{ transformOrigin: `${CX + 50}px ${BTN_Y + 42}px`, transform: `scale(${1 + 0.6 * zb})` }}>
       {/* top bar: close, progress, hearts */}
       <svg style={{ position: "absolute", left: CX - 4, top: 46 }} width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#afafaf" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
@@ -159,7 +160,7 @@ export const Lesson: React.FC = () => {
         </div>); })()}
 
       {/* ===== B: theory (site layout: picture, then blocks on a timeline with icons; the page scrolls down smoothly) */}
-      {(() => { const w = win(S.B, S.C); if (!w.on) return null; const lf = f - S.B; const r = (a: number) => lin(lf, a, a + 16);
+      {(() => { const w = win(S.B, S.C); if (!w.on) return null; const lf = f - S.B; const r = (a: number) => lin(lf, a - 2, a + 22, 0, 1, Easing.bezier(0.25, 0.1, 0.25, 1));
         const scroll = lin(lf, 70, 104, 0, 300, Easing.bezier(0.45, 0, 0.3, 1));
         const BL: [React.ReactNode, string, React.ReactNode, number][] = [
           [<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18M7 21h10M4 7h16M6 7l-3 7a3 3 0 0 0 6 0zM18 7l-3 7a3 3 0 0 0 6 0z" /></svg>, tr("ЧТО ТАКОЕ ПРАВО"),
@@ -180,15 +181,13 @@ export const Lesson: React.FC = () => {
                 <rect x="60" y="62" width="40" height="18" rx="3" fill="#fff" /><path d="M56 60v22M104 60v22M80 80v32a5 5 0 0 1-10 0V80" fill="#fff" />
               </svg>
               <div style={{ position: "absolute", left: CX, top: 290, width: CW }}>
-                {BL.map(([ic, title, body, at], i) => { const e = r(at); const line = lin(lf, at + 6, at + 40, 0, 1, OUTE); return (
+                {BL.map(([ic, title, body, at], i) => { const e = r(at); const line = lin(lf, at + 6, at + 48, 0, 1, Easing.bezier(0.45, 0, 0.25, 1)); return (
                   <div key={i} style={{ display: "flex", gap: 22, marginTop: i ? 34 : 0, opacity: e, transform: `translateY(${(1 - e) * 16}px)` }}>
                     <div style={{ width: 48, display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
                       {ic}
                       <div style={{ marginTop: 10, width: 3, flex: 1, borderRadius: 2, background: "rgba(28,176,246,0.3)", transformOrigin: "50% 0", transform: `scaleY(${line})` }} />
                     </div>
                     <div style={{ flex: 1, position: "relative" }}>
-                      {(() => { const win2 = [[14, 34], [44, 62], [74, 104]][i]; const o = lin(lf, win2[0], win2[0] + 8) * (1 - lin(lf, win2[1] - 6, win2[1])); const sweep = lin(lf, win2[0], win2[1], 0, 1, Easing.linear); return o > 0.01 ? (
-                        <div style={{ position: "absolute", left: -14, right: -14, top: title ? 50 : -6, bottom: -6, borderRadius: 14, background: `linear-gradient(180deg, rgba(28,176,246,${0.14 + 0.08 * Math.sin(f / 5)}) ${sweep * 100}%, rgba(28,176,246,0.05) ${sweep * 100 + 12}%)`, boxShadow: `0 0 0 ${2 + 2 * Math.abs(Math.sin(f / 6))}px rgba(28,176,246,0.25)`, opacity: o }} />) : null; })()}
                       {title ? <div style={{ position: "relative", height: 44, display: "flex", alignItems: "center", fontWeight: 800, fontSize: 22, letterSpacing: "0.1em", color: "#7c8593" }}>{title}</div> : null}
                       <div style={{ position: "relative", marginTop: title ? 10 : 0 }}>{body}</div>
                     </div>
