@@ -1,8 +1,9 @@
 # veoskill: промо-ролик (исходники)
 
-Готовый ролик: **[Releases → v16](https://github.com/swensi17/veoskill-promo/releases/tag/v16)**
-- `veoskill-promo-v16.mp4`: полное качество, 1920x1080, 60 fps, 98 с, со звуком;
-- `veoskill-promo-v16-phone.mp4`: лёгкая копия для телефона и мессенджеров (21 МБ).
+Готовый ролик: **[Releases → v17](https://github.com/swensi17/veoskill-promo/releases/tag/v17)**
+- `veoskill-promo-v17-ru.mp4`: русская версия, полное качество, 1920x1080, 60 fps, 4 мин 15 с, со звуком;
+- `veoskill-promo-v17-uz.mp4`: узбекская версия (новый латинский алфавит), то же качество;
+- `-phone.mp4`: лёгкие копии для телефона и мессенджеров (около 27 МБ).
 
 Скачать проект: зелёная кнопка **Code → Download ZIP** или `git clone https://github.com/swensi17/veoskill-promo.git`.
 
@@ -41,7 +42,7 @@
 2. Подготовь проект: поставь Node.js, ffmpeg и Python, если их нет, затем выполни npm install и pip install -r requirements.txt.
 3. Проверь сборку: node scripts/build.mjs --scene 6, потом node scripts/build.mjs --draft. Скажи, сколько времени заняло.
 4. Открой Remotion Studio во встроенном браузере (композиция VeoskillV11), чтобы я мог смотреть ролик и говорить правки.
-Готовый ролик v16 лежит в GitHub Releases. Финальный рендер делай только когда я скажу.
+Готовый ролик v17 (RU и UZ) лежит в GitHub Releases. Финальный рендер делай только когда я скажу.
 Отвечай мне по-русски, коротко и простыми словами, я не программист.
 Перед тем как отдать мне ролик, проверяй его отдельным агентом по кадрам, как написано в AGENT.md.
 ```
