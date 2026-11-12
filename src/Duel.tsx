@@ -2,7 +2,7 @@ import React from "react";
 import { tr } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
 import { Confetti } from "./Lesson";
-import { NAVY, BLUE, GREEN, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Pointer, TopLine, XpPill } from "./Scenes9";
+import { NAVY, BLUE, GREEN, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Pointer, TopLine } from "./Scenes9";
 
 // Play against another learner (veoskill.uz/hub/duels; the word itself is kept out of frame, see docs/RULES.md):
 // matchmaking with speed streaks and VS, then a timed question with 4 answers on one brand-blue backdrop
@@ -11,11 +11,11 @@ const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const AV = (n: string) => staticFile(`av/${n}.svg`);
 const SEARCH_END = 200, CLICK = 330, REVEAL = 352, RES = 470, END = 720;
 const ANS: [string, string, string, "tri" | "dia" | "cir" | "sq"][] = [
-  [tr("моралью общества."), "#1cb0f6", "", "tri"], [tr("субъективным правом."), "#1a8fe0", "", "dia"],
-  [tr("правомочием."), "#3db7f4", "", "cir"], [tr("объективным правом."), "#1468c4", "", "sq"],
+  [tr("моралью общества."), "#7d5bb5", "#5e4192", "tri"], [tr("субъективным правом."), "#e0454f", "#b8303a", "dia"],
+  [tr("правомочием."), "#b9735e", "#94573f", "cir"], [tr("объективным правом."), "#34a02a", "#24801c", "sq"],
 ];
-const Shape: React.FC<{ k: string; c?: string }> = ({ k, c = "rgba(255,255,255,0.95)" }) => (
-  <svg width="30" height="30" viewBox="0 0 24 24" fill={c}>
+const Shape: React.FC<{ k: string; c?: string }> = ({ k, c = "rgba(255,255,255,0.9)" }) => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill={c}>
     {k === "tri" ? <path d="M12 3l10 18H2z" /> : k === "dia" ? <path d="M12 2l10 10-10 10L2 12z" /> : k === "cir" ? <circle cx="12" cy="12" r="10" /> : <rect x="3" y="3" width="18" height="18" rx="3" />}
   </svg>
 );
@@ -27,6 +27,47 @@ const Avatar: React.FC<{ src: string; size: number; bg: string; badge?: "ok" | "
     </div> : null}
   </div>
 );
+
+/** Win card in the statistics style (like the "today in the base" tiles): result on top,
+ *  then the XP earned counts up while five brand-blue lines grow underneath. */
+const WinCard: React.FC<{ f: number; res: number }> = ({ f, res }) => {
+  const W = 900, H = 640, CH = 250;
+  const p = lin(f, RES + 14, RES + 120, 0, 1, Easing.bezier(0.25, 0.6, 0.25, 1));
+  const xp = Math.round(30 * lin(f, RES + 14, RES + 90, 0, 1, Easing.out(Easing.cubic)));
+  const cols = ["#0d8fd0", "#1cb0f6", "#3db7f4", "#84d8ff", "#bfe9ff"];
+  const lines = cols.map((c, k) => {
+    const pts = Array.from({ length: 40 }, (_, i) => {
+      const x = i / 39;
+      const g = Math.pow(x, 1.5 + k * 0.25) * (0.92 - k * 0.13) + Math.sin(x * 8 + k * 2) * 0.025 * x;
+      return [30 + x * (W - 60), CH - 10 - g * (CH - 40)] as [number, number];
+    });
+    const n = Math.max(2, Math.round(p * pts.length));
+    return { c, k, tip: pts[n - 1], d: pts.slice(0, n).map((q, i) => `${i ? "L" : "M"}${q[0].toFixed(1)} ${q[1].toFixed(1)}`).join(" ") };
+  });
+  return (
+    <div style={{ position: "relative", width: W, height: H, borderRadius: 36, background: "#fff", overflow: "hidden", boxShadow: "0 40px 100px rgba(8,26,70,0.35)", transform: `rotateX(${(1 - res) * 30}deg) scale(${0.85 + 0.15 * res})`, opacity: Math.min(1, res * 1.4), fontFamily: UI }}>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 34, display: "flex", alignItems: "center", justifyContent: "center", gap: 26 }}>
+        <Avatar src={AV("p1")} size={96} bg="#ffd5cc" />
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 60, lineHeight: 1, color: "#2e9d3a" }}>{tr("Победа!")}</div>
+          <div style={{ marginTop: 8, fontFamily: HEAD, fontWeight: 900, fontSize: 52, lineHeight: 1, color: NAVY, fontVariantNumeric: "tabular-nums" }}>700 : 0</div>
+        </div>
+        <Avatar src={AV("p3")} size={96} bg="#d9d6ff" />
+      </div>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 200, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 28, letterSpacing: "0.16em", color: "#0d8fd0" }}>{tr("ОПЫТ ЗА ПОБЕДУ")}</div>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 238, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 120, lineHeight: 1, letterSpacing: "-0.03em", color: "#1cb0f6", fontVariantNumeric: "tabular-nums" }}>+{xp} XP</div>
+      <svg style={{ position: "absolute", left: 0, bottom: 0 }} width={W} height={CH}>
+        {lines.slice().reverse().map(({ c, d, tip, k }) => (
+          <g key={k}>
+            {k === 0 ? <path d={`${d} L${tip[0]} ${CH} L30 ${CH} Z`} fill={c} opacity={0.08} /> : null}
+            <path d={d} fill="none" stroke={c} strokeWidth={k === 0 ? 7 : 5} strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx={tip[0]} cy={tip[1]} r={k === 0 ? 11 : 7} fill={c} />
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+};
 
 export const Duel: React.FC = () => {
   const f = useFrame();
@@ -73,6 +114,9 @@ export const Duel: React.FC = () => {
       {/* ===== question */}
       {f >= SEARCH_END - 10 ? (
         <AbsoluteFill style={{ background: "linear-gradient(160deg, #27b8f8 0%, #1a95e3 50%, #1468c4 100%)", opacity: q, perspective: 1600 }}>
+          <AbsoluteFill style={{ transform: "rotate(-10deg) scale(1.3)", opacity: 0.12 }}>
+            {Array.from({ length: 8 }, (_, r) => <div key={r} style={{ position: "absolute", left: -1400, top: -120 + r * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, color: "#fff", transform: `translateX(${(f * (r % 2 ? 1.6 : -1.6)) % 1300 + (r % 2 ? -650 : 0)}px)` }}>{tr("ИГРЫ • КВИЗЫ • СОРЕВНОВАНИЯ • ЛИГА • ").repeat(6)}</div>)}
+          </AbsoluteFill>
           <div style={{ position: "absolute", left: -200 + Math.sin(f / 120) * 60, top: -300, width: 1200, height: 1200, borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 62%)" }} />
           <div style={{ position: "absolute", right: -300 + Math.cos(f / 140) * 60, bottom: -500, width: 1300, height: 1300, borderRadius: "50%", background: "radial-gradient(circle, rgba(10,40,110,0.35) 0%, rgba(10,40,110,0) 62%)" }} />
           <div style={{ position: "absolute", left: 390, top: 150, width: 1140, display: "flex", gap: 10 }}>
@@ -94,7 +138,7 @@ export const Duel: React.FC = () => {
               {tr("Верно! +700")}
             </div>
           </div>
-          {ANS.map(([t, c, , k], i) => {
+          {ANS.map(([t, c, d, k], i) => {
             const mine = i === 3, oppPick = i === 1;
             const e = sp(SEARCH_END + 14 + i * 4, 16, 160);
             const dim = rev && !mine && !oppPick ? 0.55 : picked && !mine && !rev ? 0.7 : 1;
@@ -103,12 +147,12 @@ export const Duel: React.FC = () => {
             // reveal: the right answer swings once around its vertical axis
             const sw = mine ? Math.sin(lin(f, REVEAL, REVEAL + 28) * Math.PI) : 0;
             const won = rev && mine, lost = rev && oppPick;
-            const bg = won ? "linear-gradient(160deg, #61d12a 0%, #3aa514 100%)" : lost ? "linear-gradient(160deg, #f0616a 0%, #d33845 100%)" : "#fff";
-            const tx = won || lost ? "#fff" : NAVY;
+            const bg = won ? "#2f9e25" : lost ? "#d33845" : c;
+            const tx = "#fff";
             return (
-              <div key={t} style={{ position: "absolute", left: 390 + (i % 2) * 580, top: 726 + Math.floor(i / 2) * 166, width: 560, height: 146, borderRadius: 22, background: bg, boxShadow: won ? "0 18px 40px rgba(40,140,10,0.35)" : "0 14px 34px rgba(8,30,80,0.22)", display: "flex", alignItems: "center", gap: 22, padding: "0 32px", boxSizing: "border-box", color: tx, fontWeight: 900, fontSize: 34, opacity: Math.min(1, e * 1.4) * dim, transformOrigin: "50% 50%", transform: `translateY(${(1 - e) * 40}px) rotateX(${(1 - e) * -55 + tap * 12}deg) rotateY(${tap * -9 + sw * 14}deg) translateZ(${tap * -40 + sw * 30}px) scale(${1 + sw * 0.04})` }}>
+              <div key={t} style={{ position: "absolute", left: 390 + (i % 2) * 580, top: 726 + Math.floor(i / 2) * 166, width: 560, height: 146, borderRadius: 18, background: bg, boxShadow: `0 6px 0 ${won ? "#24801c" : lost ? "#a82a35" : d}, 0 16px 34px rgba(8,30,80,0.22)`, display: "flex", alignItems: "center", gap: 22, padding: "0 36px", boxSizing: "border-box", color: tx, fontWeight: 900, fontSize: 34, opacity: Math.min(1, e * 1.4) * dim, transformOrigin: "50% 50%", transform: `translateY(${(1 - e) * 40}px) rotateX(${(1 - e) * -55 + tap * 12}deg) rotateY(${tap * -9 + sw * 14}deg) translateZ(${tap * -40 + sw * 30}px) scale(${1 + sw * 0.04})` }}>
                 {won || lost ? <div style={{ width: 52, height: 52, borderRadius: 26, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={won ? GREEN : "#d33845"} strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d={won ? "M5 12.5l4.5 4.5L19 7.5" : "M6 6l12 12M18 6L6 18"} /></svg></div>
-                  : <div style={{ width: 52, height: 52, borderRadius: 16, background: c, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Shape k={k} /></div>}
+                  : <Shape k={k} />}
                 <div style={{ flex: 1 }}>{t}</div>
                 {lost ? <Avatar src={AV("p3")} size={70} bg="#d9d6ff" /> : null}
                 {won ? <Avatar src={AV("p1")} size={70} bg="#ffd5cc" /> : null}
@@ -119,16 +163,7 @@ export const Duel: React.FC = () => {
           {/* win card */}
           {f >= RES ? (
             <AbsoluteFill style={{ background: `rgba(8,26,70,${0.45 * Math.min(1, res)})`, alignItems: "center", justifyContent: "center", perspective: 1600 }}>
-              <div style={{ width: 760, padding: "50px 40px 46px", borderRadius: 36, background: "#fff", textAlign: "center", boxShadow: "0 40px 100px rgba(13,22,48,0.35)", transform: `rotateX(${(1 - res) * 30}deg) scale(${0.85 + 0.15 * res})`, opacity: Math.min(1, res * 1.4) }}>
-                <Img src={staticFile("av/medal-1.webp")} style={{ width: 150, height: 150, objectFit: "contain", transform: `rotate(${Math.sin(f / 10) * 5}deg)` }} />
-                <div style={{ marginTop: 10, fontFamily: HEAD, fontWeight: 900, fontSize: 76, color: "#2e9d3a" }}>{tr("Победа!")}</div>
-                <div style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "center", gap: 30 }}>
-                  <Avatar src={AV("p1")} size={110} bg="#ffd5cc" />
-                  <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 64, color: NAVY }}>700 : 0</div>
-                  <Avatar src={AV("p3")} size={110} bg="#d9d6ff" />
-                </div>
-                <div style={{ marginTop: 24 }}><XpPill text="+30 XP" size={34} /></div>
-              </div>
+              <WinCard f={f} res={res} />
             </AbsoluteFill>
           ) : null}
         </AbsoluteFill>
