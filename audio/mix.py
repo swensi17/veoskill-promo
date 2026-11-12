@@ -155,6 +155,7 @@ for lf in [352, 508]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(N("Duel"), lf) / FPS - i / SR + 0.03, -22)
 # Forum (Reddit-style thread): drone flight up, landing, up-vote, reply box, GIF, send, second up-vote, votes roll in
 put(WH, F(N("Forum"), 0) / FPS + 0.03, -20)
+put(WH, F(N("Forum"), 690) / FPS + 0.03, -24)   # scroll down through the conversation
 for lf in [172, 262, 424, 466, 508, 596]: at(CL, F(N("Forum"), lf), -16)
 pops += [(N("Forum"), 118), (N("Forum"), 266), (N("Forum"), 470), (N("Forum"), 512)]
 for lf in [174, 598, 640]: at(CH, F(N("Forum"), lf), -17)
