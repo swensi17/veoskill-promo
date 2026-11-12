@@ -41,51 +41,15 @@ const BlueBurst: React.FC<{ t: number }> = ({ t }) => (
   </AbsoluteFill>
 );
 
-// game formats shown before matchmaking (3D pictures from the site)
-const MODES: [string, string, string, string][] = [
-  [tr("Блиц-вопросы"), tr("1 на 1 · 15 секунд на вопрос"), "site/stickers_key-fire.webp", "linear-gradient(160deg, #ffb35c 0%, #ff7a3d 100%)"],
-  [tr("Верно или неверно"), tr("1 на 1 · быстрые ответы"), "site/icons_duel_scales.webp", "linear-gradient(160deg, #6fd3ff 0%, #1cb0f6 100%)"],
-  [tr("Найди термин"), tr("1 на 1 · по определению"), "site/stickers_key-book.webp", "linear-gradient(160deg, #b99cff 0%, #7d5bb5 100%)"],
-  [tr("Казус на время"), tr("1 на 1 · кто решит быстрее"), "ic3d2/law-s.png", "linear-gradient(160deg, #8be05a 0%, #3aa514 100%)"],
-];
-const PICK = 0, PICK_AT = 74, M0 = 104;
-const L_PICK = (1920 - 4 * 380 - 3 * 34) / 2 + PICK * (380 + 34); // the cursor picks "Блиц" at PICK_AT; matchmaking starts at M0
-const ModePicker: React.FC<{ f: number; sp: (a: number, d?: number, s?: number) => number }> = ({ f, sp }) => {
-  const out = lin(f, M0 - 26, M0 - 6, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
-  const CW = 380, GAP = 34, L0 = (1920 - 4 * CW - 3 * GAP) / 2;
-  return (
-    <AbsoluteFill style={{ perspective: 1800 }}>
-      {MODES.map(([t, sub, img, bg], i) => {
-        const e = sp(4 + i * 5, 14, 170);
-        const me = i === PICK;
-        const tap = me ? lin(f, PICK_AT - 3, PICK_AT + 2, 0, 1, OUTE) * (1 - lin(f, PICK_AT + 4, PICK_AT + 22, 0, 1, IOE)) : 0;
-        const sel = me && f >= PICK_AT;
-        const x = L0 + i * (CW + GAP);
-        return (
-          <div key={t} style={{ position: "absolute", left: x, top: 300, width: CW, height: 520, borderRadius: 32, background: "#fff", overflow: "hidden", boxShadow: sel ? "0 0 0 6px #1cb0f6, 0 30px 70px rgba(28,176,246,0.35)" : "0 24px 60px rgba(13,22,48,0.14)", opacity: Math.min(1, e * 1.4) * (me ? 1 - out : 1 - Math.max(out, sel ? 0 : lin(f, PICK_AT + 4, PICK_AT + 18) * 0.5)), transformOrigin: "50% 50%", transform: `translateY(${(1 - e) * 60}px) rotateX(${(1 - e) * -40 + tap * 12}deg) rotateY(${tap * -8}deg) translateZ(${tap * -40}px) scale(${1 + (me ? out * 0.25 : -out * 0.1)})` }}>
-            <div style={{ height: 300, background: bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Img src={staticFile(img)} style={{ width: 230, height: 230, objectFit: "contain", filter: "drop-shadow(0 16px 20px rgba(0,0,0,0.22))", transform: `translateY(${Math.sin(f / 18 + i) * 6}px) rotate(${Math.sin(f / 25 + i) * 3}deg)` }} />
-            </div>
-            <div style={{ padding: "26px 28px 0", fontFamily: UI }}>
-              <div style={{ fontWeight: 900, fontSize: 31, lineHeight: 1.15, color: NAVY, whiteSpace: "nowrap" }}>{t}</div>
-              <div style={{ marginTop: 10, fontWeight: 700, fontSize: 22, color: "#7c8593" }}>{sub}</div>
-              <div style={{ marginTop: 22, height: 62, borderRadius: 16, background: sel ? "#1cb0f6" : "#eef6fd", color: sel ? "#fff" : "#1cb0f6", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, letterSpacing: "0.06em", boxShadow: sel ? "0 5px 0 #1789c4" : "none" }}>{tr("ИГРАТЬ")}</div>
-            </div>
-          </div>
-        );
-      })}
-    </AbsoluteFill>
-  );
-};
-
 export const Duel: React.FC = () => {
   const f = useFrame();
   const sp = useSp();
   // ---------- matchmaking
-  const found = M0 + 52;
+  const found = 128;
   const cyc = ["me0", "me3", "me5", "me1", "me6", "me2", "me7", "me4"];
-  const opp = f < found ? cyc[Math.floor(f / 6) % cyc.length] : "p3";
-  const mm = lin(f, M0 - 6, M0 + 12, 0, 1, OUTE); // matchmaking fade-in
+  // the opponent card spins like a coin (3D, around Y) and slows down onto the found opponent
+  const spin = 1800 * (1 - Math.pow(1 - Math.min(1, f / found), 3));
+  const opp = f < found - 4 ? cyc[Math.floor((spin + 90) / 180) % cyc.length] : "p3";
   const pop = sp(found, 10, 220);
   const searchO = 1 - lin(f, SEARCH_END - 18, SEARCH_END);
   // ---------- quiz
@@ -102,23 +66,28 @@ export const Duel: React.FC = () => {
   const XP0 = RES + 96;
   const xpIn = lin(f, XP0, XP0 + 22, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
   const xpN = Math.round(30 * lin(f, XP0 + 14, XP0 + 104, 0, 1, Easing.bezier(0.2, 0.6, 0.25, 1)));
-  const cap: [number, string, string] = f < M0 ? [6, tr("Выбери"), tr("формат игры.")] : f < SEARCH_END ? [M0 + 4, tr("Соревнуйся"), tr("с другими.")] : f < RES ? [SEARCH_END + 6, tr("Отвечай"), tr("быстрее соперника.")] : [RES + 6, tr("Побеждай"), tr("и расти в лиге.")];
+  const cap: [number, string, string] = f < SEARCH_END ? [6, tr("Соревнуйся"), tr("с другими.")] : f < RES ? [SEARCH_END + 6, tr("Отвечай"), tr("быстрее соперника.")] : [RES + 6, tr("Побеждай"), tr("и расти в лиге.")];
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
       {/* ===== matchmaking */}
-      {f < M0 + 6 ? <ModePicker f={f} sp={sp} /> : null}
-      {f >= M0 - 6 && f < SEARCH_END + 2 ? (
-        <AbsoluteFill style={{ opacity: searchO * mm, transform: `scale(${1 + 0.08 * (1 - searchO) + 0.06 * (1 - mm)})` }}>
-          {Array.from({ length: 70 }, (_, i) => {
-            const a = (i * 137.5 * Math.PI) / 180, sp0 = 0.6 + ((i * 37) % 10) / 10;
-            const r = ((f * 9 * sp0 + i * 53) % 1100) + 60;
-            const cols = ["#1cb0f6", "#3db7f4", "#7fd0fa", "#1a8fe0", "#b9e6fd"];
-            return <div key={i} style={{ position: "absolute", left: 960 + Math.cos(a) * r, top: 560 + Math.sin(a) * r, width: 30 + r * 0.05, height: 3, borderRadius: 2, background: cols[i % 5], opacity: Math.min(1, r / 300) * 0.8, transform: `rotate(${a}rad)`, transformOrigin: "0 50%" }} />;
+      {f < SEARCH_END + 2 ? (
+        <AbsoluteFill style={{ opacity: searchO, transform: `scale(${1 + 0.08 * (1 - searchO)})`, background: "radial-gradient(ellipse at 50% 45%, #ffffff 0%, #f1f8fe 55%, #dff0fc 100%)", perspective: 1400 }}>
+          {/* 3D tunnel: rounded rings fly towards the camera */}
+          {Array.from({ length: 9 }, (_, k) => {
+            const z = ((f / 70 + k / 9) % 1);
+            const sc = 0.15 + Math.pow(z, 2.2) * 2.6;
+            return <div key={"r" + k} style={{ position: "absolute", left: 960 - 400, top: 480 - 400, width: 800, height: 800, borderRadius: "50%", border: `${2 + z * 4}px solid rgba(28,176,246,${0.2 * Math.sin(z * Math.PI)})`, transform: `scale(${sc})` }} />;
           })}
           <div style={{ position: "absolute", left: 960 - 470, top: 330, display: "flex", alignItems: "center", gap: 60 }}>
-            <Avatar src={AV("p1")} size={300} bg="#ffd5cc" />
-            <div style={{ fontFamily: HEAD, fontWeight: 900, fontStyle: "italic", fontSize: 130, lineHeight: 1, transform: `scale(${1 + 0.05 * Math.sin(f / 5)}) rotate(-8deg)` }}><span style={{ color: "#e0454f", textShadow: "4px 4px 0 #ffd36a" }}>V</span><span style={{ color: BLUE, textShadow: "4px 4px 0 #ffd36a" }}>S</span></div>
-            <div style={{ transform: `scale(${f < found ? 1 : 1 + 0.18 * Math.sin(Math.min(1, pop) * Math.PI)})` }}><Avatar src={AV(opp)} size={300} bg={f < found ? "#e9ecf2" : "#d9d6ff"} /></div>
+            <div style={{ transform: `rotateY(${(1 - sp(2, 16, 140)) * -90 + Math.sin(f / 22) * 8}deg) translateY(${Math.sin(f / 18) * 8}px)`, opacity: Math.min(1, sp(2, 16, 140) * 2) }}><Avatar src={AV("p1")} size={300} bg="#ffd5cc" /></div>
+            <div style={{ fontFamily: HEAD, fontWeight: 900, fontStyle: "italic", fontSize: 140, lineHeight: 1, transform: `rotateY(${Math.sin(f / 16) * 18}deg) rotateX(${Math.cos(f / 20) * 8}deg) scale(${0.6 + 0.4 * sp(8, 14, 220) + (f >= found ? 0.12 * Math.sin(Math.min(1, pop) * Math.PI) : 0)}) rotate(-8deg)` }}>
+              <span style={{ color: "#e0454f", textShadow: "1px 1px 0 #b8303a, 2px 2px 0 #b8303a, 3px 3px 0 #b8303a, 4px 4px 0 #b8303a, 5px 5px 0 #a42a33, 6px 6px 0 #a42a33, 10px 14px 24px rgba(13,22,48,0.25)" }}>V</span>
+              <span style={{ color: BLUE, textShadow: "1px 1px 0 #1789c4, 2px 2px 0 #1789c4, 3px 3px 0 #1789c4, 4px 4px 0 #1789c4, 5px 5px 0 #136fa0, 6px 6px 0 #136fa0, 10px 14px 24px rgba(13,22,48,0.25)" }}>S</span>
+            </div>
+            <div style={{ position: "relative", transform: `rotateY(${f < found ? spin : Math.sin(f / 22 + 1) * 8}deg) translateY(${Math.sin(f / 18 + 1) * 8}px) scale(${f < found ? 1 : 1 + 0.15 * Math.sin(Math.min(1, pop) * Math.PI)})` }}>
+              <Avatar src={AV(opp)} size={300} bg={f < found ? "#e9ecf2" : "#d9d6ff"} />
+              {f >= found && f < found + 30 ? <div style={{ position: "absolute", left: 150 - 150 * (1 + (f - found) / 12), top: 150 - 150 * (1 + (f - found) / 12), width: 300 * (1 + (f - found) / 12), height: 300 * (1 + (f - found) / 12), borderRadius: "50%", border: "6px solid rgba(46,157,58,0.6)", opacity: 1 - (f - found) / 30, boxSizing: "border-box" }} /> : null}
+            </div>
           </div>
           <div style={{ position: "absolute", left: 960 - 470, width: 300, top: 650, textAlign: "center", fontWeight: 800, fontSize: 34, color: NAVY }}>{tr("Ты")}</div>
           <div style={{ position: "absolute", left: 960 + 170, width: 300, top: 650, textAlign: "center", fontWeight: 800, fontSize: 34, color: f < found ? "#9aa1ab" : NAVY }}>{f < found ? tr("Соперник") : tr("Наргиза")}</div>
@@ -204,7 +173,6 @@ export const Duel: React.FC = () => {
       <TopLine key={cap[0]} a={cap[1]} b={cap[2]} at={cap[0]} dark={f >= SEARCH_END && f < XP0 + 10} size={f < SEARCH_END ? 66 : 54} band={f >= SEARCH_END ? "rgba(150,120,170,0.0)" : undefined} />
       <Confetti at={RES + 4} />
       {f >= XP0 + 104 && f < XP0 + 240 ? <BlueBurst t={(f - XP0 - 104) / 60} /> : null}
-      {f >= 14 && f < PICK_AT + 26 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={interpolate(f, [14, PICK_AT - 12, PICK_AT + 26], [1500, L_PICK + 200, L_PICK + 200], { ...cl, easing: IOE })} y={interpolate(f, [14, PICK_AT - 12, PICK_AT + 26], [1040, 752, 752], { ...cl, easing: IOE })} down={press(f, PICK_AT)} op={lin(f, 14, 26) * (1 - lin(f, PICK_AT + 12, PICK_AT + 24))} /></div> : null}
       {f >= SEARCH_END + 10 && f < RES - 10 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={press(f, CLICK)} op={lin(f, SEARCH_END + 10, SEARCH_END + 22) * (1 - lin(f, RES - 24, RES - 10))} /></div> : null}
     </AbsoluteFill>
   );
