@@ -22,6 +22,7 @@ const WIN = process.platform === "win32";
 const PY = process.env.PYTHON || (WIN ? "python" : "python3");
 const UZ = has("--uz");
 const SFX = UZ ? "-uz" : "";
+process.env.VO_LANG = UZ ? "uz" : "ru"; // audio/mix.py: Russian voiceover only in the Russian cut
 const CONC = String(Math.max(2, os.cpus().length - 1));
 
 // Таблица сцен читается прямо из src/V11.tsx (единый источник правды).
