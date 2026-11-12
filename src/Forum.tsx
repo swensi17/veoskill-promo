@@ -1,6 +1,6 @@
 import React from "react";
 import { tr } from "./i18n";
-import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
+import { AbsoluteFill, Easing, Img, interpolate, interpolateColors, staticFile } from "remotion";
 import { UI, IOE, lin, press, useSp, useFrame, Pointer, TopLine } from "./Scenes9";
 
 // Forum, Reddit-style thread (no side menu). Like the lesson path at the start: a drone camera flies low
@@ -12,7 +12,7 @@ const AV = (n: string) => staticFile(`av/${n}.svg`);
 const INK = "#1a1a1b", META = "#6a7681", LINE = "#e3e7eb", BLUE = "#1cb0f6", UP = "#58cc02";
 export const FORUM_FRAMES = 864;
 
-const T = { LAND: 118, VOTE: 172, DOWN0: 196, REPLY: 262, TYPE0: 312, GIFBTN: 424, PICK: 466, SEND: 508, VOTE2: 596, MYV: 636 };
+const T = { LAND: 118, VOTE: 172, DOWN0: 196, REPLY: 262, TYPE0: 312, GIFBTN: 424, PICK: 466, SEND: 508, VOTE2: 596, MYV: 626, SCROLL: 690 };
 const X0 = 410, W = 1100;                 // thread column (page coordinates = screen coordinates when flat)
 
 /** Number that rolls up when it changes at `at`. */
@@ -25,16 +25,18 @@ const Roll: React.FC<{ from: number; to: number; at: number; f: number; color: s
     </span>
   );
 };
-const Arrow: React.FC<{ up?: boolean; on?: boolean; s?: number }> = ({ up = true, on, s = 26 }) => (
-  <svg width={s} height={s} viewBox="0 0 24 24" fill={on ? UP : "none"} stroke={on ? UP : "#7c8893"} strokeWidth="2.2" strokeLinejoin="round" style={{ transform: up ? undefined : "rotate(180deg)" }}><path d="M12 3.5l7.5 8.5H15v8.5H9V12H4.5z" /></svg>
+const Arrow: React.FC<{ up?: boolean; c?: string; s?: number }> = ({ up = true, c = "#7c8893", s = 26 }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.2" strokeLinejoin="round" style={{ transform: up ? undefined : "rotate(180deg)" }}><path d="M12 3.5l7.5 8.5H15v8.5H9V12H4.5z" /></svg>
 );
 /** Vote pill: ▲ n ▼ (n rolls when the learner votes at `at`). */
 const Votes: React.FC<{ n: number; at?: number; f: number; big?: boolean; pop?: number }> = ({ n, at, f, big, pop = 0 }) => {
-  const on = at !== undefined && f >= at;
+  // pressed: no fill, the arrow, the number and a thin outline turn green smoothly
+  const u = at !== undefined ? lin(f, at - 2, at + 12, 0, 1, Easing.bezier(0.3, 0, 0.2, 1)) : 0;
+  const c = interpolateColors(u, [0, 1], ["#7c8893", UP]);
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, height: big ? 52 : 40, padding: "0 12px", borderRadius: 26, background: on ? "#eaffd9" : big ? "#eef1f4" : "transparent", fontWeight: 800, fontSize: big ? 22 : 19, transform: `scale(${1 + 0.12 * pop})` }}>
-      <Arrow on={on} s={big ? 26 : 22} />
-      {at !== undefined ? <Roll from={n} to={n + 1} at={at} f={f} color={on ? "#3f9a00" : INK} /> : <span style={{ color: INK }}>{n}</span>}
+    <div style={{ display: "flex", alignItems: "center", gap: 8, height: big ? 52 : 40, padding: "0 12px", borderRadius: 26, border: `2px solid ${interpolateColors(u, [0, 1], [big ? "#e3e7eb" : "rgba(88,204,2,0)", UP])}`, boxSizing: "border-box", fontWeight: 800, fontSize: big ? 22 : 19, transform: `scale(${1 + 0.06 * pop})` }}>
+      <Arrow c={c} s={big ? 26 : 22} />
+      {at !== undefined ? <Roll from={n} to={n + 1} at={at} f={f} color={interpolateColors(u, [0, 1], [INK, "#3f9a00"])} /> : <span style={{ color: INK }}>{n}</span>}
       <Arrow up={false} s={big ? 26 : 22} />
     </div>
   );
@@ -74,6 +76,7 @@ export const Forum: React.FC = () => {
   const yC1 = C_Y, yKids = C_Y + 176;
   const yTim = yKids + slot + (slot > 1 ? 18 : 0);
   const yC2 = yTim + 262, yC2a = yC2 + 134, yC3 = yC2a + 160;
+  const yC4 = yC3 + 176, yC4a = yC4 + 176, yC4b = yC4a + 134, yC5 = yC4b + 262, yC5a = yC5 + 134, yC6 = yC5a + 134, END_Y = yC6 + 150;
   const typed = MSG.slice(0, Math.max(0, Math.min(MSG.length, Math.floor((f - T.TYPE0) * MSG.length / (T.GIFBTN - 14 - T.TYPE0)))));
   const tray = sp(T.GIFBTN + 4, 16, 190) * (1 - lin(f, T.PICK + 6, T.PICK + 18));
   const gifIn = f >= T.PICK + 4;
@@ -83,7 +86,7 @@ export const Forum: React.FC = () => {
   const keys: [number, Cam][] = [
     [0, [1900, 1.7, 56]], [T.LAND, [POST_Y + 330, 1.0, 0]], [T.DOWN0, [POST_Y + 330, 1.0, 0]], [T.DOWN0 + 46, [C_Y + 240, 1.0, 0]],
     [T.REPLY + 6, [C_Y + 240, 1.0, 0]], [T.REPLY + 44, [yKids + 120, 1.32, 0]], [T.SEND + 8, [yKids + 120, 1.32, 0]], [T.SEND + 52, [yKids + 200, 1.05, 0]],
-    [T.VOTE2 - 34, [yKids + 260, 1.0, 0]], [T.VOTE2 + 20, [yKids + 260, 1.0, 0]], [T.MYV + 10, [yKids + 130, 1.12, 0]], [FORUM_FRAMES, [yKids + 120, 1.16, 0]],
+    [T.VOTE2 - 34, [yKids + 260, 1.0, 0]], [T.VOTE2 + 20, [yKids + 260, 1.0, 0]], [T.MYV + 8, [yKids + 140, 1.1, 0]], [T.SCROLL, [yKids + 140, 1.1, 0]], [FORUM_FRAMES, [END_Y - 420, 1.0, 0]],
   ];
   let cam: Cam = keys[keys.length - 1][1];
   for (let k = 0; k < keys.length - 1; k++) {
@@ -107,7 +110,7 @@ export const Forum: React.FC = () => {
   const px = interpolate(f, pk, [1500, ...pts.flatMap(([x]) => [x, x]), 1500], { ...cl, easing: IOE });
   const py = interpolate(f, pk, [1000, ...pts.flatMap(([, y]) => [y, y]), 1000], { ...cl, easing: IOE });
   const down = Math.max(...clicks.map(([t]) => press(f, t)));
-  const caps: [number, string, string][] = [[0, tr("Форум"), tr("для тех, кто учит право.")], [T.REPLY - 10, tr("Отвечай"), tr("и делись гифками.")], [T.VOTE2 - 30, tr("Голосуй"), tr("за лучшие ответы.")]];
+  const caps: [number, string, string][] = [[0, tr("Форум"), tr("для тех, кто учит право.")], [T.REPLY - 10, tr("Отвечай"), tr("и делись гифками.")], [T.VOTE2 - 30, tr("Голосуй"), tr("за лучшие ответы.")], [T.SCROLL, tr("Общайся"), tr("с теми, кто учит право.")]];
   let ci = 0; caps.forEach(([t], i) => { if (f >= t) ci = i; });
   const votePop = Math.sin(lin(f, T.VOTE, T.VOTE + 18) * Math.PI);
   return (
@@ -117,7 +120,7 @@ export const Forum: React.FC = () => {
           {/* dot grid under the thread, only while flying */}
           <div style={{ position: "absolute", left: -900, top: -400, width: 3720, height: 4000, backgroundImage: "radial-gradient(rgba(20,60,110,0.16) 2.4px, transparent 2.8px)", backgroundSize: "48px 48px", opacity: fog }} />
           {/* thread column */}
-          <div style={{ position: "absolute", left: X0 - 40, top: POST_Y - 40, width: W + 80, height: yC3 + 260 - POST_Y, borderRadius: 30, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.08)" }} />
+          <div style={{ position: "absolute", left: X0 - 40, top: POST_Y - 40, width: W + 80, height: END_Y + 120 - POST_Y, borderRadius: 30, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.08)" }} />
           {/* ===== post */}
           <div style={{ position: "absolute", left: X0, top: POST_Y, width: W }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -177,6 +180,15 @@ export const Forum: React.FC = () => {
           <Comment x={X0} y={yC2} av="p2" name={tr("Сардор")} when={tr("2 ч")} votes={<Votes n={15} at={T.VOTE2 + 2} f={f} pop={Math.sin(lin(f, T.VOTE2, T.VOTE2 + 18) * Math.PI)} />}>{tr("Статья про самоуправство. Читал три раза, так и не понял, где граница.")}</Comment>
           <Comment x={X0 + 56} y={yC2a} av="p3" name={tr("Дильноза")} when={tr("1 ч")} votes={<Votes n={4} f={f} />}>{tr("Согласна, без примера там вообще никак.")}</Comment>
           <Comment x={X0} y={yC3} av="p0" name={tr("Санжар")} when={tr("40 мин")} votes={<Votes n={7} f={f} />}>{tr("А мне нравится, как в кодексе описан «крайний случай». Звучит как название фильма.")}</Comment>
+          {/* more of the conversation, seen while the camera scrolls down */}
+          <div style={{ position: "absolute", left: X0 + 19, top: yC4 + 46, width: 2, height: yC4b + 30 - (yC4 + 46), background: LINE }} />
+          <div style={{ position: "absolute", left: X0 + 19, top: yC5 + 46, width: 2, height: yC5a + 30 - (yC5 + 46), background: LINE }} />
+          <Comment x={X0} y={yC4} av="me3" name={tr("Нодира")} when={tr("35 мин")} votes={<Votes n={11} f={f} />}>{tr("Для экзамена советую разбирать такие статьи на примерах. Тогда запоминаются сами.")}</Comment>
+          <Comment x={X0 + 56} y={yC4a} av="me5" name={tr("Жасур")} when={tr("30 мин")} votes={<Votes n={6} f={f} />}>{tr("Плюс. Я так и учу: статья, пример, тест.")}</Comment>
+          <Comment x={X0 + 56} y={yC4b} av="me1" name={tr("Камола")} when={tr("25 мин")} votes={<Votes n={3} f={f} />}>{tr("А у кого есть подборка по Уголовному кодексу? Скиньте ссылку 🙏")}<div style={{ marginTop: 10 }}><Gif src="real/mascot1.webp" f={f} w={190} /></div></Comment>
+          <Comment x={X0} y={yC5} av="me6" name={tr("Бехруз")} when={tr("15 мин")} votes={<Votes n={8} f={f} />}>{tr("Мне кажется, самая странная та, где три исключения в одном предложении.")}</Comment>
+          <Comment x={X0 + 56} y={yC5a} av="me2" name={tr("Азиз")} when={tr("10 мин")} votes={<Votes n={5} f={f} />}>{tr("Точно, читаешь и теряешь нить на середине 😄")}</Comment>
+          <Comment x={X0} y={yC6} av="me7" name={tr("Лола")} when={tr("2 мин")} votes={<Votes n={2} f={f} />}>{tr("Сохранила ветку, перечитаю перед сессией.")}</Comment>
         </div>
       </AbsoluteFill>
       {/* soft fog at the top while the camera flies low */}
