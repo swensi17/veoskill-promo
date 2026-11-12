@@ -250,7 +250,10 @@ VO_LANG = os.environ.get("VO_LANG", "ru")
 if VO_LANG in ("ru", "uz"):
     if VO_LANG == "uz": VO_CUTS = VO_CUTS_UZ
     V = load(os.path.join(ROOT, f"assets/vo/vo-roger-{VO_LANG}.mp3"))
+    # cut lists were timed when Wall started at 97.0 s; lines from Wall on follow the scene if the competition grows
+    _shift = (STARTS[N("Wall")] / FPS - 97.0) if N("Wall") >= 0 else 0.0
     for a, b, t in VO_CUTS:
+        if t >= 97.0: t += _shift
         x = fade(V[int(a * SR):int(b * SR)].copy(), 0.015, 0.03)
         i = int(round(t * SR)); j = min(len(VO), i + len(x)); VO[i:j] += x[: j - i]
     r = np.sqrt((VO[np.abs(VO).max(axis=1) > 1e-3] ** 2).mean())

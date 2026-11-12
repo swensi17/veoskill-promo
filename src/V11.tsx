@@ -779,7 +779,7 @@ const SCENES: { C: React.FC; d: number; xo?: number; k?: number }[] = [
   { C: S7, d: 173 },
   { C: S7b, d: 374 },
   { C: DuelWords, d: 115 },
-  { C: Duel, d: 720, xo: 16 },
+  { C: Duel, d: 950, xo: 16 },
   { C: Wall, d: 288 },
   { C: S9, d: 116, xo: 12 },
   { C: Counter, d: 518, xo: 16 },
