@@ -1,6 +1,6 @@
 import React from "react";
 import { tr } from "./i18n";
-import { AbsoluteFill, Easing, Img, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio, Easing, Img, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
@@ -823,6 +823,8 @@ export const V11: React.FC = () => {
   useFonts7();
   return (
     <AbsoluteFill style={{ background: BG }}>
+      {/* finished soundtrack (audio/mix.py -> public/audio/soundtrack.mp4) so the music plays in Studio; renders are --muted and get the master mux */}
+      <Audio src={staticFile("audio/soundtrack.mp4")} />
       {SCENES.map((s, i) => (
         <Sequence key={i} from={starts[i]} durationInFrames={s.d + (s.xo ?? 0)}>
           <Out d={s.d} xo={s.xo ?? 0}><SlowCtx.Provider value={s.k ?? 1}><s.C /></SlowCtx.Provider></Out>
