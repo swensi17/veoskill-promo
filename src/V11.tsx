@@ -1,6 +1,6 @@
 import React from "react";
 import { tr } from "./i18n";
-import { AbsoluteFill, Audio, Easing, Img, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio, Easing, Img, interpolateColors, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
 import { LessonPath } from "./V12Path";
@@ -9,7 +9,7 @@ import { Duel } from "./Duel";
 import { Books } from "./Books";
 import { Profile, Premium } from "./Profile";
 import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, LexTrySelect, LexTryHover, LexTrySearch, LexTryCollect, LexTryAi, ArticleActions, Collect, Search, AiPick, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
-import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b, SoftBg } from "./Scenes9";
+import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
 // veoskill v10: Maverick-style reel after review. Lessons as a camera flight over the lesson path, three games
 // (phrase, story, true/false) with cinematic hand-offs, kinetic words between sections, an honest side by side with
@@ -201,7 +201,7 @@ const S5: React.FC = () => {
 };
 
 // ================= S6 three games =================
-const card: React.CSSProperties = { position: "absolute", borderRadius: 26, background: "#fff", border: `3px solid ${SWAN}`, boxShadow: `0 6px 0 ${SWAN}, 0 30px 70px rgba(13,22,48,0.12)`, fontFamily: UI, fontWeight: 800, color: INK, boxSizing: "border-box" };
+const card: React.CSSProperties = { position: "absolute", borderRadius: 26, background: "#fff", border: `3px solid ${SWAN}`, boxShadow: `0 6px 0 ${SWAN}, 0 24px 50px rgba(13,22,48,0.08)`, fontFamily: UI, fontWeight: 800, color: INK, boxSizing: "border-box" };
 const GameTitle: React.FC<{ t: string; at?: number; color?: string }> = ({ t, at = 6, color }) => <div style={{ position: "absolute", left: 110, top: 110 }}><Cap text={t} at={at} size={76} color={color} /></div>;
 /** 1. Phrase: the green flood irises out; words flip down onto one clean line, slot by slot; the extras fall away. */
 export const G1: React.FC = () => {
@@ -311,61 +311,40 @@ const G3: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const T = [tr("Конституция: главный закон страны"), tr("Закон можно не соблюдать, если не согласен"), tr("Права человека защищает государство")];
-  const enter = (i: number) => spring({ frame: f - 6 - i * 10, fps, config: { damping: 15, stiffness: 120 } });
+  const enter = (i: number) => spring({ frame: f - 6 - i * 10, fps, config: { damping: 20, stiffness: 90 } });
   const go = [74, 124];
   const dir = [1, -1];
   const SLAP = 190;
-  const slap = lin(f, SLAP, SLAP + 26, 0, 1, Easing.bezier(0.6, 0, 0.8, 0.4));
-  const settle = f >= SLAP + 26 ? spring({ frame: f - SLAP - 26, fps, config: { damping: 9, stiffness: 260 } }) : 0;
-  const lean3 = lin(f, SLAP - 30, SLAP - 6, 0, 1);
+  const slap = lin(f, SLAP, SLAP + 34, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
+  const settle = f >= SLAP + 34 ? spring({ frame: f - SLAP - 34, fps, config: { damping: 16, stiffness: 160 } }) : 0;
+  const lean3 = lin(f, SLAP - 34, SLAP - 6, 0, 1, Easing.bezier(0.45, 0, 0.25, 1));
   const W3 = 1 - lin(f, 0, 20, 0, 1, Easing.out(Easing.cubic));
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
       <HBlur id="hb-g3" v={W3 * 46} />
       <AbsoluteFill style={whip("hb-g3", W3 * 46, W3 * 1700)}>
-      <SoftBg f={f} />
       <GameTitle t={tr("Верно или неверно")} />
-      {/* HUD: card counter and streak, like the game screen */}
       {(() => {
-        const done = (f >= go[0] + 12 ? 1 : 0) + (f >= go[1] + 12 ? 1 : 0) + (f >= SLAP ? 1 : 0);
-        const hud = lin(f, 10, 28, 0, 1, OUTE) * (1 - slap);
-        return (
-          <div style={{ position: "absolute", right: 110, top: 118, display: "flex", alignItems: "center", gap: 18, fontFamily: UI, opacity: hud, transform: `translateY(${(1 - hud) * -20}px)` }}>
-            <div style={{ display: "flex", gap: 10 }}>{[0, 1, 2].map((k) => <div key={k} style={{ width: 54, height: 12, borderRadius: 6, background: k < done ? GREEN : k === done ? "#bfe9ff" : "#e3e8ef", transition: "none" }} />)}</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 18px 8px 10px", borderRadius: 30, background: "#fff", boxShadow: "0 8px 22px rgba(13,22,48,0.10)", fontWeight: 900, fontSize: 26, color: "#ff7a1a" }}>
-              <Img src={staticFile("site/stickers_key-fire.webp")} style={{ width: 38, height: 38, objectFit: "contain", transform: `scale(${1 + 0.25 * Math.max(...[go[0] + 12, go[1] + 12, SLAP].map((t) => Math.sin(lin(f, t, t + 16) * Math.PI)))})` }} />
-              {tr("Серия")} {done}
-            </div>
-          </div>
-        );
-      })()}
-      {(() => {
-        const l0 = lin(f, go[0] - 18, go[0], 0, 1) * (1 - lin(f, go[0] + 10, go[0] + 30));
-        const l1 = lin(f, go[1] - 18, go[1], 0, 1) * (1 - lin(f, go[1] + 10, go[1] + 30));
+        const l0 = lin(f, go[0] - 24, go[0], 0, 1, Easing.bezier(0.45, 0, 0.25, 1)) * (1 - lin(f, go[0] + 10, go[0] + 36, 0, 1, Easing.bezier(0.45, 0, 0.25, 1)));
+        const l1 = lin(f, go[1] - 24, go[1], 0, 1, Easing.bezier(0.45, 0, 0.25, 1)) * (1 - lin(f, go[1] + 10, go[1] + 36, 0, 1, Easing.bezier(0.45, 0, 0.25, 1)));
         const l2 = lean3 * (1 - slap);
         const g = Math.max(l0, l2), r = l1;
         return (
           <>
             <AbsoluteFill style={{ background: `radial-gradient(60% 70% at 85% 55%, rgba(88,204,2,${0.22 * g}), rgba(88,204,2,0) 70%), radial-gradient(60% 70% at 15% 55%, rgba(255,75,75,${0.2 * r}), rgba(255,75,75,0) 70%)` }} />
-            {([[r, false], [g, true]] as [number, boolean][]).map(([v, ok]) => (
-              <div key={String(ok)} style={{ position: "absolute", left: ok ? undefined : 150, right: ok ? 150 : undefined, top: 470, width: 200, display: "flex", flexDirection: "column", alignItems: "center", gap: 16, opacity: (0.55 + 0.45 * v) * (1 - slap) * lin(f, 12, 30), transform: `translateX(${(ok ? 1 : -1) * v * 16}px) scale(${1 + 0.12 * v})` }}>
-                <div style={{ width: 120, height: 120, borderRadius: 60, background: ok ? `rgba(88,204,2,${0.12 + 0.88 * v})` : `rgba(255,75,75,${0.12 + 0.88 * v})`, border: `4px solid ${ok ? GREEN : RED}`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: v > 0.2 ? `0 0 0 ${14 * v}px ${ok ? "rgba(88,204,2,0.15)" : "rgba(255,75,75,0.15)"}, 0 16px 40px ${ok ? "rgba(88,204,2,0.35)" : "rgba(255,75,75,0.35)"}` : "0 10px 26px rgba(13,22,48,0.08)" }}>
-                  <svg width="58" height="58" viewBox="0 0 24 24" fill="none" stroke={v > 0.5 ? "#fff" : ok ? GREEN : RED} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d={ok ? "M5 12.5l4.5 4.5L19 7.5" : "M6 6l12 12M18 6L6 18"} /></svg>
-                </div>
-                <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 30, letterSpacing: "0.08em", color: ok ? GLIP : RED }}>{ok ? tr("ВЕРНО") : tr("НЕВЕРНО")}</div>
-                <svg width="60" height="24" viewBox="0 0 60 24" style={{ opacity: 0.6, transform: ok ? undefined : "scaleX(-1)" }}><path d="M4 12h48m-10-8 10 8-10 8" fill="none" stroke={ok ? GREEN : RED} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </div>
-            ))}
+            <div style={{ position: "absolute", left: -40, top: 560, fontFamily: HEAD, fontWeight: 900, fontSize: 150, letterSpacing: "-0.04em", color: "transparent", WebkitTextStroke: `3px rgba(255,75,75,${0.18 + 0.6 * r})`, transform: `translateX(${-r * 30}px) rotate(-90deg)`, transformOrigin: "50% 50%", opacity: 1 - slap, whiteSpace: "nowrap" }}>{tr("НЕВЕРНО")}</div>
+            <div style={{ position: "absolute", right: 60, top: 560, fontFamily: HEAD, fontWeight: 900, fontSize: 150, letterSpacing: "-0.04em", color: "transparent", WebkitTextStroke: `3px rgba(88,204,2,${0.18 + 0.6 * g})`, transform: `translateX(${g * 30}px) rotate(90deg)`, transformOrigin: "50% 50%", opacity: 1 - slap, whiteSpace: "nowrap" }}>{tr("ВЕРНО")}</div>
           </>
         );
       })()}
       {T.map((t, i) => {
         const e = enter(i);
         const isLast = i === 2;
-        const fly = i < 2 ? lin(f, go[i], go[i] + 24, 0, 1, Easing.bezier(0.5, 0, 0.9, 0.6)) : 0;
-        const lean = i < 2 ? lin(f, go[i] - 18, go[i], 0, 1) : lean3;
+        const fly = i < 2 ? lin(f, go[i] - 2, go[i] + 32, 0, 1, Easing.bezier(0.55, 0, 0.45, 1)) : 0;
+        const lean = i < 2 ? lin(f, go[i] - 24, go[i], 0, 1, Easing.bezier(0.45, 0, 0.25, 1)) : lean3;
         const good = i < 2 ? dir[i] > 0 : true;
-        const depth = i - (f >= go[0] + 12 ? 1 : 0) - (f >= go[1] + 12 ? 1 : 0);
+        // the stack behind glides forward instead of jumping
+        const depth = i - lin(f, go[0] + 2, go[0] + 30, 0, 1, Easing.bezier(0.45, 0, 0.25, 1)) - lin(f, go[1] + 2, go[1] + 30, 0, 1, Easing.bezier(0.45, 0, 0.25, 1));
         const floatY = Math.sin((f + i * 20) / 22) * 8;
         // last card: toward the lens, fills the frame, tiny bounce like a sticker
         const s3 = isLast ? 1 + slap * 3.6 - settle * 0.04 * Math.sin(settle * Math.PI) : 1 - Math.max(0, depth) * 0.05;
@@ -373,17 +352,9 @@ const G3: React.FC = () => {
         const y = (1 - e) * 700 + Math.max(0, depth) * 30 + (isLast ? -slap * 40 : 0) + floatY * (1 - slap);
         const r = i < 2 ? dir[i] * (lean * 7 + fly * 18) : (1 - slap) * -3;
         return (
-          <div key={t} style={{ ...card, left: 960 - 330, top: 330, width: 660, height: 420, display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 54, fontSize: 42, lineHeight: 1.3, zIndex: 20 - i + (isLast && depth <= 0 ? 10 : 0), border: `3px solid ${lean > 0.3 ? (good ? GREEN : RED) : SWAN}`, background: lean > 0.3 ? (good ? "#e7ffd6" : "#ffe3e3") : "#fff", transform: `translate(${x}px, ${y}px) rotate(${r}deg) scale(${s3})`, opacity: e * (1 - fly * 0.3), borderRadius: 26 * (1 - slap) + 2 }}>
-            <div style={{ position: "absolute", left: 30, top: 26, display: "flex", alignItems: "center", gap: 10, opacity: (isLast ? 1 - slap : 1) * (1 - Math.min(1, lean * 3)) }}>
-              <Img src={staticFile("site/icons_duel_scales.webp")} style={{ width: 40, height: 40, objectFit: "contain" }} />
-              <div style={{ fontWeight: 900, fontSize: 20, letterSpacing: "0.14em", color: "#9aa3b0" }}>{tr("УТВЕРЖДЕНИЕ")}</div>
-            </div>
-            <div style={{ position: "absolute", right: 30, top: 32, fontWeight: 900, fontSize: 20, color: "#9aa3b0", opacity: (isLast ? 1 - slap : 1) * (1 - Math.min(1, lean * 3)) }}>{i + 1} / 3</div>
+          <div key={t} style={{ ...card, left: 960 - 330, top: 330, width: 660, height: 420, display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 54, fontSize: 42, lineHeight: 1.3, zIndex: 20 - i + (isLast && depth <= 0 ? 10 : 0), border: `3px solid ${interpolateColors(Math.min(1, lean * 1.6), [0, 1], [SWAN, good ? GREEN : RED])}`, background: interpolateColors(Math.min(1, lean * 1.6), [0, 1], ["#ffffff", good ? "#e7ffd6" : "#ffe3e3"]), transform: `translate(${x}px, ${y}px) rotate(${r}deg) scale(${s3})`, opacity: e * (1 - fly * 0.3), borderRadius: 26 * (1 - slap) + 2 }}>
             <span style={{ opacity: isLast ? 1 - slap : 1 }}>{t}</span>
-            <div style={{ position: "absolute", left: 30, right: 30, bottom: 26, display: "flex", justifyContent: "space-between", fontWeight: 900, fontSize: 18, letterSpacing: "0.12em", opacity: (isLast ? 1 - slap : 1) * 0.75 }}>
-              <span style={{ color: RED }}>← {tr("НЕВЕРНО")}</span><span style={{ color: GLIP }}>{tr("ВЕРНО")} →</span>
-            </div>
-            {lean > 0.3 ? <div style={{ position: "absolute", left: good ? 34 : undefined, right: good ? undefined : 34, top: 28, padding: "4px 16px", border: `5px solid ${good ? GREEN : RED}`, borderRadius: 12, fontFamily: HEAD, fontWeight: 900, fontSize: 32, color: good ? GLIP : RED, transform: `rotate(${good ? -8 : 8}deg)`, opacity: isLast ? 1 - slap : 1 }}>{good ? tr("ВЕРНО") : tr("НЕВЕРНО")}</div> : null}
+            {lean > 0.05 ? <div style={{ position: "absolute", left: good ? 34 : undefined, right: good ? undefined : 34, top: 28, padding: "4px 16px", border: `5px solid ${good ? GREEN : RED}`, borderRadius: 12, fontFamily: HEAD, fontWeight: 900, fontSize: 32, color: good ? GLIP : RED, transform: `rotate(${good ? -8 : 8}deg) scale(${0.7 + 0.3 * Math.min(1, lean * 1.4)})`, opacity: Math.min(1, lean * 1.6) * (isLast ? 1 - slap : 1) }}>{good ? tr("ВЕРНО") : tr("НЕВЕРНО")}</div> : null}
           </div>
         );
       })}
