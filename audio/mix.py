@@ -62,18 +62,25 @@ def seg(src_from, src_to, at, fi=0.01, fo=0.012, g=0.0):
 BEAT = 0.48
 HIT = 96.019                                # the track's final hit (source seconds, on a downbeat)
 JUMP = STARTS[-1] / FPS                     # cut on the beat at the start of S11
-# the film may be longer than the track before its ending: then one 32-beat phrase in the middle is played twice
+# the film may be longer than the track before its ending: then whole 32-beat phrases of the middle
+# (from source beat 96, ~46 s, up to the room before the ending) are repeated in a cycle, joined on phrase lines.
 PHRASE = 32 * BEAT
 LOOP_SRC = 0.0188 + 96 * BEAT                # a phrase boundary (beat 96, ~46 s)
 _room = 95.0                                 # source time the first pass may reach before the ending starts
-_back = 0.0
-while JUMP - MUS_OFF - _back > _room: _back += PHRASE
-if _back:
-    seg(0.0, LOOP_SRC + 0.006, MUS_OFF, fi=0.02, fo=0.006)
-    seg(LOOP_SRC - _back, JUMP - MUS_OFF - _back + 0.006, LOOP_SRC + MUS_OFF, fi=0.006, fo=0.006)
+_nloop = int((_room - LOOP_SRC) // PHRASE)   # whole phrases that fit in the loop region
+LOOP_END = LOOP_SRC + _nloop * PHRASE
+_t_end = JUMP - MUS_OFF                      # film time (in source clock) where the ending section starts
+if _t_end <= _room:
+    seg(0.0, _t_end + 0.006, MUS_OFF, fi=0.02, fo=0.006)
+    _src_jump = _t_end
 else:
-    seg(0.0, JUMP - MUS_OFF + 0.006, MUS_OFF, fi=0.02, fo=0.006)
-_src_jump = JUMP - MUS_OFF - _back
+    seg(0.0, LOOP_END + 0.006, MUS_OFF, fi=0.02, fo=0.006)
+    _t = LOOP_END                            # film position (source clock) of the next phrase
+    while _t < _t_end:
+        _len = min(_nloop * PHRASE, _t_end - _t)
+        seg(LOOP_SRC, LOOP_SRC + _len + 0.006, _t + MUS_OFF, fi=0.006, fo=0.006)
+        _t += _len
+    _src_jump = LOOP_SRC + ((_t_end - LOOP_END) % (_nloop * PHRASE))
 # from S11 on, jump by a whole number of beats (back = repeat, forward = skip) so the final hit lands ~2.4 s into S11 (logo + QR)
 _shift = round((HIT - _src_jump - 2.4) / BEAT) * BEAT
 seg(_src_jump + _shift, 101.0, JUMP, fi=0.006, fo=1.6)
