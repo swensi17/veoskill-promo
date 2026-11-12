@@ -77,17 +77,17 @@ export const Forum: React.FC = () => {
   const yTim = yKids + slot + (slot > 1 ? 18 : 0);
   const yC2 = yTim + 262, yC2a = yC2 + 134, yC3 = yC2a + 160;
   const yC4 = yC3 + 176, yC4a = yC4 + 176, yC4b = yC4a + 134, yC5 = yC4b + 262, yC5a = yC5 + 134, yC6 = yC5a + 134, END_Y = yC6 + 150;
-  const typed = MSG.slice(0, Math.max(0, Math.min(MSG.length, Math.floor((f - T.TYPE0) * MSG.length / (T.GIFBTN - 14 - T.TYPE0)))));
+  const CH = Array.from(MSG); // by characters, so the emoji never shows half-typed
+  const typed = CH.slice(0, Math.max(0, Math.min(CH.length, Math.floor((f - T.TYPE0) * CH.length / (T.GIFBTN - 14 - T.TYPE0))))).join("");
   const tray = sp(T.GIFBTN + 4, 16, 190) * (1 - lin(f, T.PICK + 6, T.PICK + 18));
   const gifIn = f >= T.PICK + 4;
   const myVotes = Math.round(lin(f, T.MYV, T.MYV + 90, 1, 14, Easing.out(Easing.cubic)));
   // ---------- camera: drone flight from the bottom of the thread up to the post, then it lands and works
   type Cam = [number, number, number, number]; // focus x, focus y, scale, tilt
-  // one strong push-in when the reply opens (typing, GIF, send all happen inside this view), one pull-back after
-  // sending; after that the camera only glides down the thread, no more zoom changes
+  // after landing the camera never zooms: it only glides calmly down the thread with the action
   const keys: [number, Cam][] = [
     [0, [960, 1900, 1.7, 56]], [T.LAND, [960, POST_Y + 330, 1.0, 0]], [T.DOWN0, [960, POST_Y + 330, 1.0, 0]], [T.DOWN0 + 46, [960, C_Y + 240, 1.0, 0]],
-    [T.REPLY + 2, [960, C_Y + 240, 1.0, 0]], [T.REPLY + 50, [960, yKids + 175, 1.45, 0]], [T.SEND + 10, [960, yKids + 175, 1.45, 0]],
+    [T.REPLY + 2, [960, C_Y + 240, 1.0, 0]], [T.REPLY + 50, [960, yKids + 200, 1.0, 0]], [T.SEND + 10, [960, yKids + 200, 1.0, 0]],
     [T.SEND + 60, [960, yKids + 230, 1.0, 0]], [T.VOTE2 - 30, [960, yKids + 260, 1.0, 0]], [T.SCROLL, [960, yKids + 260, 1.0, 0]], [FORUM_FRAMES, [960, END_Y - 420, 1.0, 0]],
   ];
   let cam: Cam = keys[keys.length - 1][1];
