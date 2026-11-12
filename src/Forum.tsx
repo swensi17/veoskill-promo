@@ -14,7 +14,7 @@ const LINE = "#e5e9ef";
 export const FORUM_FRAMES = 864;
 
 // timeline (scene frames)
-const T = { HOVER: 118, OPEN: 142, R1: 214, R2: 262, VOTE: 300, FOCUS: 336, TYPE0: 350, GIFBTN: 470, PICK: 520, SEND: 560, LIKE: 600, TYPING: 640, R3: 744 };
+const T = { HOVER: 118, OPEN: 142, R1: 206, R2: 248, VOTE: 296, FOCUS: 336, TYPE0: 356, GIFBTN: 470, PICK: 520, SEND: 560, LIKE: 640, MYLIKES: 676, TYPING: 716, R3: 780 };
 
 const NAV: [string, string][] = [["icons_hub_home.webp", tr("КАБИНЕТ")], ["stickers_module.webp", tr("МОДУЛИ")], ["icons_duel_scales.webp", tr("ЗАКОНЫ")], ["icons_hub_stats.webp", tr("СТАТИСТИКА")], ["icons_hub_achievements.webp", tr("ДОСТИЖЕНИЯ")], ["icons_hub_store.webp", tr("МАГАЗИН")], ["icons_hub_forum.webp", tr("ФОРУМ")]];
 // threads: title, text, picture, hot, author avatar, author, when, up, down, replies
@@ -70,8 +70,8 @@ const Card: React.FC<{ t: Th; x: number; y: number; e: number; hover: number }> 
 };
 
 /** A message in the thread. */
-const Msg: React.FC<{ av: string; name: string; when: string; e: number; me?: boolean; children: React.ReactNode; likes?: number; likeOn?: boolean }> = ({ av, name, when, e, me, children, likes = 0, likeOn }) => (
-  <div style={{ display: "flex", gap: 18, opacity: Math.min(1, e * 1.6), transform: `translateY(${(1 - e) * -30}px) scale(${0.96 + 0.04 * e})`, transformOrigin: "0 0" }}>
+const Msg: React.FC<{ av: string; name: string; when: string; e: number; me?: boolean; children: React.ReactNode; likes?: number; likeOn?: boolean; pop?: number; y: number }> = ({ av, name, when, e, me, children, likes = 0, likeOn, pop = 0, y }) => (
+  <div style={{ position: "absolute", left: 0, top: y, width: 1500, display: "flex", gap: 18, opacity: Math.min(1, e * 1.6), transform: `translateY(${(1 - e) * -30}px) scale(${0.96 + 0.04 * e})`, transformOrigin: "0 0" }}>
     <Img src={AV(av)} style={{ width: 56, height: 56, borderRadius: 28, background: me ? "#ffd5cc" : "#eef1f5", flexShrink: 0 }} />
     <div style={{ flex: 1 }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
@@ -80,7 +80,7 @@ const Msg: React.FC<{ av: string; name: string; when: string; e: number; me?: bo
       </div>
       <div style={{ marginTop: 6, display: "inline-block", maxWidth: 1000, padding: "14px 20px", borderRadius: "6px 22px 22px 22px", background: me ? "#e8f6fe" : "#f4f6f9", fontWeight: 600, fontSize: 23, lineHeight: 1.4, color: "#2b2b2b" }}>{children}</div>
       <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 19, color: likeOn ? "#ff4b4b" : "#9aa3b0" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 19, color: likeOn ? "#ff4b4b" : "#9aa3b0", transform: `scale(${1 + 0.6 * pop})`, transformOrigin: "20% 50%" }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill={likeOn ? "#ff4b4b" : "none"} stroke={likeOn ? "#ff4b4b" : "#9aa3b0"} strokeWidth="2.2"><path d="M12 21s-7-4.4-9.3-8.6C1 9 3 5 6.8 5c2.2 0 3.6 1.3 5.2 3 1.6-1.7 3-3 5.2-3C21 5 23 9 21.3 12.4 19 16.6 12 21 12 21z" /></svg>{likes}
         </div>
         <div style={{ fontWeight: 800, fontSize: 18, color: "#9aa3b0" }}>{tr("Ответить")}</div>
@@ -110,25 +110,49 @@ export const Forum: React.FC = () => {
   const draft = sent ? "" : typed;
   const picker = sp(T.GIFBTN + 4, 15, 190) * (1 - lin(f, T.PICK + 6, T.PICK + 18));
   const gifIn = f >= T.PICK + 4 && !sent;
-  const votes = Math.round(lin(f, T.VOTE, T.VOTE + 30, 0, 5, Easing.out(Easing.cubic)));
-  const myLikes = Math.round(lin(f, T.LIKE, T.LIKE + 80, 0, 12, Easing.out(Easing.cubic)));
+  // the thread had 4 up-votes, the learner adds the 5th; the learner likes Тимур's GIF; then others like the learner's message
+  const votes = 4 + (f >= T.VOTE + 2 ? 1 : 0);
+  const votePop = Math.sin(lin(f, T.VOTE + 2, T.VOTE + 22) * Math.PI);
+  const timLike = f >= T.LIKE + 2, timPop = Math.sin(lin(f, T.LIKE + 2, T.LIKE + 20) * Math.PI);
+  const myLikes = Math.round(lin(f, T.MYLIKES, T.MYLIKES + 70, 0, 9, Easing.out(Easing.cubic)));
   const nMsg = 1 + (f >= T.R1 ? 1 : 0) + (f >= T.R2 ? 1 : 0) + (sent ? 1 : 0) + (f >= T.R3 ? 1 : 0);
-  // layout (inside the scaled page, 1920 x 1220)
+  // layout (inside the page, 1920 x 1220)
   const MX = 360;
   const COMP = { x: MX, y: 380, w: 1520, h: 210 };
   const BTN = { gif: [MX + 110, COMP.y + 166], send: [MX + 1460, COMP.y + 166] };
   const cardPos = (i: number) => [MX + (i % 3) * 530, 190 + Math.floor(i / 3) * 290];
   const [ocx, ocy] = cardPos(OPENED);
-  // page -> screen (scale 0.89, origin top centre, 110 px down)
-  // camera: after the thread opens it moves a little closer to the conversation
-  const cam = lin(f, T.OPEN + 20, T.OPEN + 70, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
-  const K = 0.89 + 0.17 * cam, CX = -150 * cam, CY = -60 * cam;
-  const scr = (x: number, y: number) => [960 + (x - 960) * K + CX, 110 + CY + y * K];
+  // messages stack (newest on top), each block has a fixed height; a new one pushes the others down smoothly
+  const L0 = 630, GAP = 22;
+  const eR1 = sp(T.R1, 14, 200), eR2 = sp(T.R2, 14, 200), eMe = sp(T.SEND + 4, 13, 200), eR3 = sp(T.R3, 14, 200);
+  const eTy = lin(f, T.TYPING, T.TYPING + 10) * (1 - lin(f, T.R3 - 6, T.R3 + 4));
+  const stack: [string, number, number][] = [["ty", 54, eTy], ["r3", 150, f >= T.R3 ? eR3 : 0], ["me", 300, sent ? eMe : 0], ["r2", 262, f >= T.R2 ? eR2 : 0], ["r1", 150, f >= T.R1 ? eR1 : 0]];
+  const Y: Record<string, number> = {}; let acc = L0;
+  stack.forEach(([k, h, e]) => { Y[k] = acc; acc += (h + GAP) * Math.min(1, e); });
+  const heart = (k: string, h: number) => [MX + 92, Y[k] + h - 22];
+  // camera keyframes: tx, ty, scale (page -> screen: x * K + tx)
+  type Cam = [number, number, number];
+  const A: Cam = [105.6, 110, 0.89];                       // forum list
+  const B: Cam = [960 - 1100 * 1.06, 560 - 470 * 1.06, 1.06]; // thread
+  const C: Cam = [960 - 860 * 1.3, 540 - 470 * 1.3, 1.3];      // typing: close on the start of the message box
+  const C2: Cam = [960 - 900 * 1.2, 560 - 600 * 1.2, 1.2];    // GIF picker
+  const C3: Cam = [960 - 1250 * 1.1, 540 - 480 * 1.1, 1.1];    // the send button comes into view
+  const D: Cam = [960 - 1100 * 1.0, -240, 1.0];               // after sending: the box and the conversation
+  const keys: [number, Cam][] = [[0, A], [T.OPEN + 20, A], [T.OPEN + 70, B], [T.FOCUS - 6, B], [T.FOCUS + 34, C], [T.GIFBTN - 4, C], [T.GIFBTN + 22, C2], [T.PICK + 8, C2], [T.SEND - 12, C3], [T.SEND + 10, C3], [T.SEND + 50, D]];
+  const ease = Easing.bezier(0.65, 0, 0.35, 1);
+  let cam: Cam = keys[keys.length - 1][1];
+  for (let k = 0; k < keys.length - 1; k++) {
+    const [t0, c0] = keys[k], [t1, c1] = keys[k + 1];
+    if (f >= t0 && f < t1) { const u = ease((f - t0) / Math.max(1, t1 - t0)); cam = [c0[0] + (c1[0] - c0[0]) * u, c0[1] + (c1[1] - c0[1]) * u, c0[2] + (c1[2] - c0[2]) * u]; break; }
+  }
+  const [TX, TY, K] = cam;
+  const scr = (x: number, y: number) => [TX + x * K, TY + y * K];
   const clicks: [number, number, number][] = [
-    [T.OPEN, ocx + 250, ocy + 90], [T.FOCUS, MX + 700, COMP.y + 70], [T.GIFBTN, BTN.gif[0], BTN.gif[1]],
+    [T.OPEN, ocx + 250, ocy + 90], [T.VOTE, MX + 325, 278], [T.FOCUS, MX + 700, COMP.y + 70], [T.GIFBTN, BTN.gif[0], BTN.gif[1]],
     [T.PICK, MX + 100 + (GIF_PICK % 3) * 150 + 65, COMP.y + 250 + Math.floor(GIF_PICK / 3) * 130 + 60], [T.SEND, BTN.send[0], BTN.send[1]],
+    [T.LIKE, ...heart("r2", 262) as [number, number]],
   ];
-  const pk = [40, ...clicks.flatMap(([t]) => [t - 16, t + 8]), T.SEND + 60];
+  const pk = [40, ...clicks.flatMap(([t]) => [t - 16, t + 8]), T.LIKE + 50];
   const pts = clicks.map(([, x, y]) => scr(x, y));
   const px = interpolate(f, pk, [1500, ...pts.flatMap(([x]) => [x, x]), 1500], { ...cl, easing: IOE });
   const py = interpolate(f, pk, [1000, ...pts.flatMap(([, y]) => [y, y]), 1000], { ...cl, easing: IOE });
@@ -138,7 +162,7 @@ export const Forum: React.FC = () => {
   const th = THREADS[OPENED];
   return (
     <AbsoluteFill style={{ background: "#fff", fontFamily: UI, overflow: "hidden", perspective: 2000 }}>
-      <AbsoluteFill style={{ transformOrigin: "50% 0", transform: `translate(${CX}px, ${110 + CY + (1 - rise) * 900}px) rotateX(${(1 - rise) * 14}deg) scale(${K})`, opacity: Math.min(1, rise * 2) }}>
+      <AbsoluteFill style={{ transformOrigin: "0 0", transform: `translate(${TX}px, ${TY + (1 - rise) * 900}px) rotateX(${(1 - rise) * 14}deg) scale(${K})`, opacity: Math.min(1, rise * 2) }}>
         {/* sidebar */}
         <div style={{ position: "absolute", left: 0, top: 0, width: 300, height: 1220, background: "linear-gradient(180deg, #eaf6ff, #f6fbff)" }}>
           <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 60, top: 30, height: 46 }} />
@@ -186,7 +210,7 @@ export const Forum: React.FC = () => {
               <Img src={AV(th[4])} style={{ width: 40, height: 40, borderRadius: 20, background: "#eef1f5" }} />
               <div style={{ fontWeight: 800, fontSize: 21, color: "#4b4b4b" }}>{th[5]}</div>
               <div style={{ fontWeight: 600, fontSize: 19, color: "#9aa3b0" }}>· {th[6]}</div>
-              <div style={{ marginLeft: 30, padding: "4px 14px", borderRadius: 14, border: "3px solid #58cc02", transform: `scale(${1 + 0.15 * Math.sin(lin(f, T.VOTE, T.VOTE + 20) * Math.PI)})` }}><Up on={votes > 0} n={votes} /></div>
+              <div style={{ marginLeft: 30, padding: "4px 14px", borderRadius: 14, border: "3px solid #58cc02", background: f >= T.VOTE + 2 ? "#eaffd9" : "#fff", transform: `scale(${1 + 0.18 * votePop})` }}><Up on={f >= T.VOTE + 2} n={votes} /></div>
               <div style={{ padding: "4px 14px", borderRadius: 14, border: "3px solid #ff8a8a" }}><Down n={1} /></div>
               <div style={{ fontWeight: 800, fontSize: 21, color: "#4b4b4b" }}>{nMsg} {tr("сообщ.")}</div>
             </div>
@@ -213,12 +237,12 @@ export const Forum: React.FC = () => {
               ) : null}
             </div>
             {/* messages, newest on top */}
-            <div style={{ position: "absolute", left: MX, top: 630, width: 1500, display: "flex", flexDirection: "column", gap: 26 }}>
-              {f >= T.TYPING && f < T.R3 ? <div style={{ display: "flex", alignItems: "center", gap: 14, fontWeight: 700, fontSize: 20, color: "#9aa3b0", opacity: lin(f, T.TYPING, T.TYPING + 10) }}><Img src={AV("p3")} style={{ width: 40, height: 40, borderRadius: 20, background: "#d9d6ff" }} />{tr("Наргиза печатает")}{[0, 1, 2].map((k) => <span key={k} style={{ display: "inline-block", width: 9, height: 9, borderRadius: 5, background: "#9aa3b0", transform: `translateY(${Math.sin(f / 5 - k) * 4}px)` }} />)}</div> : null}
-              {f >= T.R3 ? <Msg av="p3" name={tr("Наргиза")} when={tr("только что")} e={sp(T.R3, 14, 200)}>{tr("Ахаха, точно! Там столько оговорок 🔥")}</Msg> : null}
-              {sent ? <Msg av="p1" name={tr("Ты")} when={tr("только что")} e={sp(T.SEND + 4, 13, 200)} me likes={myLikes} likeOn={myLikes > 0}>{MSG}<div style={{ marginTop: 10 }}><Gif src={GIFS[GIF_PICK]} f={f} w={200} /></div></Msg> : null}
-              {f >= T.R2 ? <Msg av="p5" name={tr("Тимур")} when={tr("2 мин. назад")} e={sp(T.R2, 14, 200)} likes={3}><Gif src={GIFS[0]} f={f} w={220} /></Msg> : null}
-              {f >= T.R1 ? <Msg av="p4" name={tr("Малика")} when={tr("5 мин. назад")} e={sp(T.R1, 14, 200)} likes={4}>{tr("Мне кажется, статья про мелкое хулиганство. Там столько условий 😅")}</Msg> : null}
+            <div style={{ position: "absolute", left: MX, top: 0, width: 1500 }}>
+              {eTy > 0.01 ? <div style={{ position: "absolute", left: 0, top: Y.ty, display: "flex", alignItems: "center", gap: 14, fontWeight: 700, fontSize: 20, color: "#9aa3b0", opacity: eTy }}><Img src={AV("p3")} style={{ width: 40, height: 40, borderRadius: 20, background: "#d9d6ff" }} />{tr("Наргиза печатает")}{[0, 1, 2].map((k) => <span key={k} style={{ display: "inline-block", width: 9, height: 9, borderRadius: 5, background: "#9aa3b0", transform: `translateY(${Math.sin(f / 5 - k) * 4}px)` }} />)}</div> : null}
+              {f >= T.R3 ? <Msg y={Y.r3} av="p3" name={tr("Наргиза")} when={tr("только что")} e={eR3}>{tr("Ахаха, точно! Там столько оговорок 🔥")}</Msg> : null}
+              {sent ? <Msg y={Y.me} av="p1" name={tr("Ты")} when={tr("только что")} e={eMe} me likes={myLikes} likeOn={myLikes > 0} pop={Math.sin(lin(f, T.MYLIKES, T.MYLIKES + 16) * Math.PI)}>{MSG}<div style={{ marginTop: 10 }}><Gif src={GIFS[GIF_PICK]} f={f} w={200} /></div></Msg> : null}
+              {f >= T.R2 ? <Msg y={Y.r2} av="p5" name={tr("Тимур")} when={tr("2 мин. назад")} e={eR2} likes={3 + (timLike ? 1 : 0)} likeOn={timLike} pop={timPop}><Gif src={GIFS[0]} f={f} w={220} /></Msg> : null}
+              {f >= T.R1 ? <Msg y={Y.r1} av="p4" name={tr("Малика")} when={tr("5 мин. назад")} e={eR1} likes={4}>{tr("Мне кажется, статья про мелкое хулиганство. Там столько условий 😅")}</Msg> : null}
             </div>
           </div>
         ) : null}
