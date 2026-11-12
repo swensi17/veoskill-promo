@@ -94,6 +94,8 @@ for _i in range(0, _n, _blk):
     for c in range(2):
         out[_i:_i + _blk, c], _zi[..., c] = sosfilt(_sos, out[_i:_i + _blk, c], zi=_zi[..., c])
 out[: _n] *= np.linspace(db(-3), 1, _n)[:, None]
+# music goes to its own bus so it can be ducked under the voiceover
+MUSIC = out.copy(); out[:] = 0
 # ---- UI sounds on picture frames (absolute frame numbers of VeoskillV9)
 CL = fade(load(os.path.join(ROOT, 'assets/ui/mk-1117.wav')), 0, 0.02)
 POP = fade(load(os.path.join(ROOT, 'assets/ui/mk-2356.wav')), 0, 0.05)
@@ -184,6 +186,53 @@ for sc, lf in [(N("LessonPath"),6),(N("LessonPath"),200),(N("LessonPath"),370),(
 for sc, lf in [(N("G3"),74),(N("G3"),124)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -23)
 
+# ---- voiceover: one ElevenLabs take (voice Roger), cut on sentence pauses and placed on the scenes
+# (cut list from tools/vo/cut-vo.py). Russian cut only: VO_LANG=uz (build --uz) leaves the voice out.
+# Music is ducked under the voice (-9 dB, 0.12 s attack, 0.6 s release).
+VO_CUTS = [  # (source from, source to, film time)
+    (  0.000,   5.410,    0.5),  # intro: boring books
+    (  5.650,  14.160,    8.0),  # meet veoskill, directions
+    ( 14.160,  21.360,   20.0),  # short lessons, path
+    ( 21.360,  43.090,   30.5),  # lesson: theory, constitution, games
+    ( 43.090,  53.090,   55.5),  # find the term, case
+    ( 53.090,  55.830,   70.4),  # true or false
+    ( 55.830,  62.930,   74.1),  # play, remember, league
+    ( 63.120,  71.730,   83.3),  # competitions
+    ( 71.730,  74.910,   97.4),  # all in one place
+    ( 74.910,  82.480,  101.9),  # and now laws, base
+    ( 82.480,  90.290,  112.6),  # usual law vs ours
+    ( 90.290,  94.290,  123.1),  # usual site: no highlight
+    ( 94.290,  98.730,  127.3),  # here: highlight and notes
+    ( 98.730, 102.090,  135.5),  # unclear term
+    (102.090, 104.640,  139.0),  # hover the word
+    (104.640, 108.040,  145.0),  # save to folders
+    (108.040, 117.930,  153.9),  # download, send a link
+    (117.930, 122.200,  169.6),  # search
+    (122.200, 130.000,  177.8),  # artificial intelligence
+    (130.000, 133.090,  191.3),  # 99 languages
+    (133.090, 147.090,  195.2),  # library and reader
+    (147.090, 155.360,  217.2),  # your page
+    (155.360, 161.840,  231.1),  # premium
+    (161.840, 164.320,  238.8),  # why it is easier
+    (164.320, 170.890,  243.6),  # QR, learn by playing
+
+]
+VO = np.zeros_like(out)
+if os.environ.get("VO_LANG", "ru") == "ru":
+    V = load(os.path.join(ROOT, "assets/vo/vo-roger-ru.mp3"))
+    for a, b, t in VO_CUTS:
+        x = fade(V[int(a * SR):int(b * SR)].copy(), 0.015, 0.03)
+        i = int(round(t * SR)); j = min(len(VO), i + len(x)); VO[i:j] += x[: j - i]
+    r = np.sqrt((VO[np.abs(VO).max(axis=1) > 1e-3] ** 2).mean())
+    VO *= db(-17) / r                                   # voice RMS -17 dBFS before mastering
+    on = (np.abs(VO).max(axis=1) > 1e-3).astype(float)
+    h = int(0.25 * SR); on = np.convolve(on, np.ones(h) / h, "same") > 0.02   # bridge short gaps
+    env = np.zeros(len(on)); g = 0.0; atk = 1 - np.exp(-1 / (0.12 * SR)); rel = 1 - np.exp(-1 / (0.6 * SR))
+    for k in range(len(on)):
+        g += (on[k] - g) * (atk if on[k] > g else rel); env[k] = g
+    MUSIC *= (1 - (1 - db(-9)) * env)[:, None]
+    out *= db(-3)                                       # UI sounds a bit lower under the voice
+out += MUSIC + VO
 out = out[: int(DUR * SR)]
 sf.write(os.path.join(ROOT, '../out/audio/premaster.wav'), out.astype(np.float32), SR, subtype='FLOAT')
 print('premaster written', out.shape[0] / SR, 's, peak', np.abs(out).max())
