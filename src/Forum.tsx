@@ -20,13 +20,13 @@ const Roll: React.FC<{ from: number; to: number; at: number; f: number; color: s
   const u = lin(f, at, at + 10, 0, 1, Easing.bezier(0.3, 0, 0.2, 1));
   return (
     <span style={{ position: "relative", display: "inline-block", height: "1.2em", lineHeight: "1.2em", overflow: "hidden", verticalAlign: "middle", minWidth: "1.3em", textAlign: "center", color }}>
-      <span style={{ display: "block", transform: `translateY(${-u * 100}%)` }}>{from}</span>
-      <span style={{ display: "block", transform: `translateY(${-u * 100}%)` }}>{to}</span>
+      <span style={{ display: "block", transform: `translateY(${-u * 100}%)`, opacity: 1 - u }}>{from}</span>
+      <span style={{ display: "block", transform: `translateY(${-u * 100}%)`, opacity: u }}>{to}</span>
     </span>
   );
 };
-const Arrow: React.FC<{ up?: boolean; c?: string; s?: number }> = ({ up = true, c = "#7c8893", s = 26 }) => (
-  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.2" strokeLinejoin="round" style={{ transform: up ? undefined : "rotate(180deg)" }}><path d="M12 3.5l7.5 8.5H15v8.5H9V12H4.5z" /></svg>
+const Arrow: React.FC<{ up?: boolean; c?: string; fill?: number; s?: number; k?: number }> = ({ up = true, c = "#7c8893", fill = 0, s = 26, k = 1 }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill={`rgba(88,204,2,${fill})`} stroke={c} strokeWidth="2.2" strokeLinejoin="round" style={{ transform: `${up ? "" : "rotate(180deg) "}scale(${k})` }}><path d="M12 3.5l7.5 8.5H15v8.5H9V12H4.5z" /></svg>
 );
 /** Vote pill: ▲ n ▼ (n rolls when the learner votes at `at`). */
 const Votes: React.FC<{ n: number; at?: number; f: number; big?: boolean; pop?: number }> = ({ n, at, f, big, pop = 0 }) => {
@@ -35,7 +35,7 @@ const Votes: React.FC<{ n: number; at?: number; f: number; big?: boolean; pop?: 
   const c = interpolateColors(u, [0, 1], ["#7c8893", UP]);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, height: big ? 52 : 40, padding: "0 12px", borderRadius: 26, border: `2px solid ${interpolateColors(u, [0, 1], [big ? "#e3e7eb" : "rgba(88,204,2,0)", UP])}`, boxSizing: "border-box", fontWeight: 800, fontSize: big ? 22 : 19, transform: `scale(${1 + 0.06 * pop})` }}>
-      <Arrow c={c} s={big ? 26 : 22} />
+      <Arrow c={c} fill={u} k={1 + 0.22 * Math.sin(u * Math.PI)} s={big ? 26 : 22} />
       {at !== undefined ? <Roll from={n} to={n + 1} at={at} f={f} color={interpolateColors(u, [0, 1], [INK, "#3f9a00"])} /> : <span style={{ color: INK }}>{n}</span>}
       <Arrow up={false} s={big ? 26 : 22} />
     </div>
