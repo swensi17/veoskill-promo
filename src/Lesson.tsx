@@ -104,8 +104,8 @@ export const Lesson: React.FC = () => {
   const down = Math.max(...clicks.filter(([t]) => t !== S.B + 108).map(([t]) => press(f, t)));
   // reading the theory: camera moves in on the text block that is being read (out again before each click)
   const SOFT = Easing.bezier(0.45, 0, 0.25, 1);
-  const rd = (a: number, b: number) => lin(f, S.B + a - 4, S.B + a + 14, 0, 1, SOFT) * (1 - lin(f, S.B + b - 12, S.B + b, 0, 1, SOFT));
-  const zt = Math.max(rd(14, 34), rd(44, 62), rd(74, 104));
+  // one strong, slow push-in while the theory blocks appear, then one smooth pull-back before the book button
+  const zt = lin(f, S.B + 8, S.B + 44, 0, 1, SOFT) * (1 - lin(f, S.B + 80, S.B + 104, 0, 1, SOFT));
   // hover on the book button before clicking it: camera moves to the button, a tip explains it
   const HOV = S.B + 108;
   const zb = lin(f, HOV - 4, HOV + 12, 0, 1, IOE) * (1 - lin(f, CB.book + 4, CB.book + 18, 0, 1, IOE));
@@ -131,7 +131,7 @@ export const Lesson: React.FC = () => {
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
       {/* caption column */}
       <AbsoluteFill style={{ transformOrigin: "1540px 560px", transform: `translateY(${104 * (1 - zc)}px) scale(${0.9 + 0.3 * zc}) translateX(${-150 * zc}px)` }}>
-      <AbsoluteFill style={{ transformOrigin: "960px 560px", transform: `scale(${1 + 0.18 * zt})` }}>
+      <AbsoluteFill style={{ transformOrigin: "960px 560px", transform: `scale(${1 + 0.32 * zt})` }}>
       <AbsoluteFill style={{ transformOrigin: `${CX + 50}px ${BTN_Y + 42}px`, transform: `scale(${1 + 0.6 * zb})` }}>
       {/* top bar: close, progress, hearts */}
       <svg style={{ position: "absolute", left: CX - 4, top: 46 }} width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#afafaf" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>

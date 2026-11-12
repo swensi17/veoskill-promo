@@ -83,25 +83,24 @@ export const Forum: React.FC = () => {
   const gifIn = f >= T.PICK + 4;
   const myVotes = Math.round(lin(f, T.MYV, T.MYV + 90, 1, 14, Easing.out(Easing.cubic)));
   // ---------- camera: drone flight from the bottom of the thread up to the post, then it lands and works
-  type Cam = [number, number, number, number]; // focus x, focus y, scale, tilt
-  // after landing the camera never zooms: it only glides calmly down the thread with the action
+  type Cam = [number, number, number]; // focus y, scale, tilt
   const keys: [number, Cam][] = [
-    [0, [960, 1900, 1.7, 56]], [T.LAND, [960, POST_Y + 330, 1.0, 0]], [T.DOWN0, [960, POST_Y + 330, 1.0, 0]], [T.DOWN0 + 46, [960, C_Y + 240, 1.0, 0]],
-    [T.REPLY + 2, [960, C_Y + 240, 1.0, 0]], [T.REPLY + 50, [960, yKids + 200, 1.0, 0]], [T.SEND + 10, [960, yKids + 200, 1.0, 0]],
-    [T.SEND + 60, [960, yKids + 230, 1.0, 0]], [T.VOTE2 - 30, [960, yKids + 260, 1.0, 0]], [T.SCROLL, [960, yKids + 260, 1.0, 0]], [FORUM_FRAMES, [960, END_Y - 420, 1.0, 0]],
+    [0, [1900, 1.7, 56]], [T.LAND, [POST_Y + 330, 1.0, 0]], [T.DOWN0, [POST_Y + 330, 1.0, 0]], [T.DOWN0 + 46, [C_Y + 240, 1.0, 0]],
+    [T.REPLY + 6, [C_Y + 240, 1.0, 0]], [T.REPLY + 44, [yKids + 120, 1.32, 0]], [T.SEND + 8, [yKids + 120, 1.32, 0]], [T.SEND + 52, [yKids + 200, 1.05, 0]],
+    [T.VOTE2 - 34, [yKids + 260, 1.0, 0]], [T.VOTE2 + 20, [yKids + 260, 1.0, 0]], [T.MYV + 8, [yKids + 140, 1.1, 0]], [T.SCROLL, [yKids + 140, 1.1, 0]], [FORUM_FRAMES, [END_Y - 420, 1.0, 0]],
   ];
   let cam: Cam = keys[keys.length - 1][1];
   for (let k = 0; k < keys.length - 1; k++) {
     const [t0, c0] = keys[k], [t1, c1] = keys[k + 1];
     if (f >= t0 && f < t1) {
-      const u = (k === 0 ? Easing.bezier(0.35, 0, 0.2, 1) : Easing.bezier(0.6, 0, 0.3, 1))((f - t0) / Math.max(1, t1 - t0));
-      cam = c0.map((v, i) => v + (c1[i] - v) * u) as Cam;
+      const u = (k === 0 ? Easing.bezier(0.35, 0, 0.2, 1) : Easing.bezier(0.65, 0, 0.35, 1))((f - t0) / Math.max(1, t1 - t0));
+      cam = [c0[0] + (c1[0] - c0[0]) * u, c0[1] + (c1[1] - c0[1]) * u, c0[2] + (c1[2] - c0[2]) * u];
       break;
     }
   }
-  const [cx, cy, sc, rx] = cam;
+  const [cy, sc, rx] = cam;
   const fog = rx / 56;
-  const scr = (x: number, y: number) => [960 + (x - cx) * sc, 560 + (y - cy) * sc];
+  const scr = (x: number, y: number) => [960 + (x - 960) * sc, 560 + (y - cy) * sc];
   // ---------- cursor (all clicks happen with the page flat)
   const clicks: [number, number, number][] = [
     [T.VOTE, X0 + 26, POST_Y + 367], [T.REPLY, X0 + 200, yC1 + 133], [T.GIFBTN, X0 + 112, yKids + 196], [T.PICK, X0 + 112 + 160 + 60, yKids + 300],
@@ -118,7 +117,7 @@ export const Forum: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#f6f7f8", overflow: "hidden", fontFamily: UI }}>
       <AbsoluteFill style={{ perspective: 1100 }}>
-        <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 3200, transformOrigin: "0 0", transform: `translate(960px, 560px) rotateX(${rx}deg) scale(${sc}) translate(${-cx}px, ${-cy}px)` }}>
+        <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 3200, transformOrigin: "0 0", transform: `translate(960px, 560px) rotateX(${rx}deg) scale(${sc}) translate(-960px, ${-cy}px)` }}>
           {/* dot grid under the thread, only while flying */}
           <div style={{ position: "absolute", left: -900, top: -400, width: 3720, height: 4000, backgroundImage: "radial-gradient(rgba(20,60,110,0.16) 2.4px, transparent 2.8px)", backgroundSize: "48px 48px", opacity: fog }} />
           {/* thread column */}
