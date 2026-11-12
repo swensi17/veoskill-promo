@@ -156,9 +156,9 @@ for lf in [352, 508]:
 # Forum: page rises, cards, open a thread, replies, typing, GIF picker, send, likes, an answer
 put(WH, F(N("Forum"), 0) / FPS + 0.03, -20)
 pops += [(N("Forum"), 18 + 6 * k) for k in range(6)]
-for lf in [142, 336, 470, 520, 560]: at(CL, F(N("Forum"), lf), -16)
-pops += [(N("Forum"), 214), (N("Forum"), 262), (N("Forum"), 474), (N("Forum"), 564), (N("Forum"), 744)]
-for lf in [300, 600]: at(CH, F(N("Forum"), lf), -17)
+for lf in [142, 296, 336, 470, 520, 560, 640]: at(CL, F(N("Forum"), lf), -16)
+pops += [(N("Forum"), 206), (N("Forum"), 248), (N("Forum"), 474), (N("Forum"), 564), (N("Forum"), 780)]
+for lf in [298, 642, 676]: at(CH, F(N("Forum"), lf), -17)
 # section word cuts
 for nm in ["DuelWords", "ForumWords"]: pops += [(N(nm), 0), (N(nm), 58)]
 pops += [(N("S7"), 115)]
