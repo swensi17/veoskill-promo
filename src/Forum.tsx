@@ -83,27 +83,19 @@ export const Forum: React.FC = () => {
   const myVotes = Math.round(lin(f, T.MYV, T.MYV + 90, 1, 14, Easing.out(Easing.cubic)));
   // ---------- camera: drone flight from the bottom of the thread up to the post, then it lands and works
   type Cam = [number, number, number, number]; // focus x, focus y, scale, tilt
-  // while the reply is typed the camera pushes in close on the text (and keeps drifting slowly), then eases back
+  // one strong push-in when the reply opens (typing, GIF, send all happen inside this view), one pull-back after
+  // sending; after that the camera only glides down the thread, no more zoom changes
   const keys: [number, Cam][] = [
     [0, [960, 1900, 1.7, 56]], [T.LAND, [960, POST_Y + 330, 1.0, 0]], [T.DOWN0, [960, POST_Y + 330, 1.0, 0]], [T.DOWN0 + 46, [960, C_Y + 240, 1.0, 0]],
-    [T.REPLY + 4, [960, C_Y + 240, 1.0, 0]], [T.TYPE0, [860, yKids + 62, 1.7, 0]], [T.GIFBTN - 14, [890, yKids + 66, 1.8, 0]],
-    [T.GIFBTN + 22, [960, yKids + 175, 1.2, 0]], [T.SEND + 8, [960, yKids + 160, 1.22, 0]], [T.SEND + 56, [960, yKids + 200, 1.05, 0]],
-    [T.VOTE2 - 34, [960, yKids + 260, 1.0, 0]], [T.VOTE2 + 20, [960, yKids + 260, 1.0, 0]], [T.MYV + 8, [960, yKids + 140, 1.1, 0]], [T.SCROLL, [960, yKids + 140, 1.1, 0]], [FORUM_FRAMES, [960, END_Y - 420, 1.0, 0]],
+    [T.REPLY + 2, [960, C_Y + 240, 1.0, 0]], [T.REPLY + 50, [960, yKids + 175, 1.45, 0]], [T.SEND + 10, [960, yKids + 175, 1.45, 0]],
+    [T.SEND + 60, [960, yKids + 230, 1.0, 0]], [T.VOTE2 - 30, [960, yKids + 260, 1.0, 0]], [T.SCROLL, [960, yKids + 260, 1.0, 0]], [FORUM_FRAMES, [960, END_Y - 420, 1.0, 0]],
   ];
   let cam: Cam = keys[keys.length - 1][1];
   for (let k = 0; k < keys.length - 1; k++) {
     const [t0, c0] = keys[k], [t1, c1] = keys[k + 1];
     if (f >= t0 && f < t1) {
-      const x = (f - t0) / Math.max(1, t1 - t0);
-      if (k === 0) { const u = Easing.bezier(0.35, 0, 0.2, 1)(x); cam = c0.map((v, i) => v + (c1[i] - v) * u) as Cam; break; }
-      // smooth spline through the keys (Catmull-Rom with time-scaled tangents): the camera never stops and jerks
-      const [tp, cp] = keys[k - 1], [tn, cn] = keys[Math.min(keys.length - 1, k + 2)];
-      const h00 = 2 * x ** 3 - 3 * x ** 2 + 1, h10 = x ** 3 - 2 * x ** 2 + x, h01 = -2 * x ** 3 + 3 * x ** 2, h11 = x ** 3 - x ** 2;
-      cam = c0.map((v, i) => {
-        const m0 = ((c1[i] - cp[i]) / Math.max(1, t1 - tp)) * (t1 - t0);
-        const m1 = ((cn[i] - v) / Math.max(1, tn - t0)) * (t1 - t0);
-        return h00 * v + h10 * m0 + h01 * c1[i] + h11 * m1;
-      }) as Cam;
+      const u = (k === 0 ? Easing.bezier(0.35, 0, 0.2, 1) : Easing.bezier(0.6, 0, 0.3, 1))((f - t0) / Math.max(1, t1 - t0));
+      cam = c0.map((v, i) => v + (c1[i] - v) * u) as Cam;
       break;
     }
   }
