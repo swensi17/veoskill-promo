@@ -425,6 +425,23 @@ export const S6b: React.FC = () => {
   );
 };
 
+/** Clean XP badge: white pill, gold bolt coin, navy figures (used in the league and the win card). */
+export const XpPill: React.FC<{ text: string; size?: number; style?: React.CSSProperties }> = ({ text, size = 30, style }) => (
+  <div style={{ display: "inline-flex", alignItems: "center", gap: size * 0.32, padding: `${size * 0.22}px ${size * 0.55}px ${size * 0.22}px ${size * 0.24}px`, borderRadius: size, background: "#fff", border: "1.5px solid #e6ebf2", boxShadow: "0 10px 26px rgba(13,22,48,0.12)", fontFamily: UI, fontWeight: 900, fontSize: size, color: NAVY, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums", ...style }}>
+    <div style={{ width: size * 1.25, height: size * 1.25, borderRadius: "50%", background: "linear-gradient(160deg, #ffd85a 0%, #f5a800 100%)", boxShadow: "inset 0 -2px 0 rgba(0,0,0,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <svg width={size * 0.72} height={size * 0.72} viewBox="0 0 24 24"><path d="M13.5 2L5 13.5h5.5L9.5 22 19 9.5h-5.6z" fill="#fff" /></svg>
+    </div>
+    {text}
+  </div>
+);
+/** Calm brand backdrop: white to pale sky, two soft glows that drift very slowly, a faint dot grid. */
+export const SoftBg: React.FC<{ f: number }> = ({ f }) => (
+  <AbsoluteFill style={{ background: "linear-gradient(180deg, #ffffff 0%, #f1f8fe 45%, #e3f2fd 100%)", overflow: "hidden" }}>
+    <div style={{ position: "absolute", left: 260 + Math.sin(f / 140) * 40, top: 120, width: 900, height: 900, borderRadius: "50%", background: "radial-gradient(circle, rgba(28,176,246,0.20) 0%, rgba(28,176,246,0) 65%)" }} />
+    <div style={{ position: "absolute", left: 1000 + Math.cos(f / 160) * 40, top: 380, width: 1000, height: 1000, borderRadius: "50%", background: "radial-gradient(circle, rgba(88,204,2,0.10) 0%, rgba(88,204,2,0) 65%)" }} />
+    <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(rgba(23,52,92,0.09) 1.6px, transparent 1.7px)", backgroundSize: "34px 34px", backgroundPosition: `0 ${-f * 0.15}px`, maskImage: "linear-gradient(180deg, rgba(0,0,0,0) 8%, rgba(0,0,0,0.9) 55%, rgba(0,0,0,0.25) 100%)", WebkitMaskImage: "linear-gradient(180deg, rgba(0,0,0,0) 8%, rgba(0,0,0,0.9) 55%, rgba(0,0,0,0.25) 100%)" }} />
+  </AbsoluteFill>
+);
 // ====================== S7 league table climbs on +15 XP ======================
 const PEOPLE: [string, string, number][] = [[tr("Азиз"), "p0", 147], [tr("Малика"), "p2", 133], [tr("Тимур"), "p3", 118], [tr("Дильноза"), "p4", 102], [tr("Санжар"), "p5", 88]];
 export const S7b: React.FC = () => {
@@ -440,6 +457,7 @@ export const S7b: React.FC = () => {
   const silver = sp(T0 + 6 * B + 10, 12, 160);
   return (
     <AbsoluteFill style={{ background: BG }}>
+      <SoftBg f={f} />
       <TopLine a={tr("+15 XP за урок.")} b={tr("Поднимайся в лиге.")} at={0} size={66} accentColor={BLUE} />
       {/* league badges like the site */}
       <div style={{ position: "absolute", left: 960 - 380, top: 170, display: "flex", alignItems: "center", gap: 22 }}>
@@ -486,14 +504,13 @@ export const S7b: React.FC = () => {
                 {myRank === 1 ? <Img src={staticFile("av/medal-1.webp")} style={{ width: 46 }} /> : null}
                 <div style={{ marginLeft: "auto", fontWeight: 900, fontSize: 32, color: flash > 0.2 ? "#e0a800" : DEEP, transform: `scale(${1 + flash * 0.18})`, fontVariantNumeric: "tabular-nums" }}>{mine} XP</div>
               </div>
-              {/* +15 chips fly from the lesson side into the "Ты" row */}
+              {/* +15 XP: a clean badge slides out beside the "Ты" row, rises a little and fades */}
               {Array.from({ length: 6 }, (_, k) => {
                 const land = T0 + k * B;
-                if (f < land - 18 || f > land + 2) return null;
-                const t = lin(f, land - 18, land, 0, 1, Easing.bezier(0.5, 0, 0.7, 1));
-                const ty = rowTop(exact) + 22;
-                const sx = 800, sy = -200;
-                return <div key={k} style={{ position: "absolute", left: sx + (560 - sx) * t, top: sy + (ty - sy) * t - Math.sin(t * Math.PI) * 160, padding: "10px 22px", borderRadius: 20, background: YEL, color: "#fff", fontFamily: UI, fontWeight: 900, fontSize: 32, boxShadow: "0 6px 0 #d19a00, 0 14px 30px rgba(0,0,0,0.15)", transform: `scale(${1.15 - t * 0.35})`, opacity: 1 - lin(f, land - 5, land + 1), zIndex: 9, whiteSpace: "nowrap" }}>+15 XP</div>;
+                if (f < land - 6 || f > land + 30) return null;
+                const e = sp(land - 6, 12, 200);
+                const out = lin(f, land + 16, land + 30);
+                return <div key={k} style={{ position: "absolute", left: 790, top: rowTop(exact) + 22 - out * 30, zIndex: 9, opacity: Math.min(1, e * 1.5) * (1 - out), transform: `translateX(${(1 - e) * -30}px) scale(${0.85 + 0.15 * e})`, transformOrigin: "0% 50%" }}><XpPill text="+15 XP" size={28} /></div>;
               })}
             </>
           );
