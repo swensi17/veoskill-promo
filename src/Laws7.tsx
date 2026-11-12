@@ -1,4 +1,5 @@
 import React from "react";
+import { tr } from "./i18n";
 import { AbsoluteFill, Easing, interpolate, interpolateColors, random, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { Arrow, useCursor, CursorLayer } from "./Master";
 import { DemoCam, UI, BLUE, LIP, GREEN, GLIP, RED, CHAR, SWAN, clamp, IO, OUT, SOFT, lin, press, textWidth } from "./Kit7";
@@ -48,7 +49,7 @@ const Toast: React.FC<{ text: string; at: number; until?: number }> = ({ text, a
 const Header: React.FC = () => (
   <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 96, borderBottom: `2px solid ${SWAN}`, background: "#fff", display: "flex", alignItems: "center", padding: `0 ${COL}px`, boxSizing: "border-box", gap: 40, fontFamily: UI }}>
     <div style={{ fontWeight: 900, fontSize: 40, color: BLUE, textShadow: `0 3px 0 ${LIP}` }}>veoskill</div>
-    {["Законы", "Уроки", "Статистика"].map((t, i) => <div key={t} style={{ fontWeight: 800, fontSize: 22, letterSpacing: "0.06em", color: i === 0 ? BLUE : "#8a98a6" }}>{t.toUpperCase()}</div>)}
+    {[tr("Законы"), tr("Уроки"), tr("Статистика")].map((t, i) => <div key={t} style={{ fontWeight: 800, fontSize: 22, letterSpacing: "0.06em", color: i === 0 ? BLUE : "#8a98a6" }}>{t.toUpperCase()}</div>)}
   </div>
 );
 
@@ -86,8 +87,8 @@ export const ArticlePage: React.FC<PageProps> = ({ lang = "ru", botState = "idle
       <div style={{ position: "absolute", left: COL, top: 290, fontFamily: UI, fontSize: 24, color: "#8a98a6" }}>{META[lang]}</div>
       {tabs !== undefined ? (
         <div style={{ position: "absolute", left: COL, top: 640, display: "flex", alignItems: "center", gap: 14, fontFamily: UI }}>
-          <span style={{ fontWeight: 800, fontSize: 25, color: "#8a98a6", marginRight: 6 }}>ЯЗЫК ТЕКСТА</span>
-          {["Русский", "O‘zbekcha", "English"].map((l, i) => <div key={l} style={{ padding: "12px 26px", borderRadius: 16, background: i === tabs ? BLUE : "#fff", border: `2px solid ${i === tabs ? BLUE : SWAN}`, boxShadow: `0 4px 0 ${i === tabs ? LIP : SWAN}`, fontWeight: 900, fontSize: 24, color: i === tabs ? "#fff" : "#6b7785" }}>{l}</div>)}
+          <span style={{ fontWeight: 800, fontSize: 25, color: "#8a98a6", marginRight: 6 }}>{tr("ЯЗЫК ТЕКСТА")}</span>
+          {[tr("Русский"), "O‘zbekcha", "English"].map((l, i) => <div key={l} style={{ padding: "12px 26px", borderRadius: 16, background: i === tabs ? BLUE : "#fff", border: `2px solid ${i === tabs ? BLUE : SWAN}`, boxShadow: `0 4px 0 ${i === tabs ? LIP : SWAN}`, fontWeight: 900, fontSize: 24, color: i === tabs ? "#fff" : "#6b7785" }}>{l}</div>)}
         </div>
       ) : null}
       {offline}
@@ -112,16 +113,16 @@ const P2W = () => textWidth(ART.ru.p2, `600 ${FS}px NunitoC`);
 const P2_TIP_Y = P2_Y + FS * 1.1;
 
 // ---------------- 1. Search ----------------
-const CODES = ["Конституция", "Гражданский кодекс", "Уголовный кодекс", "Трудовой кодекс", "Семейный кодекс", "Налоговый кодекс", "Жилищный кодекс", "Земельный кодекс"];
+const CODES = [tr("Конституция"), tr("Гражданский кодекс"), tr("Уголовный кодекс"), tr("Трудовой кодекс"), tr("Семейный кодекс"), tr("Налоговый кодекс"), tr("Жилищный кодекс"), tr("Земельный кодекс")];
 const RESULTS: [string, string][] = [
-  ["Конституция Республики Узбекистан · Статья 1", "Узбекистан — суверенное, демократическое, правовое, социальное и светское государство…"],
-  ["Конституция Республики Узбекистан · Статья 17", "…государство осуществляет свою деятельность в интересах человека и общества…"],
-  ["Закон «О Конституционном суде Республики Узбекистан»", "…защита основ конституционного строя суверенного государства…"],
+  [tr("Конституция Республики Узбекистан · Статья 1"), tr("Узбекистан — суверенное, демократическое, правовое, социальное и светское государство…")],
+  [tr("Конституция Республики Узбекистан · Статья 17"), tr("…государство осуществляет свою деятельность в интересах человека и общества…")],
+  [tr("Закон «О Конституционном суде Республики Узбекистан»"), tr("…защита основ конституционного строя суверенного государства…")],
 ]
 export const DemoSearch: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const Q = "суверенное государство";
+  const Q = tr("суверенное государство");
   const T0 = 70;
   const end = typedEnd(Q, T0, 3.2);
   const BUSY = Math.round(end + 12), DONE = BUSY + 48, CLICK = DONE + 120;
@@ -133,9 +134,9 @@ export const DemoSearch: React.FC = () => {
         <Header />
         <div style={{ position: "absolute", left: COL, top: 190, width: CW, height: 92, borderRadius: 46, background: "#fff", border: `3px solid ${f > T0 - 16 ? BLUE : SWAN}`, boxShadow: `0 6px 0 ${f > T0 - 16 ? "#84d8ff" : SWAN}`, display: "flex", alignItems: "center", gap: 20, padding: "0 34px", boxSizing: "border-box" }}>
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="2.6" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
-          {f < T0 - 4 ? <span style={{ fontFamily: UI, fontSize: 34, fontWeight: 600, color: "#a7b1bc" }}>Поиск по всей базе законов</span> : <Field text={Q} at={T0} speed={3.2} size={38} />}
+          {f < T0 - 4 ? <span style={{ fontFamily: UI, fontSize: 34, fontWeight: 600, color: "#a7b1bc" }}>{tr("Поиск по всей базе законов")}</span> : <Field text={Q} at={T0} speed={3.2} size={38} />}
           <div style={{ marginLeft: "auto", display: "flex", gap: 10 }}>
-            {["В этом акте", "Вся база"].map((t, i) => <div key={t} style={{ padding: "10px 20px", borderRadius: 14, background: i === 1 ? BLUE : "#fff", border: `2px solid ${i === 1 ? BLUE : SWAN}`, fontFamily: UI, fontWeight: 800, fontSize: 24, color: i === 1 ? "#fff" : "#8a98a6" }}>{t}</div>)}
+            {[tr("В этом акте"), tr("Вся база")].map((t, i) => <div key={t} style={{ padding: "10px 20px", borderRadius: 14, background: i === 1 ? BLUE : "#fff", border: `2px solid ${i === 1 ? BLUE : SWAN}`, fontFamily: UI, fontWeight: 800, fontSize: 24, color: i === 1 ? "#fff" : "#8a98a6" }}>{t}</div>)}
           </div>
         </div>
         {/* before results: the catalogue of codes */}
@@ -148,11 +149,11 @@ export const DemoSearch: React.FC = () => {
           ))}
         </div>
         {f >= BUSY && f < DONE ? (
-          <div style={{ position: "absolute", left: COL, top: 340, display: "flex", alignItems: "center", gap: 18, fontFamily: UI, fontWeight: 700, fontSize: 28, color: "#8a98a6" }}><Spinner size={36} />Ищем, подождите пару секунд…</div>
+          <div style={{ position: "absolute", left: COL, top: 340, display: "flex", alignItems: "center", gap: 18, fontFamily: UI, fontWeight: 700, fontSize: 28, color: "#8a98a6" }}><Spinner size={36} />{tr("Ищем, подождите пару секунд…")}</div>
         ) : null}
         {results ? (
           <div style={{ position: "absolute", left: COL, top: 320, width: CW, fontFamily: UI }}>
-            <div style={{ fontWeight: 800, fontSize: 26, letterSpacing: "0.08em", color: "#8a98a6", opacity: lin(f, DONE, DONE + 12, 0, 1) }}>НАЙДЕНО АКТОВ: 3</div>
+            <div style={{ fontWeight: 800, fontSize: 26, letterSpacing: "0.08em", color: "#8a98a6", opacity: lin(f, DONE, DONE + 12, 0, 1) }}>{tr("НАЙДЕНО АКТОВ: 3")}</div>
             {RESULTS.map(([t, snip], i) => {
               const s = spring({ frame: f - DONE - 4 - i * 8, fps, config: { damping: 18, stiffness: 130 } });
               const hit = i === 0 && f > CLICK - 14;
@@ -176,11 +177,11 @@ export const DemoSearch: React.FC = () => {
 
 // ---------------- 2. AI explanation (robot button) ----------------
 const EXPLAIN: [string, string, string][] = [
-  ["Коротко", "#1cb0f6", "Узбекистан: независимое демократическое государство, где всё решает закон."],
-  ["Простыми словами", "#58cc02", "Первая статья определяет главные основы государства: независимость, выборная власть, подчинение закону и забота о гражданах."],
-  ["Пример из жизни", "#ff9600", "Если чиновник нарушил закон, гражданин вправе обжаловать его решение: правовое государство работает для людей."],
-  ["Запомните", "#ce82ff", "Названия «Республика Узбекистан» и «Узбекистан» имеют одинаковую силу."],
-  ["Термины", "#ff4b4b", "Суверенное значит независимое. Светское: религия отделена от государства."],
+  [tr("Коротко"), "#1cb0f6", tr("Узбекистан: независимое демократическое государство, где всё решает закон.")],
+  [tr("Простыми словами"), "#58cc02", tr("Первая статья определяет главные основы государства: независимость, выборная власть, подчинение закону и забота о гражданах.")],
+  [tr("Пример из жизни"), "#ff9600", tr("Если чиновник нарушил закон, гражданин вправе обжаловать его решение: правовое государство работает для людей.")],
+  [tr("Запомните"), "#ce82ff", tr("Названия «Республика Узбекистан» и «Узбекистан» имеют одинаковую силу.")],
+  [tr("Термины"), "#ff4b4b", tr("Суверенное значит независимое. Светское: религия отделена от государства.")],
 ];
 export const DemoAI: React.FC = () => {
   const f = useCurrentFrame();
@@ -196,20 +197,20 @@ export const DemoAI: React.FC = () => {
     <DemoCam from={{ s: 1.14, x: 1060, y: 300 }} settle={0} later={[{ at: CLICK + 4, s: 1.14, x: 1060, y: 300 }, { at: CLICK + 70, s: 1, x: 960, y: 540 }]}>
       <ArticlePage botState={botState} />
       {/* hover hint, exactly the site string */}
-      {tip > 0.01 ? <div style={{ position: "absolute", left: ICONS.bot - 260, top: ICON_Y - 104, width: 520, textAlign: "center", padding: "12px 0", borderRadius: 14, background: "#1f2a37", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 26, opacity: tip, transform: `translateY(${(1 - tip) * 8}px)` }}>Объяснить статью с помощью ИИ</div> : null}
+      {tip > 0.01 ? <div style={{ position: "absolute", left: ICONS.bot - 260, top: ICON_Y - 104, width: 520, textAlign: "center", padding: "12px 0", borderRadius: 14, background: "#1f2a37", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 26, opacity: tip, transform: `translateY(${(1 - tip) * 8}px)` }}>{tr("Объяснить статью с помощью ИИ")}</div> : null}
       {/* the explanation sheet rises from below */}
       <AbsoluteFill style={{ background: `rgba(15,25,40,${0.28 * sheet})` }} />
       <div style={{ position: "absolute", left: 960 - 560, top: 120, width: 1120, height: 960, borderRadius: "34px 34px 0 0", background: "#fff", boxShadow: "0 -20px 80px rgba(10,40,90,0.25)", transform: `translateY(${(1 - sheet) * 980}px)`, overflow: "hidden", fontFamily: UI }}>
         <div style={{ position: "relative", zIndex: 2, background: "#fff", height: 96, display: "flex", alignItems: "center", gap: 18, padding: "0 40px", borderBottom: `2px solid ${SWAN}` }}>
           <div style={{ width: 56, height: 56, borderRadius: 16, background: BLUE, display: "flex", alignItems: "center", justifyContent: "center" }}><Bot size={32} /></div>
-          <div style={{ fontWeight: 900, fontSize: 34, color: CHAR }}>Объяснение статьи</div>
-          <div style={{ marginLeft: "auto", fontWeight: 800, fontSize: 22, color: "#8a98a6" }}>Статья 1</div>
+          <div style={{ fontWeight: 900, fontSize: 34, color: CHAR }}>{tr("Объяснение статьи")}</div>
+          <div style={{ marginLeft: "auto", fontWeight: 800, fontSize: 22, color: "#8a98a6" }}>{tr("Статья 1")}</div>
         </div>
         {busy ? (
           <div style={{ position: "absolute", left: 0, right: 0, top: 300, display: "flex", flexDirection: "column", alignItems: "center", gap: 22 }}>
             <Spinner size={64} />
-            <div style={{ fontWeight: 900, fontSize: 34, color: CHAR }}>Разбираю статью…</div>
-            <div style={{ fontWeight: 600, fontSize: 24, color: "#8a98a6" }}>Это займёт несколько секунд</div>
+            <div style={{ fontWeight: 900, fontSize: 34, color: CHAR }}>{tr("Разбираю статью…")}</div>
+            <div style={{ fontWeight: 600, fontSize: 24, color: "#8a98a6" }}>{tr("Это займёт несколько секунд")}</div>
           </div>
         ) : (
           <div style={{ position: "absolute", left: 0, right: 0, top: 96, bottom: 0, overflow: "hidden", WebkitMaskImage: "linear-gradient(to bottom, transparent 0, #000 34px)", maskImage: "linear-gradient(to bottom, transparent 0, #000 34px)" }}><div style={{ padding: "26px 44px", transform: `translateY(${-scroll}px)` }}>
@@ -222,7 +223,7 @@ export const DemoAI: React.FC = () => {
                 </div>
               );
             })}
-            <div style={{ fontSize: 25, color: "#8a98a6", opacity: lin(f, READY + 140, READY + 160, 0, 1) }}>Объяснение подготовлено ИИ и не заменяет консультацию юриста.</div>
+            <div style={{ fontSize: 25, color: "#8a98a6", opacity: lin(f, READY + 140, READY + 160, 0, 1) }}>{tr("Объяснение подготовлено ИИ и не заменяет консультацию юриста.")}</div>
           </div></div>
         )}
       </div>
@@ -233,7 +234,7 @@ export const DemoAI: React.FC = () => {
 
 // ---------------- shared selection + mark menu for notes and test ----------------
 const COLORS = ["#ffd43b", "#ff922b", "#ff6b6b", "#f783ac", "#cc5de8", "#4dabf7", "#3bc9db", "#51cf66", "#a9e34b", "#adb5bd"];
-const ACTIONS = ["Копия", "Заметка", "Как цитату", "Ссылка", "Прочитать", "Тест", "Снять цвет"];
+const ACTIONS = [tr("Копия"), tr("Заметка"), tr("Как цитату"), tr("Ссылка"), tr("Прочитать"), tr("Тест"), tr("Снять цвет")];
 const MENU_X = COL, MENU_Y = P2_Y + 74, MENU_W = 1060;
 const colorXY = (i: number) => ({ x: MENU_X + 30 + i * 58 + 22, y: MENU_Y + 24 + 22 });
 const actionXY = (i: number) => ({ x: MENU_X + 16 + i * 147 + 73, y: MENU_Y + 104 + 28 });
@@ -254,7 +255,7 @@ const MarkMenu: React.FC<{ show: number; colorOn?: boolean; pressColor?: number;
 };
 
 // ---------------- 3. Highlight + note ----------------
-const NOTE = "Спросят на экзамене";
+const NOTE = tr("Спросят на экзамене");
 export const DemoNotes: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -279,22 +280,22 @@ export const DemoNotes: React.FC = () => {
       <AbsoluteFill style={{ background: `rgba(15,25,40,${0.25 * win})` }} />
       {win > 0.01 ? (
         <div style={{ position: "absolute", left: WX, top: WY, width: 860, borderRadius: 30, background: "#fff", boxShadow: "0 40px 90px rgba(10,40,90,0.3)", padding: "32px 38px", boxSizing: "border-box", transform: `translateY(${(1 - win) * 40}px) scale(${0.96 + 0.04 * win})`, opacity: win, fontFamily: UI }}>
-          <div style={{ fontWeight: 900, fontSize: 36, color: CHAR }}>Заметка к выделенному</div>
+          <div style={{ fontWeight: 900, fontSize: 36, color: CHAR }}>{tr("Заметка к выделенному")}</div>
           <div style={{ marginTop: 16, padding: "12px 18px", borderRadius: 14, background: "#fff8d6", borderLeft: "6px solid #ffd43b", fontSize: 22, color: "#6b7785" }}>{ART.ru.p2}</div>
           {/* chat-like input */}
           <div style={{ marginTop: 20, minHeight: 110, borderRadius: 22, border: `3px solid ${BLUE}`, padding: "18px 22px", boxSizing: "border-box", background: "#f7fbff" }}>
-            {f < T0 - 4 ? <span style={{ fontSize: 30, color: "#a7b1bc", fontWeight: 600 }}>Что вы думаете об этом? Напишите заметку</span> : <Field text={NOTE} at={T0} speed={3} size={34} />}
+            {f < T0 - 4 ? <span style={{ fontSize: 30, color: "#a7b1bc", fontWeight: 600 }}>{tr("Что вы думаете об этом? Напишите заметку")}</span> : <Field text={NOTE} at={T0} speed={3} size={34} />}
           </div>
           <div style={{ display: "flex", alignItems: "center", marginTop: 22 }}>
             <div style={{ fontSize: 25, color: "#8a98a6", fontWeight: 700, display: "flex", alignItems: "center", gap: 10 }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8a98a6" strokeWidth="2.2" strokeLinecap="round"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
-              Заметку видите только вы
+              {tr("Заметку видите только вы")}
             </div>
-            <div style={{ marginLeft: "auto", padding: "18px 34px", borderRadius: 16, background: GREEN, boxShadow: `0 ${5 - press(f, SAVE) * 4}px 0 ${GLIP}`, transform: `translateY(${press(f, SAVE) * 4}px)`, fontWeight: 900, fontSize: 24, color: "#fff", letterSpacing: "0.05em" }}>СОХРАНИТЬ</div>
+            <div style={{ marginLeft: "auto", padding: "18px 34px", borderRadius: 16, background: GREEN, boxShadow: `0 ${5 - press(f, SAVE) * 4}px 0 ${GLIP}`, transform: `translateY(${press(f, SAVE) * 4}px)`, fontWeight: 900, fontSize: 24, color: "#fff", letterSpacing: "0.05em" }}>{tr("СОХРАНИТЬ")}</div>
           </div>
         </div>
       ) : null}
-      <Toast text="Заметка сохранена" at={SAVE + 10} until={SAVE + 110} />
+      <Toast text={tr("Заметка сохранена")} at={SAVE + 10} until={SAVE + 110} />
       <CursorLayer c={{ ...cur, visible: !drag && cur.visible }} />
     </DemoCam>
   );
@@ -319,12 +320,12 @@ export const DemoTest: React.FC = () => {
       <AbsoluteFill style={{ background: `rgba(15,25,40,${0.25 * win})` }} />
       {win > 0.01 ? (
         <div style={{ position: "absolute", left: WX, top: WY, width: 900, borderRadius: 30, background: "#fff", boxShadow: "0 40px 90px rgba(10,40,90,0.3)", padding: "32px 40px", boxSizing: "border-box", transform: `translateY(${(1 - win) * 40}px) scale(${0.96 + 0.04 * win})`, opacity: win, fontFamily: UI }}>
-          <div style={{ fontWeight: 800, fontSize: 22, color: BLUE, letterSpacing: "0.08em" }}>ТЕСТ ПО ВЫДЕЛЕННОМУ</div>
-          <div style={{ fontWeight: 900, fontSize: 38, color: CHAR, marginTop: 8 }}>Проверьте себя</div>
-          <div style={{ marginTop: 24, fontWeight: 800, fontSize: 26, color: "#8a98a6" }}>Верно ли утверждение?</div>
-          <div style={{ marginTop: 12, padding: "20px 24px", borderRadius: 18, background: "#f7fbff", border: `2px solid ${SWAN}`, fontWeight: 700, fontSize: 30, lineHeight: 1.4, color: CHAR }}>«Республика Узбекистан» и «Узбекистан»: равнозначные названия.</div>
+          <div style={{ fontWeight: 800, fontSize: 22, color: BLUE, letterSpacing: "0.08em" }}>{tr("ТЕСТ ПО ВЫДЕЛЕННОМУ")}</div>
+          <div style={{ fontWeight: 900, fontSize: 38, color: CHAR, marginTop: 8 }}>{tr("Проверьте себя")}</div>
+          <div style={{ marginTop: 24, fontWeight: 800, fontSize: 26, color: "#8a98a6" }}>{tr("Верно ли утверждение?")}</div>
+          <div style={{ marginTop: 12, padding: "20px 24px", borderRadius: 18, background: "#f7fbff", border: `2px solid ${SWAN}`, fontWeight: 700, fontSize: 30, lineHeight: 1.4, color: CHAR }}>{tr("«Республика Узбекистан» и «Узбекистан»: равнозначные названия.")}</div>
           <div style={{ display: "flex", gap: 20, marginTop: 26 }}>
-            {["Верно", "Неверно"].map((b, i) => {
+            {[tr("Верно"), tr("Неверно")].map((b, i) => {
               const on = i === 0 && ok;
               const pr = i === 0 ? press(f, ANS) : 0;
               return <div key={b} style={{ flex: 1, height: 84, borderRadius: 20, border: `2px solid ${on ? GREEN : SWAN}`, background: on ? "#d7ffb8" : "#fff", boxShadow: `0 ${6 - pr * 5}px 0 ${on ? GLIP : SWAN}`, transform: `translateY(${pr * 5}px)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 32, color: on ? GLIP : CHAR }}>{b}</div>;
@@ -332,7 +333,7 @@ export const DemoTest: React.FC = () => {
           </div>
           <div style={{ marginTop: 24, height: 80 * res, overflow: "hidden", borderRadius: 18, background: "#d7ffb8", display: "flex", alignItems: "center", gap: 16, padding: "0 24px", opacity: res, fontWeight: 900, fontSize: 28, color: GLIP }}>
             <div style={{ width: 46, height: 46, borderRadius: 23, background: GREEN, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></div>
-            Всё верно. Этот отрывок вы поняли.
+            {tr("Всё верно. Этот отрывок вы поняли.")}
           </div>
         </div>
       ) : null}
@@ -342,7 +343,7 @@ export const DemoTest: React.FC = () => {
 };
 
 // ---------------- 5. Favourite + offline ----------------
-const FOLDER = "Сессия";
+const FOLDER = tr("Сессия");
 export const DemoSave: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -358,7 +359,7 @@ export const DemoSave: React.FC = () => {
   const offline = (
     <div style={{ position: "absolute", left: COL, top: 690, height: 72, display: "flex", alignItems: "center", gap: 14, padding: "0 28px", borderRadius: 20, border: `2px solid ${offState === "done" ? GREEN : SWAN}`, background: offState === "done" ? "#e7ffd6" : "#fff", boxShadow: `0 ${5 - press(f, OFF) * 4}px 0 ${offState === "done" ? "#b5ec8c" : SWAN}`, transform: `translateY(${press(f, OFF) * 4}px)`, fontFamily: UI, fontWeight: 800, fontSize: 26, color: offState === "done" ? GLIP : CHAR }}>
       {offState === "busy" ? <Spinner size={30} /> : <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={offState === "done" ? GREEN : BLUE} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d={offState === "done" ? "M5 12.5l4.5 4.5L19 7.5" : "M12 4v11M7 10l5 5 5-5M5 20h14"} /></svg>}
-      {offState === "done" ? "Сохранён на устройстве, читается без интернета" : "Сохранить закон для чтения без интернета"}
+      {offState === "done" ? tr("Сохранён на устройстве, читается без интернета") : tr("Сохранить закон для чтения без интернета")}
     </div>
   );
   return (
@@ -366,14 +367,14 @@ export const DemoSave: React.FC = () => {
       <ArticlePage heart={heart} offline={offline} />
       {pop > 0.01 ? (
         <div style={{ position: "absolute", left: PX, top: PY, width: 460, borderRadius: 24, background: "#fff", border: `2px solid ${SWAN}`, boxShadow: "0 30px 70px rgba(10,40,90,0.2)", padding: "22px 24px", boxSizing: "border-box", transformOrigin: "90% 0%", transform: `scale(${0.94 + 0.06 * pop})`, opacity: pop, fontFamily: UI, zIndex: 20 }}>
-          <div style={{ fontWeight: 900, fontSize: 28, color: CHAR }}>В избранное</div>
-          <div style={{ marginTop: 14, padding: "14px 18px", borderRadius: 14, background: "#f7fbff", fontWeight: 700, fontSize: 24, color: "#6b7785" }}>Без папки</div>
+          <div style={{ fontWeight: 900, fontSize: 28, color: CHAR }}>{tr("В избранное")}</div>
+          <div style={{ marginTop: 14, padding: "14px 18px", borderRadius: 14, background: "#f7fbff", fontWeight: 700, fontSize: 24, color: "#6b7785" }}>{tr("Без папки")}</div>
           {f < NEWF + 4 ? (
-            <div style={{ marginTop: 12, padding: "14px 18px", borderRadius: 14, border: `2px dashed ${BLUE}`, fontWeight: 800, fontSize: 24, color: BLUE, transform: `scale(${1 - press(f, NEWF) * 0.04})` }}>+ Новая папка</div>
+            <div style={{ marginTop: 12, padding: "14px 18px", borderRadius: 14, border: `2px dashed ${BLUE}`, fontWeight: 800, fontSize: 24, color: BLUE, transform: `scale(${1 - press(f, NEWF) * 0.04})` }}>{tr("+ Новая папка")}</div>
           ) : (
             <>
-              <div style={{ marginTop: 12, padding: "14px 18px", borderRadius: 14, border: `3px solid ${BLUE}`, background: "#fff", minHeight: 30 }}>{f < T0 - 4 ? <span style={{ fontSize: 24, color: "#a7b1bc", fontWeight: 600 }}>Название папки</span> : <Field text={FOLDER} at={T0} speed={4} size={26} />}</div>
-              <div style={{ marginTop: 12, marginLeft: "auto", width: 160, padding: "12px 0", textAlign: "center", borderRadius: 14, background: GREEN, boxShadow: `0 ${4 - press(f, CREATE) * 4}px 0 ${GLIP}`, transform: `translateY(${press(f, CREATE) * 4}px)`, fontWeight: 900, fontSize: 22, color: "#fff" }}>Создать</div>
+              <div style={{ marginTop: 12, padding: "14px 18px", borderRadius: 14, border: `3px solid ${BLUE}`, background: "#fff", minHeight: 30 }}>{f < T0 - 4 ? <span style={{ fontSize: 24, color: "#a7b1bc", fontWeight: 600 }}>{tr("Название папки")}</span> : <Field text={FOLDER} at={T0} speed={4} size={26} />}</div>
+              <div style={{ marginTop: 12, marginLeft: "auto", width: 160, padding: "12px 0", textAlign: "center", borderRadius: 14, background: GREEN, boxShadow: `0 ${4 - press(f, CREATE) * 4}px 0 ${GLIP}`, transform: `translateY(${press(f, CREATE) * 4}px)`, fontWeight: 900, fontSize: 22, color: "#fff" }}>{tr("Создать")}</div>
             </>
           )}
         </div>

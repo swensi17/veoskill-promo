@@ -1,4 +1,5 @@
 import React from "react";
+import { tr } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { GREEN, UI, lin, press, Pointer } from "./Scenes9";
 
@@ -77,12 +78,12 @@ const Banner: React.FC<{ y: number; color: string; lip: string; label: string; t
     </div>
     <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 22px", borderRadius: 14, border: "2px solid rgba(255,255,255,0.3)", background: "rgba(0,0,0,0.08)", boxShadow: "0 3px 0 rgba(0,0,0,0.16)", fontWeight: 900, fontSize: 17, letterSpacing: "0.04em" }}>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2.5" width="16" height="19" rx="3" /><path d="M10 8.5h7M10 12.5h7M10 16.5h5M2.5 6h4M2.5 10h4M2.5 14h4M2.5 18h4" /></svg>
-      СПРАВОЧНИК
+      {tr("СПРАВОЧНИК")}
     </div>
   </div>
 );
 
-const NAV: [string, string, boolean?][] = [["icons_hub_home.webp", "КАБИНЕТ", true], ["stickers_module.webp", "МОДУЛИ"], ["icons_duel_scales.webp", "ЗАКОНЫ"], ["icons_hub_stats.webp", "СТАТИСТИКА"], ["icons_hub_achievements.webp", "ДОСТИЖЕНИЯ"], ["icons_hub_store.webp", "МАГАЗИН"], ["stickers_key-book.webp", "МАТЕРИАЛЫ"], ["icons_hub_forum.webp", "ФОРУМ"]];
+const NAV: [string, string, boolean?][] = [["icons_hub_home.webp", tr("КАБИНЕТ"), true], ["stickers_module.webp", tr("МОДУЛИ")], ["icons_duel_scales.webp", tr("ЗАКОНЫ")], ["icons_hub_stats.webp", tr("СТАТИСТИКА")], ["icons_hub_achievements.webp", tr("ДОСТИЖЕНИЯ")], ["icons_hub_store.webp", tr("МАГАЗИН")], ["stickers_key-book.webp", tr("МАТЕРИАЛЫ")], ["icons_hub_forum.webp", tr("ФОРУМ")]];
 const Sidebar: React.FC = () => (
   <div style={{ position: "absolute", left: 0, top: -400, width: 315, height: 1480, background: "linear-gradient(180deg, #eef8ff 0%, #e6f4fe 100%)", border: "2px solid #d5ebfa", borderLeft: "none", borderRadius: "0 28px 28px 0", boxShadow: "6px 0 24px rgba(28,120,200,0.06)", fontFamily: UI }}>
     <Img src={staticFile("brand/veoskill.webp")} style={{ position: "absolute", left: 78, top: 420, height: 42 }} />
@@ -96,10 +97,10 @@ const Sidebar: React.FC = () => (
     <div style={{ position: "absolute", left: 14, top: 1126, width: 286, height: 180, borderRadius: 24, background: "linear-gradient(140deg, #45c6ff 0%, #1aa3ec 100%)", boxShadow: "0 10px 26px rgba(26,163,236,0.3)", color: "#fff", padding: "18px 18px", boxSizing: "border-box" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{ width: 46, height: 46, borderRadius: 23, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}><Img src={S("owl-cool.png")} style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 20 }} /></div>
-        <div><div style={{ fontWeight: 600, fontSize: 15, opacity: 0.9 }}>Текущий план</div><div style={{ fontWeight: 900, fontSize: 21 }}>Базовый</div></div>
+        <div><div style={{ fontWeight: 600, fontSize: 15, opacity: 0.9 }}>{tr("Текущий план")}</div><div style={{ fontWeight: 900, fontSize: 21 }}>{tr("Базовый")}</div></div>
       </div>
-      <div style={{ marginTop: 10, fontWeight: 600, fontSize: 14, lineHeight: 1.35, opacity: 0.95 }}>Больше энергии и возможностей с Premium.</div>
-      <div style={{ marginTop: 12, height: 40, borderRadius: 20, background: "#fff", color: "#1a8fd0", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 15 }}>Купить подписку</div>
+      <div style={{ marginTop: 10, fontWeight: 600, fontSize: 14, lineHeight: 1.35, opacity: 0.95 }}>{tr("Больше энергии и возможностей с Premium.")}</div>
+      <div style={{ marginTop: 12, height: 40, borderRadius: 20, background: "#fff", color: "#1a8fd0", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 15 }}>{tr("Купить подписку")}</div>
     </div>
   </div>
 );
@@ -116,30 +117,30 @@ const RightPanel: React.FC = () => (
     <Card top={92} h={350}>
       <Img src={S("premium-logo.webp")} style={{ position: "absolute", left: 24, top: 24, height: 38 }} />
       <Img src={S("owl-cool.png")} style={{ position: "absolute", right: 22, top: 12, width: 100 }} />
-      <div style={{ position: "absolute", left: 24, top: 78, width: 300, fontWeight: 800, fontSize: 22, lineHeight: 1.4, color: "#3c3c3c" }}>Откройте все модули с Premium</div>
-      <div style={{ position: "absolute", left: 24, top: 156, width: 330, fontWeight: 600, fontSize: 17, lineHeight: 1.75, color: "#777" }}>Без рекламы, безлимит энергии и все модули. Персональные уроки и практика под ваш темп.</div>
-      <div style={{ position: "absolute", left: 24, top: 264, width: 426, height: 58, borderRadius: 16, background: "#1cb0f6", boxShadow: "0 5px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 17, letterSpacing: "0.06em" }}>КУПИТЬ ПОДПИСКУ</div>
+      <div style={{ position: "absolute", left: 24, top: 78, width: 300, fontWeight: 800, fontSize: 22, lineHeight: 1.4, color: "#3c3c3c" }}>{tr("Откройте все модули с Premium")}</div>
+      <div style={{ position: "absolute", left: 24, top: 156, width: 330, fontWeight: 600, fontSize: 17, lineHeight: 1.75, color: "#777" }}>{tr("Без рекламы, безлимит энергии и все модули. Персональные уроки и практика под ваш темп.")}</div>
+      <div style={{ position: "absolute", left: 24, top: 264, width: 426, height: 58, borderRadius: 16, background: "#1cb0f6", boxShadow: "0 5px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 17, letterSpacing: "0.06em" }}>{tr("КУПИТЬ ПОДПИСКУ")}</div>
     </Card>
     <Card top={460} h={350}>
-      <div style={{ position: "absolute", left: 24, top: 30, fontWeight: 800, fontSize: 22, color: "#3c3c3c" }}>Лига</div>
-      <div style={{ position: "absolute", right: 26, top: 34, fontWeight: 800, fontSize: 17, color: "#1cb0f6", letterSpacing: "0.04em" }}>ВСЕ</div>
+      <div style={{ position: "absolute", left: 24, top: 30, fontWeight: 800, fontSize: 22, color: "#3c3c3c" }}>{tr("Лига")}</div>
+      <div style={{ position: "absolute", right: 26, top: 34, fontWeight: 800, fontSize: 17, color: "#1cb0f6", letterSpacing: "0.04em" }}>{tr("ВСЕ")}</div>
       <Img src={S("leagues_bronze.webp")} style={{ position: "absolute", left: 28, top: 82, width: 74 }} />
       <svg style={{ position: "absolute", left: 46, top: 168 }} width="40" height="64" viewBox="0 0 40 64" fill="none" stroke="#1cb0f6" strokeWidth="3" strokeLinecap="round"><path d="M20 4c10 4 12 18 0 22-10-4-6-16 4-12M20 26v34M12 52l8 8 8-8" /></svg>
       <svg style={{ position: "absolute", left: 30, top: 246 }} width="66" height="80" viewBox="0 0 66 80"><path d="M6 6h54v40c0 16-27 28-27 28S6 62 6 46z" fill="#ececec" stroke="#dcdcdc" strokeWidth="3" /><circle cx="33" cy="34" r="7" fill="#c9c9c9" /><rect x="30" y="38" width="6" height="14" rx="2" fill="#c9c9c9" /></svg>
-      {["Лига: Бронзовая лига", "Место номер: 1", "Вы в зоне повышения", "До конца недели: 5 дн."].map((t, i) => (
+      {[tr("Лига: Бронзовая лига"), tr("Место номер: 1"), tr("Вы в зоне повышения"), tr("До конца недели: 5 дн.")].map((t, i) => (
         <div key={t} style={{ position: "absolute", left: 122, top: 88 + i * 68, display: "flex", alignItems: "center", gap: 14, fontWeight: 600, fontSize: 18, color: "#4b4b4b" }}>
           <span style={{ width: 24, height: 24, borderRadius: 12, border: "2px solid #c8c8c8", boxSizing: "border-box" }} />{t}
         </div>
       ))}
     </Card>
     <Card top={828} h={300}>
-      <div style={{ position: "absolute", left: 24, top: 30, fontWeight: 800, fontSize: 22, color: "#3c3c3c" }}>Задания дня</div>
-      <div style={{ position: "absolute", right: 26, top: 34, fontWeight: 800, fontSize: 17, color: "#1cb0f6", letterSpacing: "0.04em" }}>ВСЕ</div>
+      <div style={{ position: "absolute", left: 24, top: 30, fontWeight: 800, fontSize: 22, color: "#3c3c3c" }}>{tr("Задания дня")}</div>
+      <div style={{ position: "absolute", right: 26, top: 34, fontWeight: 800, fontSize: 17, color: "#1cb0f6", letterSpacing: "0.04em" }}>{tr("ВСЕ")}</div>
       {[0, 1].map((k) => (
         <div key={k} style={{ position: "absolute", left: 24, top: 92 + k * 92, display: "flex", gap: 16, alignItems: "center" }}>
           <Img src={S(k ? "stickers_key-book.webp" : "pay_icon-gem.webp")} style={{ width: 46, height: 46, objectFit: "contain" }} />
           <div>
-            <div style={{ fontWeight: 700, fontSize: 18, color: "#4b4b4b" }}>{k ? "Пройдите 3 урока сегодня" : "Заработайте 100 XP сегодня"}</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: "#4b4b4b" }}>{k ? tr("Пройдите 3 урока сегодня") : tr("Заработайте 100 XP сегодня")}</div>
             <div style={{ marginTop: 10, width: 330, height: 14, borderRadius: 7, background: "#e5e5e5" }}><div style={{ width: k ? 110 : 190, height: 14, borderRadius: 7, background: "#ffc800" }} /></div>
           </div>
         </div>
@@ -199,8 +200,8 @@ export const LessonPath: React.FC = () => {
           <div style={{ position: "absolute", left: -900, top: -300, width: 3720, height: 4000, backgroundImage: "radial-gradient(rgba(20,60,110,0.16) 2.4px, transparent 2.8px)", backgroundSize: "48px 48px", opacity: 1 - up }} />
           <Sidebar />
           <RightPanel />
-          <Banner y={22} color="#58cc02" lip="#58a700" label="МОДУЛЬ 1" title="Введение в право" back />
-          <Banner y={2330} color="#ff9600" lip="#e08600" label="ЧАСТЬ 2" title="Олий Мажлис и референдум" />
+          <Banner y={22} color="#58cc02" lip="#58a700" label={tr("МОДУЛЬ 1")} title={tr("Введение в право")} back />
+          <Banner y={2330} color="#ff9600" lip="#e08600" label={tr("ЧАСТЬ 2")} title={tr("Олий Мажлис и референдум")} />
           {ARTS.map(([src, x, y]) => (
             <div key={src} style={{ position: "absolute", left: x, top: y, width: 296, height: 296, transformStyle: "preserve-3d", transformOrigin: "50% 100%", transform: `rotateX(${-rx * 0.9}deg)` }}>
               <Img src={S(src)} style={{ width: 296, height: 296 }} />
@@ -215,11 +216,11 @@ export const LessonPath: React.FC = () => {
             <div style={{ position: "absolute", left: POP.x, top: POP.y, width: POP.w, height: 220, borderRadius: 16, background: GREEN, boxShadow: "0 4px 0 #58a700, 0 24px 50px rgba(40,90,0,0.22)", color: "#fff", fontFamily: UI, transformOrigin: "50% 0%", transform: `scale(${pop})`, opacity: Math.min(1, pop * 1.6) }}>
               <div style={{ position: "absolute", left: "50%", top: -10, marginLeft: -9, width: 0, height: 0, borderLeft: "9px solid transparent", borderRight: "9px solid transparent", borderBottom: `11px solid ${GREEN}` }} />
               {[["8%", "60%", 12, 0], ["22%", "54%", 9, 0.35], ["80%", "52%", 13, 0.15], ["94%", "66%", 9, 0.55], ["90%", "16%", 10, 0.9], ["5%", "95%", 9, 0.8], ["70%", "97%", 9, 0.25]].map(([l, tt, s, ph], k) => <Twinkle key={k} l={l as string} t={tt as string} s={s as number} ph={ph as number} f={f} />)}
-              <div style={{ position: "absolute", left: 18, top: 14, width: 284, fontWeight: 800, fontSize: 18, lineHeight: "24px" }}>Кто пишет правила в Узбекистане</div>
-              <div style={{ position: "absolute", left: 18, top: 66, fontWeight: 600, fontSize: 15, opacity: 0.92 }}>Урок 3 из 50</div>
-              <div style={{ position: "absolute", left: 18, top: 104 - press(f, START) * -4, width: 284, height: 50, borderRadius: 12, background: "#fff", boxShadow: `0 ${4 - press(f, START) * 4}px 0 #e5e5e5, 0 0 ${40 * lin(f, START, START + 14)}px rgba(255,255,255,${0.9 * lin(f, START, START + 14)})`, display: "flex", alignItems: "center", justifyContent: "center", color: GREEN, fontWeight: 800, fontSize: 16, letterSpacing: "0.06em" }}>НАЧАТЬ</div>
+              <div style={{ position: "absolute", left: 18, top: 14, width: 284, fontWeight: 800, fontSize: 18, lineHeight: "24px" }}>{tr("Кто пишет правила в Узбекистане")}</div>
+              <div style={{ position: "absolute", left: 18, top: 66, fontWeight: 600, fontSize: 15, opacity: 0.92 }}>{tr("Урок 3 из 50")}</div>
+              <div style={{ position: "absolute", left: 18, top: 104 - press(f, START) * -4, width: 284, height: 50, borderRadius: 12, background: "#fff", boxShadow: `0 ${4 - press(f, START) * 4}px 0 #e5e5e5, 0 0 ${40 * lin(f, START, START + 14)}px rgba(255,255,255,${0.9 * lin(f, START, START + 14)})`, display: "flex", alignItems: "center", justifyContent: "center", color: GREEN, fontWeight: 800, fontSize: 16, letterSpacing: "0.06em" }}>{tr("НАЧАТЬ")}</div>
               <div style={{ opacity: 1 - lin(f, START + 2, START + 12), position: "absolute", left: 18, top: 160, width: 284, height: 46, borderRadius: 12, background: "#fff", boxShadow: "0 4px 0 #e5e5e5", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, color: "#3c3c3c", fontWeight: 800, fontSize: 16, letterSpacing: "0.06em" }}>
-                КУПИТЬ <span style={{ backgroundImage: "linear-gradient(90deg, #1cb0f6, #ce82ff)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>PRO</span>
+                {tr("КУПИТЬ")} <span style={{ backgroundImage: "linear-gradient(90deg, #1cb0f6, #ce82ff)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>PRO</span>
               </div>
             </div>
           ) : null}

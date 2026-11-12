@@ -1,4 +1,5 @@
 import React from "react";
+import { tr } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, random, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { fit } from "./Kit7";
 
@@ -99,8 +100,8 @@ const usePath = (keys: [number, number, number][]) => {
 
 // ====================== S4 directions ======================
 const DIRS: [string, string][] = [
-  ["history", "История"], ["math", "Математика"], ["english", "Английский"], ["business", "Бизнес"], ["psychology", "Психология"],
-  ["it", "Программирование"], ["ai", "Искусственный интеллект"], ["medicine", "Медицина"], ["economics", "Экономика"], ["law", "Юриспруденция"],
+  ["history", tr("История")], ["math", tr("Математика")], ["english", tr("Английский")], ["business", tr("Бизнес")], ["psychology", tr("Психология")],
+  ["it", tr("Программирование")], ["ai", tr("Искусственный интеллект")], ["medicine", tr("Медицина")], ["economics", tr("Экономика")], ["law", tr("Юриспруденция")],
 ];
 export const S4b: React.FC = () => {
   const f = useCurrentFrame();
@@ -117,7 +118,7 @@ export const S4b: React.FC = () => {
     <AbsoluteFill style={{ background: BG }}>
       <Chrome />
       <div style={{ position: "absolute", top: 96, width: "100%", textAlign: "center", overflow: "hidden", fontFamily: HEAD, fontWeight: 900, fontSize: 110, letterSpacing: "-0.035em", color: NAVY }}>
-        <div style={{ transform: `translateY(${(1 - head) * 110}%)` }}><span style={{ color: BLUE }}>10</span> направлений</div>
+        <div style={{ transform: `translateY(${(1 - head) * 110}%)` }}><span style={{ color: BLUE }}>10</span> {tr("направлений")}</div>
       </div>
       <div style={{ position: "absolute", left: 960 - 520, top: 790, width: 1040, height: 60, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(13,22,48,0.16), rgba(13,22,48,0))" }} />
       {DIRS.map(([slug], i) => {
@@ -177,29 +178,29 @@ export const S5b: React.FC = () => {
   const bar = sp(CHECK + 4, 15, 170);
   const toast = sp(DONE, 15, 160);
   const fire = f >= DONE + 34 ? 1 : 0;
-  const OPTS = ["Соседи по махалле", "Олий Мажлис", "Популярные блогеры"];
+  const OPTS = [tr("Соседи по махалле"), tr("Олий Мажлис"), tr("Популярные блогеры")];
   return (
     <AbsoluteFill style={{ background: BG }}>
-      <Chrome label="02  Уроки" />
+      <Chrome label={tr("02  Уроки")} />
       <div style={{ position: "absolute", left: 120, top: 390 }}>
-        <Cap text="Короткий урок." at={10} size={76} />
-        <Cap text="Каждый день." at={22} size={76} accent="Каждый день." accentColor={GREEN} />
-        <div style={{ marginTop: 20, fontFamily: HEAD, fontWeight: 500, fontSize: 30, color: "#5d6470", opacity: lin(f, 40, 60) }}>Теория, вопрос и награда за пару минут</div>
+        <Cap text={tr("Короткий урок.")} at={10} size={76} />
+        <Cap text={tr("Каждый день.")} at={22} size={76} accent={tr("Каждый день.")} accentColor={GREEN} />
+        <div style={{ marginTop: 20, fontFamily: HEAD, fontWeight: 500, fontSize: 30, color: "#5d6470", opacity: lin(f, 40, 60) }}>{tr("Теория, вопрос и награда за пару минут")}</div>
       </div>
       <AbsoluteFill style={{ perspective: 2400 }}>
         <div style={{ position: "absolute", left: 700, top: 0, width: 1220, height: 1080, transformStyle: "preserve-3d", transform: `rotateY(${-11 + tilt * 5}deg) rotateX(${7 - tilt * 3}deg)` }}>
           {/* path, as on the site */}
           <div style={{ position: "absolute", inset: 0, opacity: 1 - lesson, transform: `scale(${1 + lesson * 0.2})`, transformOrigin: "620px 620px" }}>
             <div style={{ position: "absolute", left: 300, top: 150, width: 640, height: 104, borderRadius: 22, background: GREEN, boxShadow: `0 6px 0 ${GLIP}`, display: "flex", alignItems: "center", padding: "0 30px", fontFamily: UI, color: "#fff", transform: `translateY(${(1 - sp(4, 14, 160)) * -60}px)`, opacity: sp(4, 14, 160) }}>
-              <div><div style={{ fontWeight: 800, fontSize: 20, opacity: 0.9 }}>МОДУЛЬ 1</div><div style={{ fontWeight: 900, fontSize: 32 }}>Введение в право</div></div>
+              <div><div style={{ fontWeight: 800, fontSize: 20, opacity: 0.9 }}>{tr("МОДУЛЬ 1")}</div><div style={{ fontWeight: 900, fontSize: 32 }}>{tr("Введение в право")}</div></div>
             </div>
             {P.map(([x, y], i) => <SiteStone key={i} x={x} y={y} at={14 + i * 14} kind={i < 2 ? "done" : i === 2 ? "now" : "lock"} pr={i === 2 ? press(f, C1) : 0} />)}
             <Img src={staticFile("real/mascot1.webp")} style={{ position: "absolute", left: 830, top: 520, width: 300, opacity: sp(40, 14, 150), transform: `translateY(${(1 - sp(40, 14, 150)) * 40}px)` }} />
             {card > 0.01 ? (
               <div style={{ position: "absolute", left: 620 - 220, top: 620 - 330, width: 440, borderRadius: 24, background: GREEN, boxShadow: `0 6px 0 ${GLIP}, 0 30px 60px rgba(40,90,0,0.25)`, padding: "22px 24px 24px", boxSizing: "border-box", fontFamily: UI, color: "#fff", transformOrigin: "50% 100%", transform: `scale(${card})`, opacity: Math.min(1, card * 1.6) }}>
-                <div style={{ fontWeight: 900, fontSize: 30, lineHeight: 1.2 }}>Кто пишет законы</div>
-                <div style={{ fontWeight: 700, fontSize: 20, opacity: 0.9, marginTop: 6 }}>Урок 3</div>
-                <div style={{ marginTop: 18, height: 64, borderRadius: 16, background: "#fff", color: GREEN, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, letterSpacing: "0.05em", boxShadow: `0 ${5 - press(f, C2) * 5}px 0 ${SWAN}`, transform: `translateY(${press(f, C2) * 5}px)` }}>НАЧАТЬ</div>
+                <div style={{ fontWeight: 900, fontSize: 30, lineHeight: 1.2 }}>{tr("Кто пишет законы")}</div>
+                <div style={{ fontWeight: 700, fontSize: 20, opacity: 0.9, marginTop: 6 }}>{tr("Урок 3")}</div>
+                <div style={{ marginTop: 18, height: 64, borderRadius: 16, background: "#fff", color: GREEN, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 24, letterSpacing: "0.05em", boxShadow: `0 ${5 - press(f, C2) * 5}px 0 ${SWAN}`, transform: `translateY(${press(f, C2) * 5}px)` }}>{tr("НАЧАТЬ")}</div>
               </div>
             ) : null}
           </div>
@@ -214,7 +215,7 @@ export const S5b: React.FC = () => {
               </div>
               <div style={{ position: "absolute", left: 60, top: 140, display: "flex", alignItems: "flex-end", gap: 20, opacity: lin(f, OPEN + 4, OPEN + 20) }}>
                 <Img src={staticFile("v4/owl-q.png")} style={{ width: 150 }} />
-                <div style={{ marginBottom: 40, padding: "20px 26px", borderRadius: 22, border: `3px solid ${SWAN}`, fontWeight: 800, fontSize: 32, color: INK }}>Кто принимает законы?</div>
+                <div style={{ marginBottom: 40, padding: "20px 26px", borderRadius: 22, border: `3px solid ${SWAN}`, fontWeight: 800, fontSize: 32, color: INK }}>{tr("Кто принимает законы?")}</div>
               </div>
               {OPTS.map((o, i) => {
                 const s = sp(OPEN + 10 + i * 6, 14, 190);
@@ -233,10 +234,10 @@ export const S5b: React.FC = () => {
                 {checked ? (
                   <div style={{ position: "absolute", left: 50, top: 34, display: "flex", alignItems: "center", gap: 18, transform: `translateY(${(1 - bar) * 40}px)`, opacity: bar }}>
                     <div style={{ width: 70, height: 70, borderRadius: 35, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}><Check s={40} c={GREEN} /></div>
-                    <div style={{ fontWeight: 900, fontSize: 36, color: GLIP }}>Круто!</div>
+                    <div style={{ fontWeight: 900, fontSize: 36, color: GLIP }}>{tr("Круто!")}</div>
                   </div>
                 ) : null}
-                <div style={{ position: "absolute", right: 50, top: 36, width: 300, height: 78, borderRadius: 18, background: picked ? GREEN : SWAN, boxShadow: `0 ${6 - press(f, CHECK) * 6}px 0 ${picked ? GLIP : "#cfcfcf"}`, transform: `translateY(${press(f, CHECK) * 6}px)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, letterSpacing: "0.05em", color: picked ? "#fff" : "#afafaf" }}>{checked ? "ПРОДОЛЖИТЬ" : "ПРОВЕРИТЬ"}</div>
+                <div style={{ position: "absolute", right: 50, top: 36, width: 300, height: 78, borderRadius: 18, background: picked ? GREEN : SWAN, boxShadow: `0 ${6 - press(f, CHECK) * 6}px 0 ${picked ? GLIP : "#cfcfcf"}`, transform: `translateY(${press(f, CHECK) * 6}px)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, letterSpacing: "0.05em", color: picked ? "#fff" : "#afafaf" }}>{checked ? tr("ПРОДОЛЖИТЬ") : tr("ПРОВЕРИТЬ")}</div>
               </div>
             </div>
           ) : null}
@@ -247,7 +248,7 @@ export const S5b: React.FC = () => {
         <div style={{ position: "absolute", left: 120, top: 700, width: 600, height: 110, borderRadius: 28, background: "#fff", boxShadow: "0 24px 60px rgba(13,22,48,0.18)", display: "flex", alignItems: "center", gap: 22, padding: "0 30px", boxSizing: "border-box", fontFamily: UI, transform: `translateY(${(1 - toast) * 60}px)`, opacity: Math.min(1, toast * 1.5), zIndex: 90 }}>
           <div style={{ width: 62, height: 62, borderRadius: 31, background: GREEN, display: "flex", alignItems: "center", justifyContent: "center" }}><Check s={36} /></div>
           <div>
-            <div style={{ fontWeight: 900, fontSize: 32, color: INK }}>Урок пройден</div>
+            <div style={{ fontWeight: 900, fontSize: 32, color: INK }}>{tr("Урок пройден")}</div>
             <div style={{ fontWeight: 800, fontSize: 24, color: "#e0a800" }}>+15 XP</div>
           </div>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 40, color: "#ff9600" }}>
@@ -262,12 +263,12 @@ export const S5b: React.FC = () => {
 
 // ====================== S6 five games, each with its own motion ======================
 const GD = 120;
-const GAMES = ["Найди миф", "Верно или неверно", "Собери фразу", "Истории", "Работа над ошибками"];
+const GAMES = [tr("Найди миф"), tr("Верно или неверно"), tr("Собери фразу"), tr("Истории"), tr("Работа над ошибками")];
 const card: React.CSSProperties = { position: "absolute", borderRadius: 28, background: "#fff", border: `3px solid ${SWAN}`, boxShadow: `0 6px 0 ${SWAN}, 0 24px 50px rgba(13,22,48,0.08)`, fontFamily: UI, fontWeight: 800, color: INK, boxSizing: "border-box" };
 const G1: React.FC<{ lf: number }> = ({ lf }) => {
   const { fps } = useVideoConfig();
   const sp = (at: number, d = 12, s = 180) => spring({ frame: lf - at, fps, config: { damping: d, stiffness: s } });
-  const S = ["Закон обязателен для всех", "Незнание закона освобождает от ответственности", "Законы публикуют, чтобы их знали"];
+  const S = [tr("Закон обязателен для всех"), tr("Незнание закона освобождает от ответственности"), tr("Законы публикуют, чтобы их знали")];
   const hit = 46;
   const scan = lin(lf, 18, hit, 0, 1, IOE);
   return (
@@ -288,18 +289,18 @@ const G1: React.FC<{ lf: number }> = ({ lf }) => {
       <div style={{ position: "absolute", left: 1290, top: 260 + scan * 150, opacity: lin(lf, 10, 20) * (1 - lin(lf, hit + 6, hit + 16)) }}>
         <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2.4" strokeLinecap="round"><circle cx="10" cy="10" r="6.5" fill="rgba(28,176,246,0.15)" /><path d="M15 15l6 6" /></svg>
       </div>
-      <div style={{ position: "absolute", left: 1210, top: 418, padding: "6px 22px", border: `6px solid ${RED}`, borderRadius: 16, fontFamily: HEAD, fontWeight: 900, fontSize: 54, color: RED, background: "#fff", transform: `rotate(-12deg) scale(${2.3 - 1.3 * sp(hit + 2, 9, 230)})`, opacity: lf >= hit + 2 ? Math.min(1, sp(hit + 2, 9, 230) * 2) : 0 }}>МИФ</div>
+      <div style={{ position: "absolute", left: 1210, top: 418, padding: "6px 22px", border: `6px solid ${RED}`, borderRadius: 16, fontFamily: HEAD, fontWeight: 900, fontSize: 54, color: RED, background: "#fff", transform: `rotate(-12deg) scale(${2.3 - 1.3 * sp(hit + 2, 9, 230)})`, opacity: lf >= hit + 2 ? Math.min(1, sp(hit + 2, 9, 230) * 2) : 0 }}>{tr("МИФ")}</div>
     </AbsoluteFill>
   );
 };
 const G2: React.FC<{ lf: number }> = ({ lf }) => {
-  const T = ["Конституция: главный закон страны", "Закон можно не соблюдать, если не согласен", "Права человека защищает государство"];
+  const T = [tr("Конституция: главный закон страны"), tr("Закон можно не соблюдать, если не согласен"), tr("Права человека защищает государство")];
   const go = [16, 48, 80];
   const dir = [1, -1, 1];
   return (
     <AbsoluteFill>
-      <div style={{ position: "absolute", left: 360, top: 520, fontFamily: HEAD, fontWeight: 800, fontSize: 34, color: RED, zIndex: 0 }}>← Неверно</div>
-      <div style={{ position: "absolute", left: 1330, top: 520, fontFamily: HEAD, fontWeight: 800, fontSize: 34, color: GLIP }}>Верно →</div>
+      <div style={{ position: "absolute", left: 360, top: 520, fontFamily: HEAD, fontWeight: 800, fontSize: 34, color: RED, zIndex: 0 }}>{tr("← Неверно")}</div>
+      <div style={{ position: "absolute", left: 1330, top: 520, fontFamily: HEAD, fontWeight: 800, fontSize: 34, color: GLIP }}>{tr("Верно →")}</div>
       {T.map((t, i) => {
         const fly = lin(lf, go[i], go[i] + 22, 0, 1, Easing.bezier(0.5, 0, 0.9, 0.6));
         const lean = lin(lf, go[i] - 12, go[i], 0, 1);
@@ -308,7 +309,7 @@ const G2: React.FC<{ lf: number }> = ({ lf }) => {
         return (
           <div key={t} style={{ ...card, left: 960 - 300, top: 330, width: 600, height: 400, display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 50, fontSize: 38, lineHeight: 1.3, zIndex: 20 - i, border: `3px solid ${lean > 0.3 ? (good ? GREEN : RED) : SWAN}`, background: lean > 0.3 ? (good ? "#e7ffd6" : "#ffe3e3") : "#fff", transform: `translate(${dir[i] * (lean * 70 + fly * 1200)}px, ${depth * 26 - fly * 60}px) rotate(${dir[i] * (lean * 7 + fly * 18)}deg) scale(${1 - depth * 0.05})`, opacity: 1 - fly * 0.4 }}>
             {t}
-            {lean > 0.3 ? <div style={{ position: "absolute", left: good ? 30 : undefined, right: good ? undefined : 30, top: 24, padding: "4px 16px", border: `5px solid ${good ? GREEN : RED}`, borderRadius: 12, fontFamily: HEAD, fontWeight: 900, fontSize: 30, color: good ? GLIP : RED, transform: `rotate(${good ? -8 : 8}deg)` }}>{good ? "ВЕРНО" : "НЕВЕРНО"}</div> : null}
+            {lean > 0.3 ? <div style={{ position: "absolute", left: good ? 30 : undefined, right: good ? undefined : 30, top: 24, padding: "4px 16px", border: `5px solid ${good ? GREEN : RED}`, borderRadius: 12, fontFamily: HEAD, fontWeight: 900, fontSize: 30, color: good ? GLIP : RED, transform: `rotate(${good ? -8 : 8}deg)` }}>{good ? tr("ВЕРНО") : tr("НЕВЕРНО")}</div> : null}
           </div>
         );
       })}
@@ -317,10 +318,10 @@ const G2: React.FC<{ lf: number }> = ({ lf }) => {
 };
 const G3: React.FC<{ lf: number }> = ({ lf }) => {
   const { fps } = useVideoConfig();
-  const W = ["Закон", "один", "для", "всех"];
+  const W = [tr("Закон"), tr("один"), tr("для"), tr("всех")];
   const slotX = [600, 790, 960, 1110];
   const scat: [number, number, number][] = [[1240, 720, 14], [520, 760, -12], [1000, 820, 9], [760, 690, -7]];
-  const extra: [string, number, number, number][] = [["только", 1380, 620, -10], ["богатых", 440, 640, 12]];
+  const extra: [string, number, number, number][] = [[tr("только"), 1380, 620, -10], [tr("богатых"), 440, 640, 12]];
   const done = lf >= 14 + 3 * 12 + 16;
   return (
     <AbsoluteFill>
@@ -344,13 +345,13 @@ const G4: React.FC<{ lf: number }> = ({ lf }) => {
   return (
     <AbsoluteFill style={{ fontFamily: UI }}>
       <Img src={staticFile("av/p1.svg")} style={{ position: "absolute", left: 470, top: 270, width: 130, height: 130, borderRadius: 65, transform: `scale(${sp(0)})` }} />
-      <div style={{ position: "absolute", left: 630, top: 270, width: 620, padding: "26px 30px", borderRadius: "30px 30px 30px 8px", background: "#fff", border: `3px solid ${SWAN}`, fontWeight: 700, fontSize: 32, lineHeight: 1.35, color: INK, transformOrigin: "0 100%", transform: `scale(${sp(8)})` }}>Шахзод купил телефон, через неделю он сломался. Продавец говорит: «Сам виноват». Что делать?</div>
-      {["Смириться", "Требовать ремонт или возврат"].map((o, i) => {
+      <div style={{ position: "absolute", left: 630, top: 270, width: 620, padding: "26px 30px", borderRadius: "30px 30px 30px 8px", background: "#fff", border: `3px solid ${SWAN}`, fontWeight: 700, fontSize: 32, lineHeight: 1.35, color: INK, transformOrigin: "0 100%", transform: `scale(${sp(8)})` }}>{tr("Шахзод купил телефон, через неделю он сломался. Продавец говорит: «Сам виноват». Что делать?")}</div>
+      {[tr("Смириться"), tr("Требовать ремонт или возврат")].map((o, i) => {
         const good = i === 1 && ok;
         const s = sp(34 + i * 8);
         return <div key={o} style={{ ...card, left: 630 + i * 290, top: 560, padding: "22px 30px", fontSize: 30, border: `3px solid ${good ? GREEN : SWAN}`, background: good ? "#e7ffd6" : "#fff", color: good ? GLIP : INK, transform: `scale(${s * (1 - press(lf, PICK) * 0.05)})`, opacity: i === 0 && ok ? 0.45 : s }}>{o}</div>;
       })}
-      {ok ? <div style={{ position: "absolute", left: 630, top: 700, width: 760, padding: "22px 28px", borderRadius: 24, background: GREEN, color: "#fff", fontWeight: 800, fontSize: 28, lineHeight: 1.35, transformOrigin: "0 0", transform: `scale(${sp(PICK + 8)})` }}>Верно. Закон защищает покупателя: можно требовать ремонт или возврат денег.</div> : null}
+      {ok ? <div style={{ position: "absolute", left: 630, top: 700, width: 760, padding: "22px 28px", borderRadius: 24, background: GREEN, color: "#fff", fontWeight: 800, fontSize: 28, lineHeight: 1.35, transformOrigin: "0 0", transform: `scale(${sp(PICK + 8)})` }}>{tr("Верно. Закон защищает покупателя: можно требовать ремонт или возврат денег.")}</div> : null}
     </AbsoluteFill>
   );
 };
@@ -365,14 +366,14 @@ const G5: React.FC<{ lf: number }> = ({ lf }) => {
   const fixed = lf >= FIX;
   return (
     <AbsoluteFill style={{ fontFamily: UI }}>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 290, textAlign: "center", fontWeight: 900, fontSize: 44, color: INK, opacity: lin(lf, 0, 10) }}>Кто принимает законы?</div>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 290, textAlign: "center", fontWeight: 900, fontSize: 44, color: INK, opacity: lin(lf, 0, 10) }}>{tr("Кто принимает законы?")}</div>
       <div style={{ position: "absolute", left: 1250, top: 230, display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 40, color: RED, transform: `translateX(${heartShake}px)` }}>
         <Img src={staticFile("real/heart-red.webp")} style={{ width: 52 }} />{hearts}
       </div>
       <svg style={{ position: "absolute", left: 960 - 230, top: 600 - 230, opacity: lin(lf, LOOP - 6, LOOP + 4) * (1 - lin(lf, FIX, FIX + 10)) }} width="460" height="460" viewBox="0 0 460 460"><circle cx="230" cy="230" r="200" fill="none" stroke={SWAN} strokeWidth="8" strokeDasharray="6 18" /></svg>
       <div style={{ ...card, left: 960 - 360 + Math.sin(ang) * 200 * Math.sin(loop * Math.PI), top: 600 - 110 - Math.sin(loop * Math.PI) * 120, width: 720, height: 220, display: "flex", alignItems: "center", gap: 22, padding: "0 30px", fontSize: 32, border: `3px solid ${fixed ? GREEN : RED}`, background: fixed ? "#e7ffd6" : "#ffe3e3", color: fixed ? GLIP : RED, transform: `scale(${(1 - Math.sin(loop * Math.PI) * 0.25) * (fixed ? 1 + (1 - sp(FIX, 9, 220)) * 0.1 : 1)})` }}>
         <div style={{ width: 70, height: 70, borderRadius: 35, background: fixed ? GREEN : RED, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{fixed ? <Check s={40} /> : <Cross s={36} />}</div>
-        <div><div style={{ fontWeight: 900, fontSize: 44 }}>{fixed ? "Исправлено" : "Ошибка"}</div><div style={{ fontWeight: 700, fontSize: 30, color: fixed ? GLIP : "#c23a3a" }}>{fixed ? "Теперь запомнил" : loop > 0.05 ? "Повторим ещё раз" : "Правильно: Олий Мажлис"}</div></div>
+        <div><div style={{ fontWeight: 900, fontSize: 44 }}>{fixed ? tr("Исправлено") : tr("Ошибка")}</div><div style={{ fontWeight: 700, fontSize: 30, color: fixed ? GLIP : "#c23a3a" }}>{fixed ? tr("Теперь запомнил") : loop > 0.05 ? tr("Повторим ещё раз") : tr("Правильно: Олий Мажлис")}</div></div>
       </div>
     </AbsoluteFill>
   );
@@ -390,7 +391,7 @@ export const S6b: React.FC = () => {
   const Game = [G1, G2, G3, G4, G5][idx];
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
-      <Chrome label="02  Уроки · игры" />
+      <Chrome label={tr("02  Уроки · игры")} />
       {row < 1 ? (
         <>
           <div style={{ position: "absolute", left: 120, top: 110, display: "flex", alignItems: "baseline", gap: 26 }}>
@@ -404,7 +405,7 @@ export const S6b: React.FC = () => {
       ) : null}
       {row > 0 ? (
         <>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 230, display: "flex", justifyContent: "center" }}><Cap text="Одна тема. Пять способов запомнить." at={END + 4} size={68} accent="запомнить." /></div>
+          <div style={{ position: "absolute", left: 0, right: 0, top: 230, display: "flex", justifyContent: "center" }}><Cap text={tr("Одна тема. Пять способов запомнить.")} at={END + 4} size={68} accent={tr("запомнить.")} /></div>
           <div style={{ position: "absolute", left: 0, right: 0, top: 440, display: "flex", justifyContent: "center", gap: 26 }}>
             {GAMES.map((g, i) => {
               const s = sp(END + 8 + i * 5, 13, 190);
@@ -425,7 +426,7 @@ export const S6b: React.FC = () => {
 };
 
 // ====================== S7 league table climbs on +15 XP ======================
-const PEOPLE: [string, string, number][] = [["Азиз", "p0", 147], ["Малика", "p2", 133], ["Тимур", "p3", 118], ["Дильноза", "p4", 102], ["Санжар", "p5", 88]];
+const PEOPLE: [string, string, number][] = [[tr("Азиз"), "p0", 147], [tr("Малика"), "p2", 133], [tr("Тимур"), "p3", 118], [tr("Дильноза"), "p4", 102], [tr("Санжар"), "p5", 88]];
 export const S7b: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
@@ -439,7 +440,7 @@ export const S7b: React.FC = () => {
   const silver = sp(T0 + 6 * B + 10, 12, 160);
   return (
     <AbsoluteFill style={{ background: BG }}>
-      <TopLine a="+15 XP за урок." b="Поднимайся в лиге." at={0} size={66} accentColor={BLUE} />
+      <TopLine a={tr("+15 XP за урок.")} b={tr("Поднимайся в лиге.")} at={0} size={66} accentColor={BLUE} />
       {/* league badges like the site */}
       <div style={{ position: "absolute", left: 960 - 380, top: 170, display: "flex", alignItems: "center", gap: 22 }}>
         <Img src={staticFile("real/bronze.webp")} style={{ width: 110, transform: `scale(${sp(4, 12, 170)})` }} />
@@ -450,7 +451,7 @@ export const S7b: React.FC = () => {
           </div>
         ))}
       </div>
-      <div style={{ position: "absolute", left: 960 - 380, top: 290, fontFamily: UI, fontWeight: 900, fontSize: 40, color: INK }}>{silver > 0.5 ? "Серебряная лига" : "Бронзовая лига"}</div>
+      <div style={{ position: "absolute", left: 960 - 380, top: 290, fontFamily: UI, fontWeight: 900, fontSize: 40, color: INK }}>{silver > 0.5 ? tr("Серебряная лига") : tr("Бронзовая лига")}</div>
       {/* table */}
       <div style={{ position: "absolute", left: 960 - 380, top: 360, width: 760, height: ROWH * 6 + 30, borderRadius: 34, background: "#fff", boxShadow: "0 30px 80px rgba(13,22,48,0.12)", opacity: sp(0, 14, 150), transform: `translateY(${(1 - sp(0, 14, 150)) * 60}px)` }}>
         {(() => {
@@ -481,7 +482,7 @@ export const S7b: React.FC = () => {
               <div style={{ position: "absolute", left: 20, right: 20, top: rowTop(exact), height: ROWH - 10, borderRadius: 22, border: `4px solid ${BLUE}`, background: "#fff", display: "flex", alignItems: "center", gap: 20, padding: "0 16px", fontFamily: UI, boxShadow: "0 12px 30px rgba(28,176,246,0.25)", zIndex: 5, boxSizing: "border-box" }}>
                 <div style={{ width: 40, fontWeight: 900, fontSize: 28, color: myRank === 1 ? "#e0a800" : DEEP }}>{myRank}</div>
                 <Img src={staticFile("av/p1.svg")} style={{ width: 66, height: 66, borderRadius: 33, background: "#fff" }} />
-                <div style={{ fontWeight: 900, fontSize: 30, color: DEEP }}>Ты</div>
+                <div style={{ fontWeight: 900, fontSize: 30, color: DEEP }}>{tr("Ты")}</div>
                 {myRank === 1 ? <Img src={staticFile("av/medal-1.webp")} style={{ width: 46 }} /> : null}
                 <div style={{ marginLeft: "auto", fontWeight: 900, fontSize: 32, color: flash > 0.2 ? "#e0a800" : DEEP, transform: `scale(${1 + flash * 0.18})`, fontVariantNumeric: "tabular-nums" }}>{mine} XP</div>
               </div>
@@ -526,30 +527,30 @@ export const S8b: React.FC = () => {
   const tap = press(f, TAP);
   const ripple = lin(f, TAP, TAP + 26);
   const CARDS: [string, string, number, number][] = [
-    ["Коротко", "Узбекистан: суверенное правовое государство.", 1480, 200],
-    ["Простыми словами", "Страна сама решает, а всё держится на законе.", 1480, 450],
-    ["Пример из жизни", "Чиновник нарушил закон? Его решение можно обжаловать.", 1480, 700],
+    [tr("Коротко"), tr("Узбекистан: суверенное правовое государство."), 1480, 200],
+    [tr("Простыми словами"), tr("Страна сама решает, а всё держится на законе."), 1480, 450],
+    [tr("Пример из жизни"), tr("Чиновник нарушил закон? Его решение можно обжаловать."), 1480, 700],
   ];
   const leave = lin(f, 640, 676, 0, 1, IOE);
   const ptr = usePath([[100, 1500, 1000], [SEL0 - 4, 980, 452], [SEL1, 1340, 452], [YEL_ - 6, 1050, 528], [YEL_ + 10, 1060, 540], [NOTE - 6, 1290, 600], [NOTE + 16, 1300, 640], [SAVE - 8, 1300, 958], [SAVE + 20, 1400, 1000], [TAP - 10, 1340, 940], [TAP + 20, 1400, 980]]);
   const down = Math.max(press(f, SEL0), press(f, YEL_), press(f, NOTE), press(f, SAVE), tap);
   const dragging = f >= SEL0 && f < SEL1 + 2;
-  const LINES = ["Узбекистан: суверенное,", "демократическое, правовое,", "социальное и светское", "государство.", "Названия «Республика", "Узбекистан» и «Узбекистан»", "равнозначны."];
+  const LINES = [tr("Узбекистан: суверенное,"), tr("демократическое, правовое,"), tr("социальное и светское"), tr("государство."), tr("Названия «Республика"), tr("Узбекистан» и «Узбекистан»"), tr("равнозначны.")];
   return (
     <AbsoluteFill style={{ background: GREEN }}>
-      <Chrome label="04  Законы" dark />
+      <Chrome label={tr("04  Законы")} dark />
       <div style={{ position: "absolute", left: 110, top: 330, opacity: 1 - leave }}>
         {!aiOn ? (
           <>
-            <Cap text="Выделяй." at={10} size={72} color="#fff" out={AI - 20} />
-            <Cap text="Пиши заметки." at={18} size={72} color="#fff" out={AI - 19} />
-            <Cap text="Прямо в законе." at={26} size={72} color={NAVY} out={AI - 18} />
+            <Cap text={tr("Выделяй.")} at={10} size={72} color="#fff" out={AI - 20} />
+            <Cap text={tr("Пиши заметки.")} at={18} size={72} color="#fff" out={AI - 19} />
+            <Cap text={tr("Прямо в законе.")} at={26} size={72} color={NAVY} out={AI - 18} />
           </>
         ) : (
           <>
-            <Cap text="Непонятно?" at={AI + 2} size={72} color="#fff" />
-            <Cap text="ИИ объяснит" at={AI + 10} size={72} color="#fff" />
-            <Cap text="простыми словами." at={AI + 18} size={72} color={NAVY} />
+            <Cap text={tr("Непонятно?")} at={AI + 2} size={72} color="#fff" />
+            <Cap text={tr("ИИ объяснит")} at={AI + 10} size={72} color="#fff" />
+            <Cap text={tr("простыми словами.")} at={AI + 18} size={72} color={NAVY} />
           </>
         )}
       </div>
@@ -568,8 +569,8 @@ export const S8b: React.FC = () => {
             <div style={{ position: "absolute", inset: 0, opacity: lin(f, 86, 104) }}>
               <div style={{ width: 130, height: 12, borderRadius: 6, background: "#e8eaee", margin: "22px auto 0" }} />
               <div style={{ padding: "26px 34px 0" }}>
-                <div style={{ fontWeight: 700, fontSize: 19, color: BLUE }}>Конституция Республики Узбекистан</div>
-                <div style={{ marginTop: 6, fontWeight: 900, fontSize: 40, color: INK }}>Статья 1.</div>
+                <div style={{ fontWeight: 700, fontSize: 19, color: BLUE }}>{tr("Конституция Республики Узбекистан")}</div>
+                <div style={{ marginTop: 6, fontWeight: 900, fontSize: 40, color: INK }}>{tr("Статья 1.")}</div>
                 <div style={{ marginTop: 18, fontWeight: 700, fontSize: 27, lineHeight: 1.55, color: "#4b4b4b" }}>
                   {LINES.map((l, i) => {
                     const hot = i >= 4;
@@ -588,21 +589,21 @@ export const S8b: React.FC = () => {
                 <div style={{ position: "absolute", left: 24, right: 24, top: 600, borderRadius: 22, background: "#fff", border: `3px solid ${BLUE}`, boxShadow: "0 18px 40px rgba(13,22,48,0.18)", padding: "16px 18px", transform: `scale(${0.9 + 0.1 * pal})`, opacity: pal, transformOrigin: "50% 0" }}>
                   <div style={{ display: "flex", gap: 12 }}>{COLORS.map((c, i) => <div key={c} style={{ width: 40, height: 40, borderRadius: 20, background: c, boxShadow: i === 0 && yellow ? `0 0 0 4px #fff, 0 0 0 7px ${c}` : undefined, transform: `scale(${i === 0 ? 1 - press(f, YEL_) * 0.2 : 1})` }} />)}</div>
                   <div style={{ display: "flex", gap: 14, marginTop: 14, fontWeight: 800, fontSize: 22, color: BLUE }}>
-                    <span>Копия</span><span style={{ padding: "2px 10px", borderRadius: 10, background: f > NOTE - 14 ? "#ddf4ff" : "transparent" }}>Заметка</span><span>Тест</span><span>Ссылка</span>
+                    <span>{tr("Копия")}</span><span style={{ padding: "2px 10px", borderRadius: 10, background: f > NOTE - 14 ? "#ddf4ff" : "transparent" }}>{tr("Заметка")}</span><span>{tr("Тест")}</span><span>{tr("Ссылка")}</span>
                   </div>
                 </div>
               ) : null}
               {/* note sheet */}
               {sheet > 0.01 ? (
                 <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 420, borderRadius: "34px 34px 0 0", background: "#fff", boxShadow: "0 -20px 50px rgba(13,22,48,0.2)", padding: "26px 28px", boxSizing: "border-box", transform: `translateY(${(1 - sheet) * 440}px)` }}>
-                  <div style={{ fontWeight: 900, fontSize: 30, color: INK }}>Заметка к выделенному</div>
-                  <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 12, background: "#fff8d6", borderLeft: "6px solid #ffd43b", fontSize: 20, fontWeight: 700, color: "#6b7785" }}>Названия «Республика Узбекистан» и «Узбекистан» равнозначны.</div>
+                  <div style={{ fontWeight: 900, fontSize: 30, color: INK }}>{tr("Заметка к выделенному")}</div>
+                  <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 12, background: "#fff8d6", borderLeft: "6px solid #ffd43b", fontSize: 20, fontWeight: 700, color: "#6b7785" }}>{tr("Названия «Республика Узбекистан» и «Узбекистан» равнозначны.")}</div>
                   <div style={{ marginTop: 16, minHeight: 90, borderRadius: 20, border: `3px solid ${BLUE}`, background: "#f7fbff", padding: "16px 18px", boxSizing: "border-box", fontWeight: 800, fontSize: 28, color: INK }}>
-                    {f < TYPE ? <span style={{ color: "#a7b1bc", fontWeight: 600, fontSize: 24 }}>Что вы думаете об этом?</span> : <>{typed("Спросят на экзамене", TYPE, f)}<span style={{ display: "inline-block", width: 3, height: 30, background: BLUE, marginLeft: 2, verticalAlign: "middle", opacity: Math.floor(f / 14) % 2 ? 1 : 0.2 }} /></>}
+                    {f < TYPE ? <span style={{ color: "#a7b1bc", fontWeight: 600, fontSize: 24 }}>{tr("Что вы думаете об этом?")}</span> : <>{typed(tr("Спросят на экзамене"), TYPE, f)}<span style={{ display: "inline-block", width: 3, height: 30, background: BLUE, marginLeft: 2, verticalAlign: "middle", opacity: Math.floor(f / 14) % 2 ? 1 : 0.2 }} /></>}
                   </div>
                   <div style={{ marginTop: 18, display: "flex", alignItems: "center" }}>
-                    <div style={{ fontSize: 20, fontWeight: 700, color: GREY }}>Видите только вы</div>
-                    <div style={{ marginLeft: "auto", padding: "16px 30px", borderRadius: 16, background: GREEN, boxShadow: `0 ${5 - press(f, SAVE) * 5}px 0 ${GLIP}`, transform: `translateY(${press(f, SAVE) * 5}px)`, color: "#fff", fontWeight: 900, fontSize: 22, letterSpacing: "0.05em" }}>СОХРАНИТЬ</div>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: GREY }}>{tr("Видите только вы")}</div>
+                    <div style={{ marginLeft: "auto", padding: "16px 30px", borderRadius: 16, background: GREEN, boxShadow: `0 ${5 - press(f, SAVE) * 5}px 0 ${GLIP}`, transform: `translateY(${press(f, SAVE) * 5}px)`, color: "#fff", fontWeight: 900, fontSize: 22, letterSpacing: "0.05em" }}>{tr("СОХРАНИТЬ")}</div>
                   </div>
                 </div>
               ) : null}
@@ -615,7 +616,7 @@ export const S8b: React.FC = () => {
           ) : null}
         </div>
         {/* toast */}
-        {f >= SAVE + 8 && f < AI ? <div style={{ position: "absolute", left: PX - 220, top: 70, width: 440, height: 76, borderRadius: 22, background: NAVY, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 14, fontFamily: UI, fontWeight: 800, fontSize: 28, transform: `translateY(${(1 - sp(SAVE + 8, 15, 170)) * -120}px)`, opacity: 1 - lin(f, AI - 24, AI - 8) }}><Check s={28} c={GREEN} />Заметка сохранена</div> : null}
+        {f >= SAVE + 8 && f < AI ? <div style={{ position: "absolute", left: PX - 220, top: 70, width: 440, height: 76, borderRadius: 22, background: NAVY, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 14, fontFamily: UI, fontWeight: 800, fontSize: 28, transform: `translateY(${(1 - sp(SAVE + 8, 15, 170)) * -120}px)`, opacity: 1 - lin(f, AI - 24, AI - 8) }}><Check s={28} c={GREEN} />{tr("Заметка сохранена")}</div> : null}
         {aiOn ? CARDS.map(([t, d, x, y], i) => {
           const s = sp(TAP + 28 + i * B, 13, 180);
           return (
@@ -635,13 +636,13 @@ export const S8b: React.FC = () => {
 const StepperB: React.FC<{ at: number }> = ({ at }) => {
   const f = useCurrentFrame();
   const sp = useSp();
-  const L = [["Найди", "поиск по 1 608 законам"], ["Пойми", "объяснение ИИ"], ["Запомни", "заметки и тест"]];
+  const L = [[tr("Найди"), tr("поиск по 1 608 законам")], [tr("Пойми"), tr("объяснение ИИ")], [tr("Запомни"), tr("заметки и тест")]];
   const X = [560, 960, 1360];
   const travel = interpolate(f, [at + 30, at + 30 + B, at + 30 + B * 2, at + 30 + B * 3], [0, 1, 1, 2], { ...cl, easing: IOE });
   const dotX = X[0] + (X[2] - X[0]) * (travel / 2);
   return (
     <AbsoluteFill>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 220, display: "flex", justifyContent: "center" }}><Cap text="Найди. Пойми. Запомни." at={at + 4} size={72} color="#fff" accent="Запомни." accentColor={NAVY} /></div>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 220, display: "flex", justifyContent: "center" }}><Cap text={tr("Найди. Пойми. Запомни.")} at={at + 4} size={72} color="#fff" accent={tr("Запомни.")} accentColor={NAVY} /></div>
       <div style={{ position: "absolute", left: X[0], top: 560 - 3, width: (X[2] - X[0]) * lin(f, at + 6, at + 36), height: 6, borderRadius: 3, background: "rgba(255,255,255,0.6)" }} />
       {L.map(([t, d], i) => {
         const s = sp(at + 6 + i * 8, 12, 200);
