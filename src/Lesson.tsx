@@ -36,20 +36,26 @@ const Check: React.FC<{ on: number; c?: string; size?: number }> = ({ on, c = GR
   </div>
 );
 /** green / red result band at the bottom of the page */
-const Result: React.FC<{ o: number; ok: boolean; title: string; sub: string; btn: string; btnDown?: number }> = ({ o, ok, title, sub, btn, btnDown = 0 }) => (
-  <div style={{ position: "absolute", left: 0, right: 0, top: 880, height: 200, background: ok ? "#d7ffb8" : "#ffdfe0", transform: `translateY(${(1 - o) * 200}px)`, zIndex: 20, fontFamily: UI }}>
-    <div style={{ position: "absolute", left: CX - 110, top: 46, width: 104, height: 104, borderRadius: 52, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ width: 84, height: 84, borderRadius: 42, background: ok ? GREEN : RED, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d={ok ? "M5 12.5l4.5 4.5L19 7.5" : "M6 6l12 12M18 6L6 18"} /></svg>
+const Result: React.FC<{ o: number; ok: boolean; title: string; sub: string; btn: string; btnDown?: number }> = ({ o, ok, title, sub, btn, btnDown = 0 }) => {
+  // the band is far wider and taller than the frame, so a zoomed-out camera never shows its edges
+  const P = 1600;
+  const k = (a: number) => Math.min(1, Math.max(0, (o - a) / (1 - a)));   // staggered parts
+  const ic = k(0.25), tx = k(0.4), bt = k(0.55);
+  return (
+    <div style={{ position: "absolute", left: -P, right: -P, top: 880, height: 900, background: ok ? "linear-gradient(180deg, #e3ffcc 0%, #d7ffb8 100%)" : "linear-gradient(180deg, #ffe8e9 0%, #ffdfe0 100%)", borderTop: `3px solid ${ok ? "#b9f08f" : "#ffc4c7"}`, boxShadow: ok ? "0 -14px 40px rgba(88,204,2,0.14)" : "0 -14px 40px rgba(234,43,43,0.12)", transform: `translateY(${(1 - o) * 230}px)`, opacity: Math.min(1, o * 1.8), zIndex: 20, fontFamily: UI }}>
+      <div style={{ position: "absolute", left: P + CX - 110, top: 46, width: 104, height: 104, borderRadius: 52, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 18px rgba(0,0,0,0.08)", transform: `scale(${0.5 + 0.5 * ic + 0.12 * Math.sin(ic * Math.PI)})`, opacity: ic }}>
+        <div style={{ width: 84, height: 84, borderRadius: 42, background: ok ? GREEN : RED, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d={ok ? "M5 12.5l4.5 4.5L19 7.5" : "M6 6l12 12M18 6L6 18"} strokeDasharray="30" strokeDashoffset={30 * (1 - ic)} /></svg>
+        </div>
       </div>
+      <div style={{ position: "absolute", left: P + CX + 20, top: 50, opacity: tx, transform: `translateY(${(1 - tx) * 18}px)` }}>
+        <div style={{ fontWeight: 900, fontSize: 42, color: ok ? GLIP : "#ea2b2b" }}>{title}</div>
+        <div style={{ marginTop: 6, fontWeight: 700, fontSize: 26, color: ok ? "#58a700" : "#ea2b2b" }}>{sub}</div>
+      </div>
+      <div style={{ position: "absolute", left: P + CX + CW - 300, top: 58, width: 300, height: 80, borderRadius: 18, background: ok ? GREEN : RED, boxShadow: `0 ${5 - 4 * btnDown}px 0 ${ok ? GLIP : "#ea2b2b"}`, transform: `translate(${(1 - bt) * 40}px, ${btnDown * 4}px)`, opacity: bt, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, letterSpacing: "0.06em" }}>{btn}</div>
     </div>
-    <div style={{ position: "absolute", left: CX + 20, top: 50 }}>
-      <div style={{ fontWeight: 900, fontSize: 42, color: ok ? GLIP : "#ea2b2b" }}>{title}</div>
-      <div style={{ marginTop: 6, fontWeight: 700, fontSize: 26, color: ok ? "#58a700" : "#ea2b2b" }}>{sub}</div>
-    </div>
-    <div style={{ position: "absolute", left: CX + CW - 300, top: 58, width: 300, height: 80, borderRadius: 18, background: ok ? GREEN : RED, boxShadow: `0 ${5 - 4 * btnDown}px 0 ${ok ? GLIP : "#ea2b2b"}`, transform: `translateY(${btnDown * 4}px)`, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, letterSpacing: "0.06em" }}>{btn}</div>
-  </div>
-);
+  );
+};
 
 /** Confetti burst from (x, y) starting at frame `at` (deterministic). */
 export const Confetti: React.FC<{ at: number; x?: number; y?: number; n?: number }> = ({ at, x = 960, y = 760, n = 90 }) => {
@@ -438,7 +444,7 @@ export const LessonMore: React.FC = () => {
       </div>
       <div style={{ position: "absolute", left: CX + 116, top: BTN_Y, width: CW - 116, height: BTN_H, borderRadius: 18, background: mainOn ? GREEN : "#e5e5e5", boxShadow: `0 ${5 - 4 * mainDown}px 0 ${mainOn ? GLIP : "#cfcfcf"}`, transform: `translateY(${mainDown * 4}px)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 30, letterSpacing: "0.08em", color: mainOn ? "#fff" : "#afafaf" }}>{tr("ПРОВЕРИТЬ")}</div>
       {f >= CHK1 + 2 && f < H_END ? <Result o={lin(f, CHK1 + 2, CHK1 + 14, 0, 1, OUTE) * (1 - lin(f, H_END - 14, H_END - 4))} ok title={tr("Верно!")} sub="+10 XP" btn={tr("ДАЛЕЕ")} btnDown={press(f, NEXT)} /> : null}
-      {f >= OK2 ? <Result o={lin(f, OK2, OK2 + 12, 0, 1, OUTE)} ok title={tr("Ура! Казус решён верно")} sub="+50 XP" btn={tr("ПРОДОЛЖИТЬ")} /> : null}
+      {f >= OK2 ? <Result o={lin(f, OK2, OK2 + 34, 0, 1, Easing.bezier(0.16, 1, 0.3, 1))} ok title={tr("Ура! Казус решён верно")} sub="+50 XP" btn={tr("ПРОДОЛЖИТЬ")} /> : null}
       {f >= 10 && !hideCursor && f < END - 20 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, 10, 20) * (1 - lin(f, END - 34, END - 20))} /></div> : null}
       </AbsoluteFill>
       <Confetti at={CHK1 + 2} />
