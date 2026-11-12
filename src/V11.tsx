@@ -1,4 +1,5 @@
 import React from "react";
+import { tr } from "./i18n";
 import { AbsoluteFill, Easing, Img, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { useFonts7, fit } from "./Kit7";
 import { DemoNotes, DemoAI } from "./Laws7";
@@ -79,14 +80,14 @@ export const S1: React.FC = () => {
           return <span key={i} style={{ display: "inline-block", fontFamily: UI, fontWeight: 900, fontSize: 230, lineHeight: 0.92, letterSpacing: "-0.01em", color: LOGO, transform: `translateY(${(1 - s) * 110}%)` }}>{ch}</span>;
         })}
       </div>
-      <div style={{ position: "absolute", top: 676, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 600, fontSize: 40, color: "#555c68", opacity: sub, transform: `translateY(${(1 - sub) * 20}px)` }}>Самый живой способ учиться</div>
+      <div style={{ position: "absolute", top: 676, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 600, fontSize: 40, color: "#555c68", opacity: sub, transform: `translateY(${(1 - sub) * 20}px)` }}>{tr("Самый живой способ учиться")}</div>
     </AbsoluteFill>
   );
 };
-const S2: React.FC = () => <Words per={57.6} items={[["ЗУБРИШЬ.", NAVY, "#fff"], ["ЗАБЫВАЕШЬ.", BLUE, "#fff"], ["СКУЧНО.", "#fff", NAVY], ["ЗНАКОМО?", BG, NAVY, "?"]]} />;
+const S2: React.FC = () => <Words per={57.6} items={[[tr("ЗУБРИШЬ."), NAVY, "#fff"], [tr("ЗАБЫВАЕШЬ."), BLUE, "#fff"], [tr("СКУЧНО."), "#fff", NAVY], [tr("ЗНАКОМО?"), BG, NAVY, "?"]]} />;
 
 // ================= S3 the turn: a slower text cylinder =================
-const BAND = "УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ • ";
+const BAND = tr("УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ • ");
 const S3: React.FC = () => {
   const f = useCurrentFrame();
   const N = 9, R = 520;
@@ -103,7 +104,7 @@ const S3: React.FC = () => {
       </AbsoluteFill>
       <Top dark />
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-        {f >= 178 ? <Kin text="Учись играя." at={180} size={190} color="#fff" /> : null}
+        {f >= 178 ? <Kin text={tr("Учись играя.")} at={180} size={190} color="#fff" /> : null}
       </AbsoluteFill>
     </AbsoluteFill>
   );
@@ -122,7 +123,7 @@ const S4: React.FC = () => {
         <AbsoluteFill>
           <Top />
           <Img src={staticFile("ic3d2/law-s.png")} style={{ position: "absolute", left: 960 - 270, top: 160 + (1 - hero) * 120, width: 540, height: 540, objectFit: "contain", transform: `scale(${0.85 + 0.15 * hero}) rotate(${(1 - hero) * -6 + Math.sin(f / 30) * 2}deg)`, filter: `drop-shadow(0 ${30 + 20 * hero}px 40px rgba(13,22,48,${0.12 + 0.1 * hero}))` }} />
-          <div style={{ position: "absolute", top: 750, width: "100%" }}><Kin text="Юриспруденция" at={306} size={130} stagger={1} /></div>
+          <div style={{ position: "absolute", top: 750, width: "100%" }}><Kin text={tr("Юриспруденция")} at={306} size={130} stagger={1} /></div>
         </AbsoluteFill>
       ) : null}
     </AbsoluteFill>
@@ -168,7 +169,7 @@ const S5: React.FC = () => {
   // flood from the button, in screen space
   const bsx = 960 + (btn.x - fx) * sc, bsy = 600 + (btn.y - fy) * sc;
   const flood = lin(f, FLOOD, FLOOD + 40, 0, 1, Easing.bezier(0.6, 0, 0.2, 1));
-  const banners: [number, string, string][] = [[0, "МОДУЛЬ 1", "Введение в право"], [5, "МОДУЛЬ 2", "Конституция"], [10, "МОДУЛЬ 3", "Права человека"]];
+  const banners: [number, string, string][] = [[0, tr("МОДУЛЬ 1"), tr("Введение в право")], [5, tr("МОДУЛЬ 2"), tr("Конституция")], [10, tr("МОДУЛЬ 3"), tr("Права человека")]];
   return (
     <AbsoluteFill style={{ background: "#f7f8f4", overflow: "hidden" }}>
       <AbsoluteFill style={{ perspective: 1300 }}>
@@ -185,9 +186,9 @@ const S5: React.FC = () => {
           <Img src={staticFile("v4/owl-q.png")} style={{ position: "absolute", left: SX(3) - 420, top: SY(3) - 120, width: 220 }} />
           {card > 0.01 ? (
             <div style={{ position: "absolute", left: SX(CUR) - 230, top: cardY, width: 460, borderRadius: 26, background: GREEN, boxShadow: `0 6px 0 ${GLIP}, 0 30px 60px rgba(40,90,0,0.25)`, padding: "22px 26px 26px", boxSizing: "border-box", fontFamily: UI, color: "#fff", transformOrigin: "50% 100%", transform: `scale(${card})`, opacity: Math.min(1, card * 1.6) }}>
-              <div style={{ fontWeight: 900, fontSize: 32, lineHeight: 1.15 }}>Кто пишет законы</div>
-              <div style={{ fontWeight: 700, fontSize: 21, opacity: 0.9, marginTop: 6 }}>Урок 10</div>
-              <div style={{ marginTop: 18, height: 68, borderRadius: 18, background: "#fff", color: GREEN, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, letterSpacing: "0.05em", boxShadow: `0 ${6 - press(f, START) * 6}px 0 ${SWAN}`, transform: `translateY(${press(f, START) * 6}px)` }}>НАЧАТЬ</div>
+              <div style={{ fontWeight: 900, fontSize: 32, lineHeight: 1.15 }}>{tr("Кто пишет законы")}</div>
+              <div style={{ fontWeight: 700, fontSize: 21, opacity: 0.9, marginTop: 6 }}>{tr("Урок 10")}</div>
+              <div style={{ marginTop: 18, height: 68, borderRadius: 18, background: "#fff", color: GREEN, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, letterSpacing: "0.05em", boxShadow: `0 ${6 - press(f, START) * 6}px 0 ${SWAN}`, transform: `translateY(${press(f, START) * 6}px)` }}>{tr("НАЧАТЬ")}</div>
             </div>
           ) : null}
           {f >= FLY - 30 && f < FLOOD + 10 ? <Pointer x={px} y={py} down={down} op={lin(f, FLY - 30, FLY - 18)} /> : null}
@@ -207,7 +208,7 @@ export const G1: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const iris = 1 - lin(f, 0, 34, 0, 1, Easing.bezier(0.6, 0, 0.3, 1));
-  const W = ["Закон", "один", "для", "всех"];
+  const W = [tr("Закон"), tr("один"), tr("для"), tr("всех")];
   const widths = [200, 160, 130, 150];
   const gap = 28, total = widths.reduce((a, b) => a + b, 0) + gap * 3;
   const slotX = widths.map((_, i) => 960 - total / 2 + widths.slice(0, i).reduce((a, b) => a + b, 0) + gap * i);
@@ -216,12 +217,12 @@ export const G1: React.FC = () => {
   const done = f >= landAt(3) + 16;
   const glow = lin(f, landAt(3) + 16, landAt(3) + 40, 0, 1, OUTE);
   const lift = lin(f, landAt(3) + 30, landAt(3) + 70, 0, 1, OUTE);
-  const extra: [string, number, number, number][] = [["только", 1330, 760, -8], ["богатых", 420, 790, 10], ["иногда", 1080, 860, 5]];
+  const extra: [string, number, number, number][] = [[tr("только"), 1330, 760, -8], [tr("богатых"), 420, 790, 10], [tr("иногда"), 1080, 860, 5]];
   const fall = lin(f, landAt(3) + 10, landAt(3) + 50, 0, 1, Easing.in(Easing.quad));
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
       <Top />
-      <GameTitle t="Собери фразу" at={30} />
+      <GameTitle t={tr("Собери фразу")} at={30} />
       {/* slots on one baseline */}
       {widths.map((w, i) => (
         <div key={i} style={{ position: "absolute", left: slotX[i], top: BASE - H, width: w, height: H, borderRadius: 22, border: `3px dashed ${done ? "transparent" : "#d6d9de"}`, boxSizing: "border-box", opacity: lin(f, 20 + i * 4, 34 + i * 4) }} />
@@ -245,7 +246,7 @@ export const G1: React.FC = () => {
   );
 };
 /** 2. Story: someone is typing, the message types out, the camera pulls back to the answers, one is chosen. */
-const STORY = "Купил телефон, через неделю он сломался. Продавец говорит: «Сам виноват». Что делать?";
+const STORY = tr("Купил телефон, через неделю он сломался. Продавец говорит: «Сам виноват». Что делать?");
 const G2: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -274,10 +275,10 @@ const G2: React.FC = () => {
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
       <HBlur id="hb-g2" v={W2 * 46} />
       <AbsoluteFill style={whip("hb-g2", W2 * 46, -W2 * 1700)}>
-      <GameTitle t="Истории" />
+      <GameTitle t={tr("Истории")} />
       <AbsoluteFill style={{ perspective: 1600 }}><AbsoluteFill style={{ transformOrigin: "960px 560px", transform: `rotateY(${-12 * follow}deg) rotateX(${6 * follow}deg)` }}><AbsoluteFill style={{ transformOrigin: "0 0", transform: `translate(${camX}px, ${camYf}px) scale(${camS})` }}>
         <Img src={staticFile("av/p1.svg")} style={{ position: "absolute", left: 420, top: 280, width: 120, height: 120, borderRadius: 60, background: "#e9dcff", transform: `scale(${sp(4)})` }} />
-        <div style={{ position: "absolute", left: 572, top: 296, fontFamily: UI, fontWeight: 800, fontSize: 26, color: GREY, opacity: lin(f, 8, 20) }}>Шахзод</div>
+        <div style={{ position: "absolute", left: 572, top: 296, fontFamily: UI, fontWeight: 800, fontSize: 26, color: GREY, opacity: lin(f, 8, 20) }}>{tr("Шахзод")}</div>
         {typing ? (
           <div style={{ position: "absolute", left: 570, top: 340, padding: "22px 30px", borderRadius: "28px 28px 28px 8px", background: "#fff", border: `3px solid ${SWAN}`, display: "flex", gap: 10, transform: `scale(${sp(18)})`, transformOrigin: "0 100%" }}>
             {[0, 1, 2].map((k) => <div key={k} style={{ width: 16, height: 16, borderRadius: 8, background: "#b9c1cc", transform: `translateY(${Math.sin(f / 4 - k) * 5}px)` }} />)}
@@ -288,7 +289,7 @@ const G2: React.FC = () => {
             {STORY.slice(0, n)}<span style={{ display: "inline-block", width: 3, height: 38, marginLeft: 3, verticalAlign: "-6px", background: BLUE, opacity: n < STORY.length || Math.floor(f / 14) % 2 ? 1 : 0 }} />
           </div>
         ) : null}
-        {["Смириться", "Требовать ремонт или возврат"].map((o, i) => {
+        {[tr("Смириться"), tr("Требовать ремонт или возврат")].map((o, i) => {
           const s = sp(200 + i * 6, 13, 190);
           const good = i === 1 && ok;
           return <div key={o} style={{ ...card, left: optX[i], top: optY, width: optW[i], height: 100, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, border: `3px solid ${good ? GREEN : SWAN}`, background: good ? "#e7ffd6" : "#fff", color: good ? GLIP : INK, transform: `scale(${s * (1 - (i === 1 ? press(f, PICK) * 0.05 : 0))})`, opacity: i === 0 && ok ? 0.4 : s }}>{o}</div>;
@@ -296,7 +297,7 @@ const G2: React.FC = () => {
         {ok ? (
           <div style={{ position: "absolute", left: 560, top: 780, display: "flex", alignItems: "center", gap: 18, transform: `scale(${sp(PICK + 8)})`, transformOrigin: "0 50%" }}>
             <Img src={staticFile("v4/owl-q.png")} style={{ width: 110 }} />
-            <div style={{ padding: "20px 28px", borderRadius: 24, background: GREEN, color: "#fff", fontFamily: UI, fontWeight: 800, fontSize: 30 }}>Верно! Закон защищает покупателя.</div>
+            <div style={{ padding: "20px 28px", borderRadius: 24, background: GREEN, color: "#fff", fontFamily: UI, fontWeight: 800, fontSize: 30 }}>{tr("Верно! Закон защищает покупателя.")}</div>
           </div>
         ) : null}
       </AbsoluteFill></AbsoluteFill></AbsoluteFill>
@@ -309,7 +310,7 @@ const G2: React.FC = () => {
 const G3: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const T = ["Конституция: главный закон страны", "Закон можно не соблюдать, если не согласен", "Права человека защищает государство"];
+  const T = [tr("Конституция: главный закон страны"), tr("Закон можно не соблюдать, если не согласен"), tr("Права человека защищает государство")];
   const enter = (i: number) => spring({ frame: f - 6 - i * 10, fps, config: { damping: 15, stiffness: 120 } });
   const go = [74, 124];
   const dir = [1, -1];
@@ -322,7 +323,7 @@ const G3: React.FC = () => {
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
       <HBlur id="hb-g3" v={W3 * 46} />
       <AbsoluteFill style={whip("hb-g3", W3 * 46, W3 * 1700)}>
-      <GameTitle t="Верно или неверно" />
+      <GameTitle t={tr("Верно или неверно")} />
       {(() => {
         const l0 = lin(f, go[0] - 18, go[0], 0, 1) * (1 - lin(f, go[0] + 10, go[0] + 30));
         const l1 = lin(f, go[1] - 18, go[1], 0, 1) * (1 - lin(f, go[1] + 10, go[1] + 30));
@@ -331,8 +332,8 @@ const G3: React.FC = () => {
         return (
           <>
             <AbsoluteFill style={{ background: `radial-gradient(60% 70% at 85% 55%, rgba(88,204,2,${0.22 * g}), rgba(88,204,2,0) 70%), radial-gradient(60% 70% at 15% 55%, rgba(255,75,75,${0.2 * r}), rgba(255,75,75,0) 70%)` }} />
-            <div style={{ position: "absolute", left: -40, top: 560, fontFamily: HEAD, fontWeight: 900, fontSize: 150, letterSpacing: "-0.04em", color: "transparent", WebkitTextStroke: `3px rgba(255,75,75,${0.18 + 0.6 * r})`, transform: `translateX(${-r * 30}px) rotate(-90deg)`, transformOrigin: "50% 50%", opacity: 1 - slap, whiteSpace: "nowrap" }}>НЕВЕРНО</div>
-            <div style={{ position: "absolute", right: 60, top: 560, fontFamily: HEAD, fontWeight: 900, fontSize: 150, letterSpacing: "-0.04em", color: "transparent", WebkitTextStroke: `3px rgba(88,204,2,${0.18 + 0.6 * g})`, transform: `translateX(${g * 30}px) rotate(90deg)`, transformOrigin: "50% 50%", opacity: 1 - slap, whiteSpace: "nowrap" }}>ВЕРНО</div>
+            <div style={{ position: "absolute", left: -40, top: 560, fontFamily: HEAD, fontWeight: 900, fontSize: 150, letterSpacing: "-0.04em", color: "transparent", WebkitTextStroke: `3px rgba(255,75,75,${0.18 + 0.6 * r})`, transform: `translateX(${-r * 30}px) rotate(-90deg)`, transformOrigin: "50% 50%", opacity: 1 - slap, whiteSpace: "nowrap" }}>{tr("НЕВЕРНО")}</div>
+            <div style={{ position: "absolute", right: 60, top: 560, fontFamily: HEAD, fontWeight: 900, fontSize: 150, letterSpacing: "-0.04em", color: "transparent", WebkitTextStroke: `3px rgba(88,204,2,${0.18 + 0.6 * g})`, transform: `translateX(${g * 30}px) rotate(90deg)`, transformOrigin: "50% 50%", opacity: 1 - slap, whiteSpace: "nowrap" }}>{tr("ВЕРНО")}</div>
           </>
         );
       })()}
@@ -352,7 +353,7 @@ const G3: React.FC = () => {
         return (
           <div key={t} style={{ ...card, left: 960 - 330, top: 330, width: 660, height: 420, display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 54, fontSize: 42, lineHeight: 1.3, zIndex: 20 - i + (isLast && depth <= 0 ? 10 : 0), border: `3px solid ${lean > 0.3 ? (good ? GREEN : RED) : SWAN}`, background: lean > 0.3 ? (good ? "#e7ffd6" : "#ffe3e3") : "#fff", transform: `translate(${x}px, ${y}px) rotate(${r}deg) scale(${s3})`, opacity: e * (1 - fly * 0.3), borderRadius: 26 * (1 - slap) + 2 }}>
             <span style={{ opacity: isLast ? 1 - slap : 1 }}>{t}</span>
-            {lean > 0.3 ? <div style={{ position: "absolute", left: good ? 34 : undefined, right: good ? undefined : 34, top: 28, padding: "4px 16px", border: `5px solid ${good ? GREEN : RED}`, borderRadius: 12, fontFamily: HEAD, fontWeight: 900, fontSize: 32, color: good ? GLIP : RED, transform: `rotate(${good ? -8 : 8}deg)`, opacity: isLast ? 1 - slap : 1 }}>{good ? "ВЕРНО" : "НЕВЕРНО"}</div> : null}
+            {lean > 0.3 ? <div style={{ position: "absolute", left: good ? 34 : undefined, right: good ? undefined : 34, top: 28, padding: "4px 16px", border: `5px solid ${good ? GREEN : RED}`, borderRadius: 12, fontFamily: HEAD, fontWeight: 900, fontSize: 32, color: good ? GLIP : RED, transform: `rotate(${good ? -8 : 8}deg)`, opacity: isLast ? 1 - slap : 1 }}>{good ? tr("ВЕРНО") : tr("НЕВЕРНО")}</div> : null}
           </div>
         );
       })}
@@ -362,19 +363,19 @@ const G3: React.FC = () => {
 };
 
 // ================= S7 kinetic words between sections =================
-const S7: React.FC = () => <Words per={57.6} items={[["ИГРАЕШЬ.", "#e7ffd6", GLIP], ["ЗАПОМИНАЕШЬ.", BLUE, "#fff"], ["РАСТЁШЬ В ЛИГЕ.", BG, NAVY, "В ЛИГЕ."]]} />;
+const S7: React.FC = () => <Words per={57.6} items={[[tr("ИГРАЕШЬ."), "#e7ffd6", GLIP], [tr("ЗАПОМИНАЕШЬ."), BLUE, "#fff"], [tr("РАСТЁШЬ В ЛИГЕ."), BG, NAVY, tr("В ЛИГЕ.")]]} />;
 /** Blue section cuts before each new part of the site. */
-const DuelWords: React.FC = () => <Words per={57.6} items={[["А ТЕПЕРЬ", BG, NAVY], ["СОРЕВНОВАНИЯ.", BLUE, "#fff"]]} />;
-const ProfWords: React.FC = () => <Words per={57.6} items={[["А ЕЩЁ", BG, NAVY], ["ТВОЯ СТРАНИЦА.", BLUE, "#fff"]]} />;
-const PremWords: React.FC = () => <Words per={57.6} items={[["И, КОНЕЧНО,", BG, NAVY], ["PREMIUM.", NAVY, "#fff"]]} />;
-const LibWords: React.FC = () => <Words per={57.6} items={[["А ТАКЖЕ", BG, NAVY], ["СВОЯ БИБЛИОТЕКА.", BLUE, "#fff"]]} />;
-const S9: React.FC = () => <Words per={57.6} items={[["А ТЕПЕРЬ", BG, NAVY], ["ЗАКОНЫ.", NAVY, "#fff"]]} />;
+const DuelWords: React.FC = () => <Words per={57.6} items={[[tr("А ТЕПЕРЬ"), BG, NAVY], [tr("СОРЕВНОВАНИЯ."), BLUE, "#fff"]]} />;
+const ProfWords: React.FC = () => <Words per={57.6} items={[[tr("А ЕЩЁ"), BG, NAVY], [tr("ТВОЯ СТРАНИЦА."), BLUE, "#fff"]]} />;
+const PremWords: React.FC = () => <Words per={57.6} items={[[tr("И, КОНЕЧНО,"), BG, NAVY], ["PREMIUM.", NAVY, "#fff"]]} />;
+const LibWords: React.FC = () => <Words per={57.6} items={[[tr("А ТАКЖЕ"), BG, NAVY], [tr("СВОЯ БИБЛИОТЕКА."), BLUE, "#fff"]]} />;
+const S9: React.FC = () => <Words per={57.6} items={[[tr("А ТЕПЕРЬ"), BG, NAVY], [tr("ЗАКОНЫ."), NAVY, "#fff"]]} />;
 /** Word cut before the AI window: "А ТЕПЕРЬ" (1 beat), then a blue card with the AI mark (2 beats). */
 const AiWords: React.FC = () => {
   const f = useCurrentFrame();
   const sp = useSp();
   const B1 = 57.6; // 2 beats, then the AI card for 4 beats (scene = 6 beats = 173 frames)
-  if (f < B1) return <Words per={B1} items={[["А ТЕПЕРЬ", BG, NAVY]]} />;
+  if (f < B1) return <Words per={B1} items={[[tr("А ТЕПЕРЬ"), BG, NAVY]]} />;
   const lf = f - B1;
   const ic = sp(B1, 12, 170);
   const s = 1.05 - lin(lf, 0, 115, 0, 0.05, Easing.out(Easing.quad));
@@ -383,15 +384,15 @@ const AiWords: React.FC = () => {
       <Top dark />
       <div style={{ transform: `scale(${s})`, width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ transform: `scale(${ic}) rotate(${(1 - ic) * -90}deg)`, opacity: Math.min(1, ic * 1.5), marginBottom: 6 }}><AiIcon size={170} color="#fff" spin={Math.sin(f / 10) * 5} blink={blinkAt(f - 10)} /></div>
-        <Kin text="ИСКУССТВЕННЫЙ" at={B1 + 2} size={170} color="#fff" />
-        <div style={{ marginTop: -30 }}><Kin text="ИНТЕЛЛЕКТ." at={B1 + 8} size={170} color="#fff" /></div>
+        <Kin text={tr("ИСКУССТВЕННЫЙ")} at={B1 + 2} size={170} color="#fff" />
+        <div style={{ marginTop: -30 }}><Kin text={tr("ИНТЕЛЛЕКТ.")} at={B1 + 8} size={170} color="#fff" /></div>
       </div>
     </AbsoluteFill>
   );
 };
 
 // ================= S10 lex.uz vs veoskill, function by function =================
-const LINES = ["Узбекистан: суверенное,", "демократическое, правовое,", "социальное и светское", "государство.", "Названия «Республика", "Узбекистан» и «Узбекистан»", "равнозначны."];
+const LINES = [tr("Узбекистан: суверенное,"), tr("демократическое, правовое,"), tr("социальное и светское"), tr("государство."), tr("Названия «Республика"), tr("Узбекистан» и «Узбекистан»"), tr("равнозначны.")];
 const COLORS = ["#ffd43b", "#ff922b", "#ff6b6b", "#f783ac", "#cc5de8", "#4dabf7", "#51cf66"];
 const Mark: React.FC<{ ok: boolean; s?: number }> = ({ ok, s = 40 }) => (
   <div style={{ width: s, height: s, borderRadius: s / 2, background: ok ? GREEN : RED, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -429,10 +430,10 @@ export const S10: React.FC = () => {
   const ptr = { x: interpolate(f, kf.map((k) => k[0]), kf.map((k) => k[1]), { ...cl, easing: IOE }), y: interpolate(f, kf.map((k) => k[0]), kf.map((k) => k[2]), { ...cl, easing: IOE }) };
   const down = Math.max(press(f, SEL0), press(f, YEL_), press(f, NOTE), press(f, SAVE), tap);
   const dragging = f >= SEL0 && f < SEL1 + 2;
-  const cap = f < AI - 10 ? "Выдели строку и запиши заметку" : "Пойми статью простыми словами";
-  const lexNo = f < AI - 10 ? "Нет заметок и выделения" : "Только юридический текст";
-  const CARDS: [string, string][] = [["Коротко", "Узбекистан: суверенное правовое государство."], ["Простыми словами", "Страна сама решает, а всё держится на законе."], ["Пример из жизни", "Чиновник нарушил закон? Его решение можно обжаловать."]];
-  const ROWS = ["Объяснение простыми словами", "Заметки и выделение цветом", "Тест по выделенному тексту", "Уроки и игры по праву"];
+  const cap = f < AI - 10 ? tr("Выдели строку и запиши заметку") : tr("Пойми статью простыми словами");
+  const lexNo = f < AI - 10 ? tr("Нет заметок и выделения") : tr("Только юридический текст");
+  const CARDS: [string, string][] = [[tr("Коротко"), tr("Узбекистан: суверенное правовое государство.")], [tr("Простыми словами"), tr("Страна сама решает, а всё держится на законе.")], [tr("Пример из жизни"), tr("Чиновник нарушил закон? Его решение можно обжаловать.")]];
+  const ROWS = [tr("Объяснение простыми словами"), tr("Заметки и выделение цветом"), tr("Тест по выделенному тексту"), tr("Уроки и игры по праву")];
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
       <Top />
@@ -455,8 +456,8 @@ export const S10: React.FC = () => {
         <div style={{ position: "absolute", left: PL, top: PT, width: PW, height: PH, borderRadius: 54, background: "#fff", boxShadow: "0 40px 90px rgba(13,22,48,0.2)", border: "3px solid #e8eaee", overflow: "hidden", fontFamily: UI, opacity: inR, transform: `translateX(${(1 - inR) * 200}px)` }}>
           <div style={{ width: 130, height: 12, borderRadius: 6, background: "#e8eaee", margin: "22px auto 0" }} />
           <div style={{ padding: "22px 30px 0" }}>
-            <div style={{ fontWeight: 700, fontSize: 19, color: BLUE }}>Конституция Республики Узбекистан</div>
-            <div style={{ marginTop: 6, fontWeight: 900, fontSize: 40, color: INK }}>Статья 1.</div>
+            <div style={{ fontWeight: 700, fontSize: 19, color: BLUE }}>{tr("Конституция Республики Узбекистан")}</div>
+            <div style={{ marginTop: 6, fontWeight: 900, fontSize: 40, color: INK }}>{tr("Статья 1.")}</div>
           </div>
           {LINES.map((l, i) => {
             const hot = i >= 4;
@@ -473,20 +474,20 @@ export const S10: React.FC = () => {
             <div style={{ position: "absolute", left: 30, right: 30, top: palTop - PT, borderRadius: 22, background: "#fff", border: `3px solid ${BLUE}`, boxShadow: "0 18px 40px rgba(13,22,48,0.18)", padding: "18px 20px", transform: `scale(${0.9 + 0.1 * pal})`, opacity: pal, transformOrigin: "50% 0" }}>
               <div style={{ display: "flex", gap: 14 }}>{COLORS.map((c, i) => <div key={c} style={{ width: 40, height: 40, borderRadius: 20, background: c, boxShadow: i === 0 && yellow ? `0 0 0 4px #fff, 0 0 0 7px ${c}` : undefined, transform: `scale(${i === 0 ? 1 - press(f, YEL_) * 0.2 : 1})` }} />)}</div>
               <div style={{ display: "flex", gap: 18, marginTop: 14, fontWeight: 800, fontSize: 22, color: BLUE }}>
-                <span>Копия</span><span style={{ padding: "2px 10px", borderRadius: 10, background: f > NOTE - 14 ? "#ddf4ff" : "transparent" }}>Заметка</span><span>Тест</span><span>Ссылка</span>
+                <span>{tr("Копия")}</span><span style={{ padding: "2px 10px", borderRadius: 10, background: f > NOTE - 14 ? "#ddf4ff" : "transparent" }}>{tr("Заметка")}</span><span>{tr("Тест")}</span><span>{tr("Ссылка")}</span>
               </div>
             </div>
           ) : null}
           {sheet > 0.01 ? (
             <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 400, borderRadius: "34px 34px 0 0", background: "#fff", boxShadow: "0 -20px 50px rgba(13,22,48,0.2)", padding: "26px 28px", boxSizing: "border-box", transform: `translateY(${(1 - sheet) * 420}px)` }}>
-              <div style={{ fontWeight: 900, fontSize: 30, color: INK }}>Заметка к выделенному</div>
+              <div style={{ fontWeight: 900, fontSize: 30, color: INK }}>{tr("Заметка к выделенному")}</div>
               <div style={{ marginTop: 16, minHeight: 96, borderRadius: 20, border: `3px solid ${BLUE}`, background: "#f7fbff", padding: "18px 18px", boxSizing: "border-box", fontWeight: 800, fontSize: 30, color: INK }}>
-                {f < TYPE ? <span style={{ color: "#a7b1bc", fontWeight: 600, fontSize: 24 }}>Что вы думаете об этом?</span> : <>{"Спросят на экзамене".slice(0, Math.max(0, Math.floor((f - TYPE) / 2.6)))}<span style={{ display: "inline-block", width: 3, height: 30, background: BLUE, marginLeft: 2, verticalAlign: "middle" }} /></>}
+                {f < TYPE ? <span style={{ color: "#a7b1bc", fontWeight: 600, fontSize: 24 }}>{tr("Что вы думаете об этом?")}</span> : <>{tr("Спросят на экзамене").slice(0, Math.max(0, Math.floor((f - TYPE) / 2.6)))}<span style={{ display: "inline-block", width: 3, height: 30, background: BLUE, marginLeft: 2, verticalAlign: "middle" }} /></>}
               </div>
               <div style={{ marginTop: 20, display: "flex", alignItems: "center" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: GREY }}>Видите только вы</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: GREY }}>{tr("Видите только вы")}</div>
               </div>
-              <div style={{ position: "absolute", left: saveX - PL - 90, top: saveY - (PT + PH - 400) - 34, width: 180, height: 68, borderRadius: 16, background: GREEN, boxShadow: `0 ${5 - press(f, SAVE) * 5}px 0 ${GLIP}`, transform: `translateY(${press(f, SAVE) * 5}px)`, color: "#fff", fontWeight: 900, fontSize: 22, letterSpacing: "0.05em", display: "flex", alignItems: "center", justifyContent: "center" }}>СОХРАНИТЬ</div>
+              <div style={{ position: "absolute", left: saveX - PL - 90, top: saveY - (PT + PH - 400) - 34, width: 180, height: 68, borderRadius: 16, background: GREEN, boxShadow: `0 ${5 - press(f, SAVE) * 5}px 0 ${GLIP}`, transform: `translateY(${press(f, SAVE) * 5}px)`, color: "#fff", fontWeight: 900, fontSize: 22, letterSpacing: "0.05em", display: "flex", alignItems: "center", justifyContent: "center" }}>{tr("СОХРАНИТЬ")}</div>
             </div>
           ) : null}
           <div style={{ position: "absolute", left: botX - PL - 46, top: botY - PT - 46, width: 92, height: 92, borderRadius: 28, background: BLUE, boxShadow: `0 ${6 - tap * 6}px 0 ${DEEP}`, transform: `translateY(${tap * 6}px) scale(${aiOn ? 1 + Math.sin(f / 8) * 0.04 : 0.9})`, opacity: lin(f, AI - 20, AI), display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -497,7 +498,7 @@ export const S10: React.FC = () => {
             const sh = sp(TAP + 10, 16, 150);
             return (
               <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: PH - 120, borderRadius: "34px 34px 0 0", background: "#f5fbff", boxShadow: "0 -20px 50px rgba(13,22,48,0.2)", padding: "24px 22px", boxSizing: "border-box", transform: `translateY(${(1 - sh) * (PH - 100)}px)` }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 14, fontWeight: 900, fontSize: 30, color: INK }}><div style={{ width: 50, height: 50, borderRadius: 16, background: BLUE }} />Объяснение статьи</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, fontWeight: 900, fontSize: 30, color: INK }}><div style={{ width: 50, height: 50, borderRadius: 16, background: BLUE }} />{tr("Объяснение статьи")}</div>
                 {CARDS.map(([t, d], i) => {
                   const s = sp(TAP + 40 + i * B, 13, 180);
                   return (
@@ -511,14 +512,14 @@ export const S10: React.FC = () => {
             );
           })() : null}
         </div>
-        {f >= SAVE + 8 && f < AI - 10 ? <div style={{ position: "absolute", left: PX - 200, top: PT - 70, width: 400, height: 64, borderRadius: 20, background: NAVY, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 12, fontFamily: UI, fontWeight: 800, fontSize: 24, opacity: sp(SAVE + 8, 15, 170) * (1 - lin(f, AI - 26, AI - 12)) }}><Mark ok s={30} />Заметка сохранена</div> : null}
+        {f >= SAVE + 8 && f < AI - 10 ? <div style={{ position: "absolute", left: PX - 200, top: PT - 70, width: 400, height: 64, borderRadius: 20, background: NAVY, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 12, fontFamily: UI, fontWeight: 800, fontSize: 24, opacity: sp(SAVE + 8, 15, 170) * (1 - lin(f, AI - 26, AI - 12)) }}><Mark ok s={30} />{tr("Заметка сохранена")}</div> : null}
         {f >= N0 && f < TAP + 40 ? <Pointer x={ptr.x} y={ptr.y} down={down} op={(dragging ? 0 : 1) * lin(f, N0, N0 + 12) * (1 - lin(f, TAP + 26, TAP + 40))} /> : null}
         {dragging ? <div style={{ position: "absolute", left: ptr.x - 3, top: ptr.y - 46, width: 6, height: 48, borderRadius: 3, background: BLUE }} /> : null}
       </AbsoluteFill>
       {/* summary table */}
       {sum > 0 ? (
         <AbsoluteFill style={{ opacity: sum }}>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 120, display: "flex", justifyContent: "center" }}><Cap text="Чем мы удобнее" at={SUM + 10} size={72} /></div>
+          <div style={{ position: "absolute", left: 0, right: 0, top: 120, display: "flex", justifyContent: "center" }}><Cap text={tr("Чем мы удобнее")} at={SUM + 10} size={72} /></div>
           <div style={{ position: "absolute", left: 300, top: 290, width: 1320 }}>
             <div style={{ display: "flex", alignItems: "center", height: 70, fontFamily: HEAD, fontWeight: 800, fontSize: 34 }}>
               <div style={{ flex: 1 }} />
@@ -574,17 +575,17 @@ const S11: React.FC = () => {
           </div>
         </div>
       </div>
-      <div style={{ position: "absolute", top: 790, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 56, color: "#fff", opacity: txt, transform: `translateY(${(1 - txt) * 20}px)` }}>Отсканируйте QR-код</div>
-      <div style={{ position: "absolute", top: 870, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 700, fontSize: 40, color: "rgba(255,255,255,0.92)", opacity: lin(f, 84, 104) }}>и переходите на veoskill.uz</div>
+      <div style={{ position: "absolute", top: 790, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 56, color: "#fff", opacity: txt, transform: `translateY(${(1 - txt) * 20}px)` }}>{tr("Отсканируйте QR-код")}</div>
+      <div style={{ position: "absolute", top: 870, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 700, fontSize: 40, color: "rgba(255,255,255,0.92)", opacity: lin(f, 84, 104) }}>{tr("и переходите на veoskill.uz")}</div>
     </AbsoluteFill>
   );
 };
 
 
 // ================= laws, desktop: lex.uz first, then ours =================
-const LessonWords: React.FC = () => <Words per={57.6} items={[["КОРОТКИЕ", GREEN, "#fff"], ["УРОКИ.", BG, NAVY, "УРОКИ."], ["ШАГ", NAVY, "#fff"], ["ЗА ШАГОМ.", BLUE, "#fff"]]} />;
-export const LexWords: React.FC = () => <Words per={40} items={[["ОБЫЧНО", BG, NAVY], ["ЗАКОН", NAVY, "#fff"], ["ВЫГЛЯДИТ", BG, NAVY], ["ТАК.", "#ffe3e3", RED]]} />;
-const OurWords: React.FC = () => <Words per={57.6} items={[["А У НАС", BLUE, "#fff"], ["ТАК.", "#e7ffd6", GLIP]]} />;
+const LessonWords: React.FC = () => <Words per={57.6} items={[[tr("КОРОТКИЕ"), GREEN, "#fff"], [tr("УРОКИ."), BG, NAVY, tr("УРОКИ.")], [tr("ШАГ"), NAVY, "#fff"], [tr("ЗА ШАГОМ."), BLUE, "#fff"]]} />;
+export const LexWords: React.FC = () => <Words per={40} items={[[tr("ОБЫЧНО"), BG, NAVY], [tr("ЗАКОН"), NAVY, "#fff"], [tr("ВЫГЛЯДИТ"), BG, NAVY], [tr("ТАК."), "#ffe3e3", RED]]} />;
+const OurWords: React.FC = () => <Words per={57.6} items={[[tr("А У НАС"), BLUE, "#fff"], [tr("ТАК."), "#e7ffd6", GLIP]]} />;
 /** A desktop browser window; the page inside is a full 1920x1080 frame scaled down. */
 const Browser: React.FC<{ url: string; x: number; y: number; w: number; enter: number; children: React.ReactNode }> = ({ url, x, y, w, enter, children }) => {
   const f = useCurrentFrame();
@@ -618,11 +619,11 @@ const Badge: React.FC<{ ok: boolean; text: string; at: number; x: number; y: num
   );
 };
 const LEX_ROWS: [string, string][] = [
-  ["Нет заметок и выделения", "Заметки и выделение цветом"],
-  ["Нет объяснения простыми словами", "Объяснение простыми словами"],
-  ["Нет примеров из жизни", "Примеры из жизни к статьям"],
-  ["Нет уроков и игр", "Уроки и игры по праву"],
-  ["Нет перевода на 99+ языков", "Законы на 99+ языках"],
+  [tr("Нет заметок и выделения"), tr("Заметки и выделение цветом")],
+  [tr("Нет объяснения простыми словами"), tr("Объяснение простыми словами")],
+  [tr("Нет примеров из жизни"), tr("Примеры из жизни к статьям")],
+  [tr("Нет уроков и игр"), tr("Уроки и игры по праву")],
+  [tr("Нет перевода на 99+ языков"), tr("Законы на 99+ языках")],
 ];
 const LEX_FLIP = 196;
 const LexHead: React.FC<{ f: number }> = ({ f }) => {
@@ -630,8 +631,8 @@ const LexHead: React.FC<{ f: number }> = ({ f }) => {
   const st = { position: "absolute" as const, left: 1290, top: 196, fontFamily: HEAD, fontWeight: 800, fontSize: 30, letterSpacing: "0.12em" };
   return (
     <>
-      <div style={{ ...st, color: "#7c8593", opacity: a }}>НА LEX.UZ</div>
-      <div style={{ ...st, color: LOGO, opacity: b, transform: `translateY(${(1 - b) * 12}px)` }}>В VEOSKILL</div>
+      <div style={{ ...st, color: "#7c8593", opacity: a }}>{tr("НА LEX.UZ")}</div>
+      <div style={{ ...st, color: LOGO, opacity: b, transform: `translateY(${(1 - b) * 12}px)` }}>{tr("В VEOSKILL")}</div>
     </>
   );
 };
@@ -668,7 +669,7 @@ const LexScene: React.FC = () => {
   const cx = 110 + 550, cy = 200 + 370;
   return (
     <AbsoluteFill style={{ background: BG }}>
-      <div style={{ position: "absolute", left: 110, top: 96, zIndex: 30 }}><Cap text="Обычно закон выглядит так." at={6} size={56} /></div>
+      <div style={{ position: "absolute", left: 110, top: 96, zIndex: 30 }}><Cap text={tr("Обычно закон выглядит так.")} at={6} size={56} /></div>
       <AbsoluteFill style={{ transformOrigin: `${cx}px ${cy}px`, transform: `scale(${1 + push * 0.06})` }}>
         <AbsoluteFill style={{ perspective: 2400 }}>
           <div style={{ position: "absolute", left: 110, top: 190, width: 1100, height: 744, borderRadius: 22, overflow: "hidden", boxShadow: "0 50px 120px rgba(13,22,48,0.2)", border: "2px solid #e3e5e9", transform: `translateY(${(1 - enter) * 160}px) rotateX(${(1 - enter) * 14 + 2}deg)`, opacity: enter, background: "#fff" }}>
@@ -701,8 +702,8 @@ const OurScene: React.FC<{ kind: "notes" | "ai" }> = ({ kind }) => {
       <Browser url="veoskill.uz/ru/laws/konstitutsiya" x={80} y={170} w={1300} enter={enter}>
         <Sequence from={-off} layout="none"><Demo /></Sequence>
       </Browser>
-      {kind === "notes" ? <Badge ok text="Заметки и выделение цветом" at={badgeAt} x={1410} y={420} /> : <Badge ok text="Объяснение простыми словами" at={badgeAt} x={1410} y={420} />}
-      {kind === "ai" ? <Badge ok text="Пример из жизни" at={badgeAt + 40} x={1410} y={580} /> : null}
+      {kind === "notes" ? <Badge ok text={tr("Заметки и выделение цветом")} at={badgeAt} x={1410} y={420} /> : <Badge ok text={tr("Объяснение простыми словами")} at={badgeAt} x={1410} y={420} />}
+      {kind === "ai" ? <Badge ok text={tr("Пример из жизни")} at={badgeAt + 40} x={1410} y={580} /> : null}
     </AbsoluteFill>
   );
 };
@@ -713,17 +714,17 @@ const Table: React.FC = () => {
   const sp = useSp();
   // top 10 real advantages over reading a bare law site; two columns of numbered cards on a soft brand gradient
   const ROWS: [string, string][] = [
-    ["Каждая статья простыми словами", ""],
-    ["Пример из жизни к любой статье", ""],
-    ["Подсказки к сложным терминам", ""],
-    ["Заметки и выделение прямо в законе", ""],
-    ["Подборки статей одной ссылкой", ""],
-    ["Несколько статей одним файлом", ""],
-    ["Тест по каждой статье", ""],
-    ["Уроки, игры и казусы по праву", ""],
-    ["Конституция открыта прямо в уроке", ""],
-    ["Библиотека книг для юриста", ""],
-    ["XP, лига и соревнования", ""],
+    [tr("Каждая статья простыми словами"), ""],
+    [tr("Пример из жизни к любой статье"), ""],
+    [tr("Подсказки к сложным терминам"), ""],
+    [tr("Заметки и выделение прямо в законе"), ""],
+    [tr("Подборки статей одной ссылкой"), ""],
+    [tr("Несколько статей одним файлом"), ""],
+    [tr("Тест по каждой статье"), ""],
+    [tr("Уроки, игры и казусы по праву"), ""],
+    [tr("Конституция открыта прямо в уроке"), ""],
+    [tr("Библиотека книг для юриста"), ""],
+    [tr("XP, лига и соревнования"), ""],
   ];
   const rowAt = (i: number) => Math.round(72 + i * 14.4);
   const up = lin(f, 44, 70, 0, 1, Easing.bezier(0.65, 0, 0.35, 1));
@@ -732,17 +733,17 @@ const Table: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: BLUE, overflow: "hidden" }}>
       <AbsoluteFill style={{ transform: "rotate(-10deg) scale(1.3)", opacity: 0.13 }}>
-        {Array.from({ length: 8 }, (_, r) => <div key={r} style={{ position: "absolute", left: -1400, top: -120 + r * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, color: "#fff", transform: `translateX(${(f * (r % 2 ? 1.6 : -1.6)) % 1300 + (r % 2 ? -650 : 0)}px)` }}>{"УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ • ".repeat(6)}</div>)}
+        {Array.from({ length: 8 }, (_, r) => <div key={r} style={{ position: "absolute", left: -1400, top: -120 + r * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, color: "#fff", transform: `translateX(${(f * (r % 2 ? 1.6 : -1.6)) % 1300 + (r % 2 ? -650 : 0)}px)` }}>{tr("УРОКИ • ИГРЫ • ЗАКОНЫ • КВИЗЫ • ").repeat(6)}</div>)}
       </AbsoluteFill>
       <AbsoluteFill style={{ transform: `scale(${1.0 + push * 0.025})` }}>
         {/* headline first, big in the centre; then it glides up and the table fades in */}
         <div style={{ position: "absolute", left: 0, right: 0, top: 36 + (1 - up) * 400, display: "flex", justifyContent: "center", columnGap: 22, transformOrigin: "50% 50%", transform: `scale(${1 + 0.8 * (1 - up)})` }}>
-          <Cap text="Почему" at={4} size={66} color="#fff" />
-          <Cap text="с veoskill удобнее?" at={12} size={66} color="#fff" accent="с veoskill удобнее?" accentColor={NAVY} />
+          <Cap text={tr("Почему")} at={4} size={66} color="#fff" />
+          <Cap text={tr("с veoskill удобнее?")} at={12} size={66} color="#fff" accent={tr("с veoskill удобнее?")} accentColor={NAVY} />
         </div>
         <div style={{ position: "absolute", left: 210, top: 150, width: 1500, borderRadius: 30, background: "#fff", boxShadow: "0 40px 100px rgba(13,22,48,0.25)", padding: "8px 0 12px", boxSizing: "border-box", overflow: "hidden", opacity: lin(f, 56, 76), transform: `translateY(${(1 - lin(f, 56, 80, 0, 1, OUTE)) * 60}px)` }}>
           <div style={{ display: "flex", alignItems: "center", height: 64, padding: "0 40px", fontFamily: HEAD, fontWeight: 800, fontSize: 30 }}>
-            <div style={{ flex: 1, color: NAVY }}>Что вы получаете:</div>
+            <div style={{ flex: 1, color: NAVY }}>{tr("Что вы получаете:")}</div>
             <div style={{ width: 190, textAlign: "center", color: "#7c8593" }}>lex.uz</div>
             <div style={{ width: 190, textAlign: "center", color: LOGO, fontFamily: UI, fontWeight: 900 }}>veoskill</div>
           </div>

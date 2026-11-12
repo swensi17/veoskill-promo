@@ -1,7 +1,9 @@
 import React from "react";
+import { tr, LANG, uzt } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, random, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { fit, textWidth } from "./Kit7";
 import { ART } from "./Laws7";
+const ARTL = LANG === "uz" ? { p1: uzt(ART.uz.p1), p2: uzt(ART.uz.p2) } : ART.ru;
 import { BG, NAVY, BLUE, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer, TopLine } from "./Scenes9";
 
 // v11 parts: intro mosaic, wall of screens, live counter, real-screenshot law scenes, languages, word-bank game.
@@ -62,13 +64,13 @@ export const IntroMosaic: React.FC = () => {
           </div>
         );
       })()}
-      <div style={{ position: "absolute", top: 690, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 600, fontSize: 42, color: "#555c68", opacity: sub, transform: `translateY(${(1 - sub) * 20}px)` }}>Самый живой способ учиться</div>
+      <div style={{ position: "absolute", top: 690, width: "100%", textAlign: "center", fontFamily: HEAD, fontWeight: 600, fontSize: 42, color: "#555c68", opacity: sub, transform: `translateY(${(1 - sub) * 20}px)` }}>{tr("Самый живой способ учиться")}</div>
     </AbsoluteFill>
   );
 };
 
 // ================= wall of screens (everything in one place) =================
-const WALL_HI: [number, string][] = [[6, "Уроки"], [1, "Законы"], [7, "Игры"], [3, "Тесты"]];
+const WALL_HI: [number, string][] = [[6, tr("Уроки")], [1, tr("Законы")], [7, tr("Игры")], [3, tr("Тесты")]];
 export const Wall: React.FC = () => {
   const f = useFrame();
   const cols = 5, rws = 3, TW = 470, TH = 294, GAP = 30;
@@ -102,8 +104,8 @@ export const Wall: React.FC = () => {
       </AbsoluteFill>
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(243,242,238,0) 58%, rgba(243,242,238,0.96) 78%)" }} />
       <div style={{ position: "absolute", left: 0, right: 0, top: 880, display: "flex", justifyContent: "center", columnGap: 20, opacity: 1 - out }}>
-        <Cap text="Уроки, игры и законы." at={14} size={66} />
-        <Cap text="Всё в одном месте." at={22} size={66} accent="в одном месте." />
+        <Cap text={tr("Уроки, игры и законы.")} at={14} size={66} />
+        <Cap text={tr("Всё в одном месте.")} at={22} size={66} accent={tr("в одном месте.")} />
       </div>
     </AbsoluteFill>
   );
@@ -159,7 +161,7 @@ export const Counter: React.FC = () => {
   const k = TW / 1920;
   const [sx, sy] = slot(0);
   const ms = 1 + (k - 1) * pull, mx = sx * pull, my = sy * pull;
-  const TILES: [string, string, number][] = [["ЯЗЫКОВ", "99+", 300], ["АВТООБНОВЛЕНИЕ", "каждый день", 190], ["СОРТИРОВКА", "по годам и видам", 150], ["ПОИСК", "по всей базе", 180], ["СТАТУС", "«Действует»", 180]];
+  const TILES: [string, string, number][] = [[tr("ЯЗЫКОВ"), "99+", 300], [tr("АВТООБНОВЛЕНИЕ"), tr("каждый день"), 190], [tr("СОРТИРОВКА"), tr("по годам и видам"), 150], [tr("ПОИСК"), tr("по всей базе"), 180], [tr("СТАТУС"), tr("«Действует»"), 180]];
   const word = lin(f, W0 - 10, W0 + 4);
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
@@ -167,11 +169,11 @@ export const Counter: React.FC = () => {
       {f < W0 + 6 ? (
         <AbsoluteFill style={{ background: BLUE, alignItems: "center", justifyContent: "center", opacity: 1 - word, zIndex: 20 }}>
           <AbsoluteFill style={{ transform: "rotate(-10deg) scale(1.3)", opacity: 0.16 }}>
-            {Array.from({ length: 8 }, (_, r) => <div key={r} style={{ position: "absolute", left: -1400, top: -120 + r * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, color: "#fff", transform: `translateX(${(f * (r % 2 ? 2 : -2)) % 1300 + (r % 2 ? -650 : 0)}px)` }}>{"ЗАКОНЫ • КОДЕКСЫ • УКАЗЫ • ".repeat(6)}</div>)}
+            {Array.from({ length: 8 }, (_, r) => <div key={r} style={{ position: "absolute", left: -1400, top: -120 + r * 170, whiteSpace: "nowrap", fontFamily: HEAD, fontWeight: 900, fontSize: 120, color: "#fff", transform: `translateX(${(f * (r % 2 ? 2 : -2)) % 1300 + (r % 2 ? -650 : 0)}px)` }}>{tr("ЗАКОНЫ • КОДЕКСЫ • УКАЗЫ • ").repeat(6)}</div>)}
           </AbsoluteFill>
           <div style={{ display: "flex", columnGap: 50 }}>
-            <Cap text="СЕГОДНЯ" at={4} size={190} color="#fff" weight={900} />
-            <Cap text="В БАЗЕ" at={14} size={190} color={NAVY} weight={900} />
+            <Cap text={tr("СЕГОДНЯ")} at={4} size={190} color="#fff" weight={900} />
+            <Cap text={tr("В БАЗЕ")} at={14} size={190} color={NAVY} weight={900} />
           </div>
         </AbsoluteFill>
       ) : null}
@@ -182,7 +184,7 @@ export const Counter: React.FC = () => {
         </div>); })}
       {/* 3. the main counter: full screen, then shrinks into the first tile */}
       <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, transformOrigin: "0 0", transform: `translate(${mx}px, ${my}px) scale(${ms})`, borderRadius: 70 * pull, overflow: "hidden", boxShadow: pull > 0 ? `0 40px 120px rgba(13,22,48,${0.18 * pull})` : undefined }}>
-        <StatCard label="ЗАКОНОВ И КОДЕКСОВ" value={vi.toLocaleString("ru-RU")} at={C0} dur={C1 - C0} seed={0} />
+        <StatCard label={tr("ЗАКОНОВ И КОДЕКСОВ")} value={vi.toLocaleString("ru-RU")} at={C0} dur={C1 - C0} seed={0} />
       </div>
       {/* 4. big blue confetti when the count lands */}
       {f >= C1 && f < C1 + 150 ? (
@@ -197,7 +199,7 @@ export const Counter: React.FC = () => {
           })}
         </AbsoluteFill>
       ) : null}
-      {f >= PULL1 - 10 ? <TopLine a="Законы всегда" b="актуальны." at={PULL1 - 6} size={66} /> : null}
+      {f >= PULL1 - 10 ? <TopLine a={tr("Законы всегда")} b={tr("актуальны.")} at={PULL1 - 6} size={66} /> : null}
       {void END}
     </AbsoluteFill>
   );
@@ -276,13 +278,13 @@ export const LawsHome: React.FC = () => {
         {f >= 60 && f < 175 ? <Pointer x={px} y={py} down={press(f, CLICK)} op={lin(f, 60, 72)} /> : null}
       </Plane>
       <AbsoluteFill style={{ background: "#fff", opacity: white }} />
-      <TopCap lines={["Любой кодекс.", "В один клик."]} at={10} accent="В один клик." />
+      <TopCap lines={[tr("Любой кодекс."), tr("В один клик.")]} at={10} accent={tr("В один клик.")} />
       <Top />
     </AbsoluteFill>
   );
 };
 /** Reader: select a line, pick yellow, write a note, save. All on the real reader screens. */
-const NOTE = "Повторить перед экзаменом";
+const NOTE = tr("Повторить перед экзаменом");
 export const Reader: React.FC = () => {
   const f = useFrame();
   const D0 = 64, D1 = 112, SEL = 122, YELC = 162, NOTEC = 204, T0 = 236, SAVE = 330, MARK = 344;
@@ -301,7 +303,7 @@ export const Reader: React.FC = () => {
       <Plane keys={keys} layers={layers} cy={640}>
         {f >= D0 && f < SEL + 10 ? <div style={{ position: "absolute", left: 708, top: 526, width: 692 * sel, height: 32, background: "rgba(28,176,246,0.25)" }} /> : null}
         {f >= YELC + 2 && f < NOTEC + 16 ? <div style={{ position: "absolute", left: 708, top: 526, width: 692, height: 32, background: "rgba(255,212,59,0.55)", mixBlendMode: "multiply", opacity: lin(f, YELC + 2, YELC + 10) }} /> : null}
-        {f >= NOTEC + 6 && f < MARK + 8 ? <div style={{ position: "absolute", left: 716, top: 452, width: 488, height: 38, background: "rgb(239,239,239)", display: "flex", alignItems: "center", padding: "0 18px", boxSizing: "border-box", fontFamily: UI, fontWeight: 600, fontSize: 17, color: "#6b7785", whiteSpace: "nowrap", overflow: "hidden" }}>торжественно провозглашая свою приверженность</div> : null}
+        {f >= NOTEC + 6 && f < MARK + 8 ? <div style={{ position: "absolute", left: 716, top: 452, width: 488, height: 38, background: "rgb(239,239,239)", display: "flex", alignItems: "center", padding: "0 18px", boxSizing: "border-box", fontFamily: UI, fontWeight: 600, fontSize: 17, color: "#6b7785", whiteSpace: "nowrap", overflow: "hidden" }}>{tr("торжественно провозглашая свою приверженность")}</div> : null}
         {f >= T0 - 6 && f < T0 + NOTE.length * 2.6 + 14 ? (
           <div style={{ position: "absolute", left: 716, top: 500, width: 488, height: 206, background: "#fff", padding: "16px 18px", boxSizing: "border-box", fontFamily: UI, fontWeight: 600, fontSize: 23, color: "#4b4b4b" }}>
             {NOTE.slice(0, n)}<span style={{ display: "inline-block", width: 2, height: 24, marginLeft: 2, verticalAlign: "-4px", background: BLUE }} />
@@ -309,8 +311,8 @@ export const Reader: React.FC = () => {
         ) : null}
         {f >= 30 && f < SAVE + 34 ? <Pointer x={px} y={py} down={down} op={lin(f, 30, 42) * (1 - lin(f, SAVE + 20, SAVE + 34))} /> : null}
       </Plane>
-      <Toast text="Заметка сохранена" at={MARK + 4} />
-      {capA ? <TopCap key="a" lines={["Выделяй цветом.", "Пиши заметки."]} at={8} accent="Пиши заметки." /> : <TopCap key="b" lines={["Заметки остаются", "прямо в законе."]} at={NOTEC + 12} accent="прямо в законе." />}
+      <Toast text={tr("Заметка сохранена")} at={MARK + 4} />
+      {capA ? <TopCap key="a" lines={[tr("Выделяй цветом."), tr("Пиши заметки.")]} at={8} accent={tr("Пиши заметки.")} /> : <TopCap key="b" lines={[tr("Заметки остаются"), tr("прямо в законе.")]} at={NOTEC + 12} accent={tr("прямо в законе.")} />}
       <Top />
     </AbsoluteFill>
   );
@@ -347,30 +349,30 @@ export const Hints: React.FC = () => {
       <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640}>
         {/* bulb pressed: dark ring like on the site */}
         <div style={{ position: "absolute", left: 1551, top: 134, width: 68, height: 60, borderRadius: 14, border: "3px solid #1f5d2a", boxSizing: "border-box", opacity: lin(f, BULB + 2, BULB + 6) }} />
-        <HintBox x={1430} y={214} w={380} o={pop} read={readA} arrowX={155} title="Подсказки" text="Подсказки к юридическим терминам: наведите на выделенное слово, и появится пояснение." />
+        <HintBox x={1430} y={214} w={380} o={pop} read={readA} arrowX={155} title={tr("Подсказки")} text={tr("Подсказки к юридическим терминам: наведите на выделенное слово, и появится пояснение.")} />
         {/* hovered term: dotted underline becomes solid */}
         <div style={{ position: "absolute", left: 971, top: 742, width: 206, height: 3, borderRadius: 2, background: "#1cb0f6", opacity: ul }} />
-        <HintBox x={930} y={772} w={440} o={tip} read={readB} arrowX={140} title="Юридическая ответственность" text="Обязанность лица претерпеть неблагоприятные последствия за нарушение закона: штраф, возмещение вреда, лишение свободы." />
+        <HintBox x={930} y={772} w={440} o={tip} read={readB} arrowX={140} title={tr("Юридическая ответственность")} text={tr("Обязанность лица претерпеть неблагоприятные последствия за нарушение закона: штраф, возмещение вреда, лишение свободы.")} />
         {f >= 14 ? <Pointer x={px} y={py} down={press(f, BULB)} op={lin(f, 14, 26)} /> : null}
       </Plane>
-      <TopCap lines={["Непонятный термин?", "Наведи и узнай."]} at={8} accent="Наведи и узнай." />
+      <TopCap lines={[tr("Непонятный термин?"), tr("Наведи и узнай.")]} at={8} accent={tr("Наведи и узнай.")} />
       <Top />
     </AbsoluteFill>
   );
 };
 /** Article actions: heart -> "В избранное" with the folder picker; "⋯" -> the article menu (as on veoskill.uz). */
-const FOLDERS: [string, string][] = [["Экзамен", "#1cb0f6"], ["Курсовая работа", "#ffc800"], ["Повторить", GREEN]];
+const FOLDERS: [string, string][] = [[tr("Экзамен"), "#1cb0f6"], [tr("Курсовая работа"), "#ffc800"], [tr("Повторить"), GREEN]];
 const ART_P = { fontFamily: UI, fontWeight: 500, fontSize: 25, lineHeight: 1.36, color: "#2b2b2b", textAlign: "justify" as const, textIndent: 80 };
 const Heart: React.FC<{ on: number; size?: number }> = ({ on, size = 30 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.2-9.3C1.6 7.8 3.8 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 3.4 0 5.6 3.3 4.4 6.7-1.7 4.7-9.2 9.3-9.2 9.3z" fill={on > 0.5 ? "#ff4b4b" : "none"} stroke={on > 0.5 ? "#ff4b4b" : "#9aa1ab"} strokeWidth="2" strokeLinejoin="round" /></svg>
 );
 const MI = (d: React.ReactNode) => <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{d}</svg>;
 const MENU: [React.ReactNode, string][] = [
-  [MI(<><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" /></>), "Копировать статью"],
-  [MI(<path d="M7 17c-2 0-3-1.5-3-3.5C4 10 6 7.5 9 7M17 17c-2 0-3-1.5-3-3.5 0-3.5 2-6 5-6.5" />), "Скопировать источник"],
-  [MI(<><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></>), "Кто ссылается на статью"],
-  [MI(<><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 9h8M8 13h8M8 17h5" /></>), "Заметка к статье"],
-  [MI(<path d="M10 6h10M10 12h10M10 18h10M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" />), "Тест по статье"],
+  [MI(<><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" /></>), tr("Копировать статью")],
+  [MI(<path d="M7 17c-2 0-3-1.5-3-3.5C4 10 6 7.5 9 7M17 17c-2 0-3-1.5-3-3.5 0-3.5 2-6 5-6.5" />), tr("Скопировать источник")],
+  [MI(<><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></>), tr("Кто ссылается на статью")],
+  [MI(<><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 9h8M8 13h8M8 17h5" /></>), tr("Заметка к статье")],
+  [MI(<path d="M10 6h10M10 12h10M10 18h10M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" />), tr("Тест по статье")],
 ];
 export const ArticleActions: React.FC = () => {
   const f = useFrame();
@@ -390,15 +392,15 @@ export const ArticleActions: React.FC = () => {
     <AbsoluteFill style={{ background: BG }}>
       <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640}>
         <div style={{ position: "absolute", left: 573, top: 218, width: 1282, height: 990, background: "#fff", padding: "14px 60px 0 48px", boxSizing: "border-box", overflow: "hidden" }}>
-          <div style={ART_P}>Названия государства «Республика Узбекистан» и «Узбекистан» равнозначны.</div>
-          {[["2", ["Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами."]],
-            ["3", ["Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику.", "Государственная граница и территория Узбекистана неприкосновенны и неделимы."]],
-            ["4", ["Государственным языком Республики Узбекистан является узбекский язык.", "Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития."]],
-            ["5", ["Республика Узбекистан имеет свои государственные символы — флаг, герб, гимн, утверждаемые законом.", "Государственные символы находятся под защитой государства."]]].map(([n, ps]) => (
+          <div style={ART_P}>{tr("Названия государства «Республика Узбекистан» и «Узбекистан» равнозначны.")}</div>
+          {[["2", [tr("Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами.")]],
+            ["3", [tr("Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику."), tr("Государственная граница и территория Узбекистана неприкосновенны и неделимы.")]],
+            ["4", [tr("Государственным языком Республики Узбекистан является узбекский язык."), tr("Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития.")]],
+            ["5", [tr("Республика Узбекистан имеет свои государственные символы — флаг, герб, гимн, утверждаемые законом."), tr("Государственные символы находятся под защитой государства.")]]].map(([n, ps]) => (
             <div key={n as string} style={{ marginTop: 14 }}>
               <div style={{ height: 48, display: "flex", alignItems: "center", gap: 14 }}>
                 <div style={{ transform: n === "3" ? `scale(${1 + 0.35 * Math.sin(Math.min(1, heart) * Math.PI)})` : undefined }}><Heart on={n === "3" ? heart : 0} /></div>
-                <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>Статья {n}.</div>
+                <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>{tr("Статья")} {n}.</div>
                 {n === "3" ? (
                   <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 18 }}>
                     <AiIcon size={30} color="#8a8f98" />
@@ -414,11 +416,11 @@ export const ArticleActions: React.FC = () => {
         <div style={{ position: "absolute", left: 606, top: Y3 + 58, width: 390, opacity: pop, transform: `translateY(${(1 - pop) * 10}px)`, fontFamily: UI }}>
           <div style={{ background: "#fff", borderRadius: 18, boxShadow: "0 22px 50px rgba(13,22,48,0.2)", border: "1px solid #eef0f3", padding: "16px 16px 10px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ padding: "6px 10px", borderRadius: 8, background: "#3c3c3c", color: "#fff", fontWeight: 800, fontSize: 16 }}>В избранное</div>
-              <div style={{ fontWeight: 800, fontSize: 17, letterSpacing: "0.08em", color: "#6f7682" }}>В ПАПКУ</div>
+              <div style={{ padding: "6px 10px", borderRadius: 8, background: "#3c3c3c", color: "#fff", fontWeight: 800, fontSize: 16 }}>{tr("В избранное")}</div>
+              <div style={{ fontWeight: 800, fontSize: 17, letterSpacing: "0.08em", color: "#6f7682" }}>{tr("В ПАПКУ")}</div>
             </div>
             <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
-              <div style={{ flex: 1, height: 44, borderRadius: 12, border: "2px solid #e6e9ee", display: "flex", alignItems: "center", padding: "0 14px", color: "#9aa1ab", fontWeight: 600, fontSize: 17 }}>Найти папку</div>
+              <div style={{ flex: 1, height: 44, borderRadius: 12, border: "2px solid #e6e9ee", display: "flex", alignItems: "center", padding: "0 14px", color: "#9aa1ab", fontWeight: 600, fontSize: 17 }}>{tr("Найти папку")}</div>
               <div style={{ width: 44, height: 44, borderRadius: 12, background: "#1cb0f6", boxShadow: "0 3px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg></div>
             </div>
             {FOLDERS.map(([name, c], i) => {
@@ -432,7 +434,7 @@ export const ArticleActions: React.FC = () => {
               );
             })}
             <div style={{ height: 34, display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 16, color: GLIP, opacity: lin(f, F2 + 8, F2 + 16) }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={GLIP} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Сохранено в 2 папки
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={GLIP} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>{tr("Сохранено в 2 папки")}
             </div>
           </div>
         </div>
@@ -450,17 +452,17 @@ export const ArticleActions: React.FC = () => {
         ) : null}
         {f >= 12 ? <Pointer x={px} y={py} down={Math.max(press(f, HEART), press(f, F1), press(f, F2), press(f, DOTS))} op={lin(f, 12, 22)} /> : null}
       </Plane>
-      <TopCap lines={["Сохраняй статьи.", "Всё под рукой."]} at={8} accent="Всё под рукой." />
+      <TopCap lines={[tr("Сохраняй статьи."), tr("Всё под рукой.")]} at={8} accent={tr("Всё под рукой.")} />
       <Top />
     </AbsoluteFill>
   );
 };
 /** Collection: tick several articles, download them as one file (format picker as on the site), share one link; a friend opens it on a phone. */
 const COL_ARTS: [string, string[]][] = [
-  ["2", ["Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами."]],
-  ["3", ["Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику.", "Государственная граница и территория Узбекистана неприкосновенны и неделимы."]],
-  ["4", ["Государственным языком Республики Узбекистан является узбекский язык.", "Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития."]],
-  ["5", ["Республика Узбекистан имеет свои государственные символы — флаг, герб, гимн, утверждаемые законом.", "Государственные символы находятся под защитой государства."]],
+  ["2", [tr("Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами.")]],
+  ["3", [tr("Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику."), tr("Государственная граница и территория Узбекистана неприкосновенны и неделимы.")]],
+  ["4", [tr("Государственным языком Республики Узбекистан является узбекский язык."), tr("Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития.")]],
+  ["5", [tr("Республика Узбекистан имеет свои государственные символы — флаг, герб, гимн, утверждаемые законом."), tr("Государственные символы находятся под защитой государства.")]],
 ];
 const Tick: React.FC<{ on: number; size?: number }> = ({ on, size = 30 }) => (
   <div style={{ width: size, height: size, borderRadius: 8, border: `2.5px solid ${on > 0.5 ? "#1cb0f6" : "#b9bec6"}`, background: on > 0.5 ? "#1cb0f6" : "#fff", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", transform: `scale(${1 + 0.25 * Math.sin(Math.min(1, on) * Math.PI)})` }}>
@@ -473,7 +475,7 @@ const PlaneIc: React.FC<{ size: number }> = ({ size }) => (
 const FileIc: React.FC<{ label: string; c: string }> = ({ label, c }) => (
   <svg width="40" height="46" viewBox="0 0 40 46"><path d="M4 3h22l10 10v30H4z" fill="#f4f5f7" stroke="#d5d9df" strokeWidth="1.5" /><path d="M26 3v10h10" fill="#e6e9ee" /><rect x="1" y="22" width="30" height="13" rx="3" fill={c} /><text x="16" y="31.5" textAnchor="middle" fontFamily="Arial" fontWeight="700" fontSize="8.5" fill="#fff">{label}</text></svg>
 );
-const FORMATS: [string, string, string, string][] = [["DOC", "#2f6fe0", "Word (.docx)", "для правки и отправки"], ["PDF", "#e5322d", "PDF (.pdf)", "готовый файл для чтения и печати"], ["TXT", "#f08a24", "Текст (.txt)", "без оформления"], ["HTML", "#22a35a", "Веб-страница (.html)", "откроется в любом браузере"]];
+const FORMATS: [string, string, string, string][] = [["DOC", "#2f6fe0", "Word (.docx)", tr("для правки и отправки")], ["PDF", "#e5322d", "PDF (.pdf)", tr("готовый файл для чтения и печати")], ["TXT", "#f08a24", tr("Текст (.txt)"), tr("без оформления")], ["HTML", "#22a35a", tr("Веб-страница (.html)"), tr("откроется в любом браузере")]];
 export const Collect: React.FC = () => {
   const f = useFrame();
   const sp = useSp();
@@ -513,7 +515,7 @@ export const Collect: React.FC = () => {
       <AbsoluteFill style={{ opacity: 1 - sceneOut, transform: `scale(${1 - 0.06 * sceneOut})`, filter: sceneOut > 0.01 ? `blur(${sceneOut * 8}px)` : undefined }}>
         <Plane keys={keys} layers={[{ src: "l-reader", from: 0 }]} cy={640}>
           <div style={{ position: "absolute", left: 573, top: 218, width: 1282, height: 990, background: "#fff", padding: "14px 60px 0 48px", boxSizing: "border-box", overflow: "hidden" }}>
-            <div style={ART_P}>Названия государства «Республика Узбекистан» и «Узбекистан» равнозначны.</div>
+            <div style={ART_P}>{tr("Названия государства «Республика Узбекистан» и «Узбекистан» равнозначны.")}</div>
             {COL_ARTS.map(([n, ps], i) => {
               const on = i < 3 ? sp(T[i], 10, 260) * (f >= T[i] ? 1 : 0) : 0;
               const e = lin(f, 8 + i * 4, 20 + i * 4);
@@ -521,7 +523,7 @@ export const Collect: React.FC = () => {
                 <div key={n} style={{ marginTop: 14, position: "relative" }}>
                   <div style={{ position: "relative", height: 48, display: "flex", alignItems: "center", gap: 14 }}>
                     <div style={{ opacity: e, transform: `scale(${0.6 + 0.4 * e})` }}><Tick on={on} /></div>
-                    <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>Статья {n}.</div>
+                    <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>{tr("Статья")} {n}.</div>
                   </div>
                   {ps.map((t, k) => <div key={k} style={{ ...ART_P, position: "relative", marginTop: 8 }}>{t}</div>)}
                 </div>
@@ -532,18 +534,18 @@ export const Collect: React.FC = () => {
         {/* selection bar */}
         <div style={{ position: "absolute", left: 960 - 470, top: BAR_Y - 46, width: 940, height: 92, borderRadius: 24, background: "#fff", boxShadow: "0 24px 60px rgba(13,22,48,0.22)", display: "flex", alignItems: "center", gap: 18, padding: "0 20px 0 30px", boxSizing: "border-box", fontFamily: UI, opacity: Math.min(1, bar * 1.4), transform: `translateY(${(1 - bar) * 80}px)`, zIndex: 20 }}>
           <Tick on={1} size={30} />
-          <div style={{ fontWeight: 900, fontSize: 26, color: INK, flex: 1, whiteSpace: "nowrap" }}>Выбрано: {Math.max(1, nSel)} {nSel >= 2 ? "статьи" : "статья"}</div>
+          <div style={{ fontWeight: 900, fontSize: 26, color: INK, flex: 1, whiteSpace: "nowrap" }}>{tr("Выбрано:")} {Math.max(1, nSel)} {nSel >= 2 ? tr("статьи") : tr("статья")}</div>
           <div style={{ height: 58, padding: "0 24px", borderRadius: 16, border: "2.5px solid #1cb0f6", color: "#1cb0f6", display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 22, letterSpacing: "0.04em", boxSizing: "border-box" }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>СКАЧАТЬ
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>{tr("СКАЧАТЬ")}
           </div>
           <div style={{ height: 58, padding: "0 24px", borderRadius: 16, background: "#1cb0f6", boxShadow: "0 4px 0 #1899d6", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 22, letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>ПОДЕЛИТЬСЯ ССЫЛКОЙ
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>{tr("ПОДЕЛИТЬСЯ ССЫЛКОЙ")}
           </div>
         </div>
         {/* download: format picker */}
         {dl > 0.01 ? modal(dl, 640, <>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ flex: 1 }}><div style={{ fontWeight: 900, fontSize: 32, color: INK }}>Скачать подборку</div><div style={{ marginTop: 4, fontWeight: 700, fontSize: 20, color: "#8a8f98" }}>3 статьи в одном файле</div></div>
+            <div style={{ flex: 1 }}><div style={{ fontWeight: 900, fontSize: 32, color: INK }}>{tr("Скачать подборку")}</div><div style={{ marginTop: 4, fontWeight: 700, fontSize: 20, color: "#8a8f98" }}>{tr("3 статьи в одном файле")}</div></div>
             <div style={{ width: 56, height: 56, borderRadius: 16, background: "#1cb0f6", boxShadow: "0 4px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg></div>
           </div>
           {FORMATS.map(([lb, c, name, sub], i) => (
@@ -555,31 +557,31 @@ export const Collect: React.FC = () => {
           ))}
           <div style={{ marginTop: 30, display: "flex", justifyContent: "flex-end" }}>
             <div style={{ height: 66, padding: "0 46px", borderRadius: 18, background: GREEN, boxShadow: `0 5px 0 ${GLIP}`, color: "#fff", display: "flex", alignItems: "center", gap: 12, fontWeight: 900, fontSize: 24, letterSpacing: "0.06em", transform: `scale(${1 - press(f, GO) * 0.05})` }}>
-              {done > 0.5 ? <><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>ФАЙЛ СКАЧАН</> : "СКАЧАТЬ"}
+              {done > 0.5 ? <><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>{tr("ФАЙЛ СКАЧАН")}</> : tr("СКАЧАТЬ")}
             </div>
           </div>
         </>) : null}
         {/* share: one link */}
         {sh > 0.01 ? modal(sh, 660, <>
-          <div style={{ fontWeight: 900, fontSize: 32, color: INK }}>Ссылка на подборку</div>
-          <div style={{ marginTop: 4, fontWeight: 700, fontSize: 20, color: "#8a8f98" }}>Друг или студент откроет все 3 статьи в одном месте</div>
+          <div style={{ fontWeight: 900, fontSize: 32, color: INK }}>{tr("Ссылка на подборку")}</div>
+          <div style={{ marginTop: 4, fontWeight: 700, fontSize: 20, color: "#8a8f98" }}>{tr("Друг или студент откроет все 3 статьи в одном месте")}</div>
           <div style={{ marginTop: 26, display: "flex", gap: 12 }}>
             <div style={{ flex: 1, height: 64, borderRadius: 16, border: `2.5px solid ${copied > 0.5 ? GREEN : "#e6e9ee"}`, display: "flex", alignItems: "center", gap: 12, padding: "0 18px", fontWeight: 800, fontSize: 24, color: "#1cb0f6", boxSizing: "border-box" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>veoskill.uz/s/k7Qm2
             </div>
-            <div style={{ height: 64, padding: "0 26px", borderRadius: 16, background: copied > 0.5 ? GREEN : "#1cb0f6", boxShadow: `0 4px 0 ${copied > 0.5 ? GLIP : "#1899d6"}`, color: "#fff", display: "flex", alignItems: "center", fontWeight: 900, fontSize: 21, letterSpacing: "0.04em", whiteSpace: "nowrap", transform: `scale(${1 - press(f, COPY) * 0.05})` }}>{copied > 0.5 ? "СКОПИРОВАНО" : "КОПИРОВАТЬ"}</div>
+            <div style={{ height: 64, padding: "0 26px", borderRadius: 16, background: copied > 0.5 ? GREEN : "#1cb0f6", boxShadow: `0 4px 0 ${copied > 0.5 ? GLIP : "#1899d6"}`, color: "#fff", display: "flex", alignItems: "center", fontWeight: 900, fontSize: 21, letterSpacing: "0.04em", whiteSpace: "nowrap", transform: `scale(${1 - press(f, COPY) * 0.05})` }}>{copied > 0.5 ? tr("СКОПИРОВАНО") : tr("КОПИРОВАТЬ")}</div>
           </div>
         </>) : null}
         {f >= 12 && f < PHONE - 10 ? <div style={{ position: "absolute", inset: 0, zIndex: 40 }}><Pointer x={px} y={py} down={down} op={lin(f, 12, 22)} /></div> : null}
         <div style={{ position: "absolute", inset: 0, zIndex: 45 }}>
-          {cap === 0 ? <TopCap key="c0" lines={["Выдели нужные статьи."]} at={8} /> : cap === 1 ? <TopCap key="c1" lines={["Скачай одним файлом:", "Word, PDF, TXT, HTML."]} at={DL} accent="Word, PDF, TXT, HTML." /> : <TopCap key="c2" lines={["Отправь", "одной ссылкой."]} at={SH - 4} accent="одной ссылкой." />}
+          {cap === 0 ? <TopCap key="c0" lines={[tr("Выдели нужные статьи.")]} at={8} /> : cap === 1 ? <TopCap key="c1" lines={[tr("Скачай одним файлом:"), "Word, PDF, TXT, HTML."]} at={DL} accent="Word, PDF, TXT, HTML." /> : <TopCap key="c2" lines={[tr("Отправь"), tr("одной ссылкой.")]} at={SH - 4} accent={tr("одной ссылкой.")} />}
           <Top />
         </div>
       </AbsoluteFill>
       {/* the friend opens the link on a phone */}
       {f >= PHONE - 10 ? (
         <AbsoluteFill style={{ background: "#ffffff" }}>
-          <TopLine a="Друг откроет" b="всё в одном месте." at={PHONE + 4} size={72} />
+          <TopLine a={tr("Друг откроет")} b={tr("всё в одном месте.")} at={PHONE + 4} size={72} />
           {/* after the collection has opened, move in on the phone so the articles can be read */}
           <AbsoluteFill style={{ transformOrigin: "960px 150px", transform: `scale(${1 + 0.5 * lin(f, PHONE + 168, PHONE + 206)})` }}>
           {/* paper plane: the link flies from the text to the phone along a curve, leaving a dotted trail, then "Отправлено" */}
@@ -608,7 +610,7 @@ export const Collect: React.FC = () => {
                 ) : null}
                 {f >= T1 ? (
                   <div style={{ position: "absolute", left: 960, top: 330, transform: `translate(-50%, 0) scale(${land})`, padding: "14px 26px", borderRadius: 30, background: "#58cc02", boxShadow: "0 5px 0 #46a302, 0 18px 40px rgba(70,163,2,0.35)", color: "#fff", fontFamily: UI, fontWeight: 900, fontSize: 30, display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap", zIndex: 5, opacity: 1 - lin(f, T1 + 70, T1 + 86) }}>
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Отправлено другу
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>{tr("Отправлено другу")}
                   </div>
                 ) : null}
               </>
@@ -620,29 +622,29 @@ export const Collect: React.FC = () => {
               {/* site header, mobile layout */}
               <div style={{ margin: "4px 6px 0", background: "#1cb0f6", color: "#fff" }}>
                 <div style={{ padding: "10px 14px", display: "flex", alignItems: "center" }}>
-                  <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "0.12em", opacity: 0.85 }}>ПОДБОРКА СТАТЕЙ</div><div style={{ fontWeight: 900, fontSize: 15 }}>Конституция Республики Узбекистан</div></div>
+                  <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "0.12em", opacity: 0.85 }}>{tr("ПОДБОРКА СТАТЕЙ")}</div><div style={{ fontWeight: 900, fontSize: 15 }}>{tr("Конституция Республики Узбекистан")}</div></div>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>
                 </div>
                 <div style={{ display: "flex", borderTop: "1px solid rgba(255,255,255,0.35)" }}>
-                  <div style={{ flex: 1, padding: "8px 14px", borderRight: "1px solid rgba(255,255,255,0.35)" }}><div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "0.12em", opacity: 0.85 }}>ВЫБРАНО</div><div style={{ fontWeight: 900, fontSize: 15 }}>3 СТАТЬИ</div></div>
+                  <div style={{ flex: 1, padding: "8px 14px", borderRight: "1px solid rgba(255,255,255,0.35)" }}><div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "0.12em", opacity: 0.85 }}>{tr("ВЫБРАНО")}</div><div style={{ fontWeight: 900, fontSize: 15 }}>{tr("3 СТАТЬИ")}</div></div>
                   {["flag", "doc", "filter", "heart", "set"].map((k) => (
                     <div key={k} style={{ width: 44, display: "flex", alignItems: "center", justifyContent: "center", borderRight: k === "set" ? undefined : "1px solid rgba(255,255,255,0.35)" }}>
                       {k === "flag" ? <Img src={staticFile("flags/c-ru.svg")} style={{ width: 22, height: 22, borderRadius: 11, border: "1.5px solid #fff" }} /> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">{k === "doc" ? <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 8h6M9 12h6" /></> : k === "filter" ? <path d="M3 4h18l-7 8v7l-4 2v-9z" /> : k === "heart" ? <path d="M12 20s-7-4.4-8.6-8.8C2.3 8 4.4 5 7.6 5c1.9 0 3.4 1 4.4 2.6C13 6 14.5 5 16.4 5c3.2 0 5.3 3 4.2 6.2C19 15.6 12 20 12 20z" /> : <path d="M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4" />}</svg>}
                     </div>
                   ))}
                 </div>
-                <div style={{ padding: "8px 10px 10px" }}><div style={{ height: 34, background: "#fff", display: "flex", alignItems: "center", gap: 8, padding: "0 10px", color: "#9aa1ab", fontWeight: 600, fontSize: 13 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>Поиск по всей базе законов</div></div>
+                <div style={{ padding: "8px 10px 10px" }}><div style={{ height: 34, background: "#fff", display: "flex", alignItems: "center", gap: 8, padding: "0 10px", color: "#9aa1ab", fontWeight: 600, fontSize: 13 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>{tr("Поиск по всей базе законов")}</div></div>
               </div>
               {/* "sent to you" strip with the paper plane */}
               <div style={{ margin: "10px 10px 0", borderRadius: 12, background: "#e3f4fd", display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", fontWeight: 800, fontSize: 14, color: "#0d6fa3", opacity: lin(f, PHONE + 84, PHONE + 96), transform: `translateY(${(1 - lin(f, PHONE + 84, PHONE + 98)) * -10}px)` }}>
-                <PlaneIc size={22} />Вам отправили подборку · 3 статьи
+                <PlaneIc size={22} />{tr("Вам отправили подборку · 3 статьи")}
               </div>
               <div style={{ padding: "8px 12px 0" }}>
                 {COL_ARTS.slice(0, 3).map(([n, ps], i) => {
                   const e = sp(PHONE + 96 + i * 10, 15, 170);
                   return (
                     <div key={n} style={{ marginTop: 6, opacity: Math.min(1, e * 1.4), transform: `translateY(${(1 - e) * 24}px)` }}>
-                      <div style={{ height: 34, display: "flex", alignItems: "center", gap: 8 }}><Heart on={0} size={19} /><div style={{ fontWeight: 900, fontSize: 18, color: "#1a237e" }}>Статья {n}.</div></div>
+                      <div style={{ height: 34, display: "flex", alignItems: "center", gap: 8 }}><Heart on={0} size={19} /><div style={{ fontWeight: 900, fontSize: 18, color: "#1a237e" }}>{tr("Статья")} {n}.</div></div>
                       {ps.map((t, k) => <div key={k} style={{ marginTop: 3, fontWeight: 500, fontSize: 15.5, lineHeight: 1.5, color: "#2b2b2b", textAlign: "justify", textIndent: 22 }}>{t}</div>)}
                     </div>
                   );
@@ -650,8 +652,8 @@ export const Collect: React.FC = () => {
               </div>
               {/* bottom tab bar as on the site */}
               <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 74, background: "#fff", borderTop: "1px solid #eef0f3", display: "flex", alignItems: "center", justifyContent: "space-around", paddingBottom: 8 }}>
-                {[["icons_hub_home.webp", "Кабинет"], ["stickers_module.webp", "Модули"], ["icons_duel_scales.webp", "Законы"], ["icons_hub_forum.webp", "Форум"], ["", "Ещё"]].map(([ic, t]) => (
-                  <div key={t} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, fontWeight: t === "Законы" ? 900 : 600, fontSize: 11, color: t === "Законы" ? INK : "#9aa1ab" }}>
+                {[["icons_hub_home.webp", tr("Кабинет")], ["stickers_module.webp", tr("Модули")], ["icons_duel_scales.webp", tr("Законы")], ["icons_hub_forum.webp", tr("Форум")], ["", tr("Ещё")]].map(([ic, t]) => (
+                  <div key={t} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, fontWeight: t === tr("Законы") ? 900 : 600, fontSize: 11, color: t === tr("Законы") ? INK : "#9aa1ab" }}>
                     {ic ? <Img src={staticFile(`site/${ic}`)} style={{ width: 30, height: 30, objectFit: "contain" }} /> : <div style={{ width: 28, height: 28, borderRadius: 14, background: "#c86cf0", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M5 7h14M5 12h14M5 17h14" /></svg></div>}
                     {t}
                   </div>
@@ -663,22 +665,22 @@ export const Collect: React.FC = () => {
         </AbsoluteFill>
       ) : null}
       {/* toast after copy */}
-      {f >= COPY + 6 && f < PHONE - 10 ? <Toast text="Ссылка скопирована" at={COPY + 6} /> : null}
+      {f >= COPY + 6 && f < PHONE - 10 ? <Toast text={tr("Ссылка скопирована")} at={COPY + 6} /> : null}
     </AbsoluteFill>
   );
 };
 /** Search: "ФИЛЬТР" opens "Фильтр и поиск", type a word, "НАЙТИ", loading, then the results list (as on veoskill.uz/laws/search). */
 const SB = "#1f6fb5"; // the search page's darker blue
 const RESULTS: [string, string][] = [
-  ["О внесении изменений и дополнений в некоторые законодательные акты Республики Узбекистан в связи с принятием закона Республики Узбекистан «О судебной экспертизе»", "«Эксперт имеет право: знакомиться с материалами дела, относящимися к предмету экспертизы, выписывать из них необходимые сведения и…"],
-  ["Бюджетный кодекс Республики Узбекистан", "принимает нормативно-правовые акты по вопросам, входящим в ее полномочия."],
-  ["Водный кодекс Республики Узбекистан", "…цию и техническое обслуживание водохозяйственных объектов, наделенное правом забора и доставки воды водопользователям на договорной основе;"],
-  ["Воздушный кодекс Республики Узбекистан", "…е, общественные и иные негосударственные организации и граждане имеют право принимать участие в разработке и осуществлении мероприятий…"],
-  ["Гражданский кодекс Республики Узбекистан", "…право собственности на имущество, приобретенное по основаниям, не запрещенным законом…"],
-  ["Земельный кодекс Республики Узбекистан", "…право постоянного владения и пользования земельным участком…"],
+  [tr("О внесении изменений и дополнений в некоторые законодательные акты Республики Узбекистан в связи с принятием закона Республики Узбекистан «О судебной экспертизе»"), tr("«Эксперт имеет право: знакомиться с материалами дела, относящимися к предмету экспертизы, выписывать из них необходимые сведения и…")],
+  [tr("Бюджетный кодекс Республики Узбекистан"), tr("принимает нормативно-правовые акты по вопросам, входящим в ее полномочия.")],
+  [tr("Водный кодекс Республики Узбекистан"), tr("…цию и техническое обслуживание водохозяйственных объектов, наделенное правом забора и доставки воды водопользователям на договорной основе;")],
+  [tr("Воздушный кодекс Республики Узбекистан"), tr("…е, общественные и иные негосударственные организации и граждане имеют право принимать участие в разработке и осуществлении мероприятий…")],
+  [tr("Гражданский кодекс Республики Узбекистан"), tr("…право собственности на имущество, приобретенное по основаниям, не запрещенным законом…")],
+  [tr("Земельный кодекс Республики Узбекистан"), tr("…право постоянного владения и пользования земельным участком…")],
 ];
 const markWord = (t: string, w: string) => {
-  const parts = t.split(new RegExp(`(${w}[а-яё]*)`, "gi"));
+  const parts = t.split(new RegExp(`(${w}[а-яёa-zʼöğşç]*)`, "gi"));
   return parts.map((p, i) => (i % 2 ? <mark key={i} style={{ background: "rgba(255,212,59,0.55)", color: "inherit", borderRadius: 4, padding: "0 2px" }}>{p}</mark> : p));
 };
 const Sel: React.FC<{ label: string; value: string; ph?: boolean; w?: number; active?: number }> = ({ label, value, ph, active = 0 }) => (
@@ -694,7 +696,7 @@ export const Search: React.FC = () => {
   const f = useFrame();
   const sp = useSp();
   const FILT = 40, TYPE0 = 62, FIND = 112, LOAD = 128, RES = 176, ALL = 196;
-  const WORD = "право";
+  const WORD = tr("право");
   const typed = WORD.slice(0, Math.max(0, Math.min(WORD.length, Math.floor((f - TYPE0) / 4))));
   const keys: CK[] = [{ at: 0, x: 1300, y: 300, s: 1.2 }];
   const modal = sp(FILT + 6, 15, 190) * (1 - lin(f, FIND + 6, FIND + 16));
@@ -719,20 +721,20 @@ export const Search: React.FC = () => {
         <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
           <div style={{ width: 800, background: "#fff", padding: "30px 30px 34px", boxSizing: "border-box", fontFamily: UI, boxShadow: "0 40px 100px rgba(13,22,48,0.3)", opacity: Math.min(1, modal * 1.4), transform: `translateY(${(1 - modal) * 30}px) scale(${0.95 + 0.05 * modal})` }}>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <div style={{ flex: 1, fontWeight: 900, fontSize: 36, color: INK }}>Фильтр и поиск</div>
+              <div style={{ flex: 1, fontWeight: 900, fontSize: 36, color: INK }}>{tr("Фильтр и поиск")}</div>
               <div style={{ width: 58, height: 58, background: SB, display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg></div>
             </div>
-            <div style={{ marginTop: 14, fontWeight: 800, fontSize: 15, letterSpacing: "0.1em", color: "#5d6470" }}>СЛОВО ИЛИ ФРАЗА В ТЕКСТЕ</div>
+            <div style={{ marginTop: 14, fontWeight: 800, fontSize: 15, letterSpacing: "0.1em", color: "#5d6470" }}>{tr("СЛОВО ИЛИ ФРАЗА В ТЕКСТЕ")}</div>
             <div style={{ marginTop: 8, height: 54, border: `2px solid ${f >= TYPE0 - 6 ? SB : "#cfd8e3"}`, display: "flex", alignItems: "center", padding: "0 18px", fontWeight: 700, fontSize: 24, color: "#2b2b2b", boxSizing: "border-box" }}>
               {typed}{f >= TYPE0 - 6 && f < FIND ? <span style={{ display: "inline-block", width: 2, height: 28, marginLeft: 2, background: caret ? SB : "transparent" }} /> : null}
             </div>
-            <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 10, fontWeight: 600, fontSize: 16, color: "#3c3c3c" }}><div style={{ width: 22, height: 22, borderRadius: 11, border: "2px solid #9aa1ab" }} />Точное соответствие</div>
-            <div style={{ marginTop: 16, display: "flex", gap: 18 }}><Sel label="НОМЕР АКТА" value="Например, ЗРУ-588" ph /><Sel label="ВИД АКТА" value="Все виды" /></div>
-            <div style={{ marginTop: 14, display: "flex", gap: 18 }}><Sel label="ГДЕ ИСКАТЬ СЛОВО" value="Везде в тексте" /><Sel label="СТАТУС" value="Действует" /></div>
-            <div style={{ marginTop: 14, display: "flex", gap: 18 }}><Sel label="ЯЗЫК АКТА" value="Русский" /><Sel label="СОРТИРОВКА" value="По названию" /></div>
+            <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 10, fontWeight: 600, fontSize: 16, color: "#3c3c3c" }}><div style={{ width: 22, height: 22, borderRadius: 11, border: "2px solid #9aa1ab" }} />{tr("Точное соответствие")}</div>
+            <div style={{ marginTop: 16, display: "flex", gap: 18 }}><Sel label={tr("НОМЕР АКТА")} value={tr("Например, ЗРУ-588")} ph /><Sel label={tr("ВИД АКТА")} value={tr("Все виды")} /></div>
+            <div style={{ marginTop: 14, display: "flex", gap: 18 }}><Sel label={tr("ГДЕ ИСКАТЬ СЛОВО")} value={tr("Везде в тексте")} /><Sel label={tr("СТАТУС")} value={tr("Действует")} /></div>
+            <div style={{ marginTop: 14, display: "flex", gap: 18 }}><Sel label={tr("ЯЗЫК АКТА")} value={LANG === "uz" ? "Özbekça" : "Русский"} /><Sel label={tr("СОРТИРОВКА")} value={tr("По названию")} /></div>
             <div style={{ marginTop: 22, display: "flex", gap: 16 }}>
-              <div style={{ flex: 1, height: 60, background: "#f2b3ab", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.08em" }}>ОЧИСТИТЬ</div>
-              <div style={{ flex: 1, height: 60, background: SB, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.08em", transform: `scale(${1 - press(f, FIND) * 0.04})` }}>НАЙТИ</div>
+              <div style={{ flex: 1, height: 60, background: "#f2b3ab", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.08em" }}>{tr("ОЧИСТИТЬ")}</div>
+              <div style={{ flex: 1, height: 60, background: SB, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.08em", transform: `scale(${1 - press(f, FIND) * 0.04})` }}>{tr("НАЙТИ")}</div>
             </div>
           </div>
         </AbsoluteFill>
@@ -741,13 +743,13 @@ export const Search: React.FC = () => {
       {page > 0.01 ? (
         <AbsoluteFill style={{ background: "#fff", opacity: page, fontFamily: UI }}>
           <div style={{ position: "absolute", left: 240, right: 240, top: 380 - scroll }}>
-            <div style={{ fontWeight: 900, fontSize: 21, letterSpacing: "0.06em", color: SB }}>УТОЧНИТЬ РЕЗУЛЬТАТЫ ПО:</div>
-            <div style={{ marginTop: 14, display: "flex", gap: 18 }}>{["По годам", "По месяцам", "По видам", "По статусу"].map((t) => <div key={t} style={{ flex: 1 }}><Sel label="" value={t} /></div>)}</div>
-            <div style={{ marginTop: 14, height: 52, border: "2px solid #cfd8e3", display: "flex", alignItems: "center", padding: "0 18px", fontWeight: 600, fontSize: 19, color: "#9aa1ab" }}>Слово в названии акта</div>
+            <div style={{ fontWeight: 900, fontSize: 21, letterSpacing: "0.06em", color: SB }}>{tr("УТОЧНИТЬ РЕЗУЛЬТАТЫ ПО:")}</div>
+            <div style={{ marginTop: 14, display: "flex", gap: 18 }}>{[tr("По годам"), tr("По месяцам"), tr("По видам"), tr("По статусу")].map((t) => <div key={t} style={{ flex: 1 }}><Sel label="" value={t} /></div>)}</div>
+            <div style={{ marginTop: 14, height: 52, border: "2px solid #cfd8e3", display: "flex", alignItems: "center", padding: "0 18px", fontWeight: 600, fontSize: 19, color: "#9aa1ab" }}>{tr("Слово в названии акта")}</div>
             <div style={{ marginTop: 26, height: 2, background: "#e6e9ee" }} />
             {f < RES ? (
               <div style={{ marginTop: 28 }}>
-                <div style={{ fontWeight: 800, fontSize: 24, color: SB }}>Ищем в базе законов{".".repeat(1 + (Math.floor(f / 8) % 3))}</div>
+                <div style={{ fontWeight: 800, fontSize: 24, color: SB }}>{tr("Ищем в базе законов")}{".".repeat(1 + (Math.floor(f / 8) % 3))}</div>
                 {[0, 1, 2].map((i) => (
                   <div key={i} style={{ marginTop: 30 }}>
                     {[0.66, 0.5, 0.83].map((w, k) => <div key={k} style={{ marginTop: 12, width: `${w * 100}%`, height: 18, borderRadius: 9, background: `linear-gradient(90deg, #e8f1fa, #f6f9fd ${(f * 3 + i * 20) % 100}%, #e8f1fa)` }} />)}
@@ -757,10 +759,10 @@ export const Search: React.FC = () => {
             ) : (
               <div style={{ opacity: res }}>
                 <div style={{ marginTop: 26, display: "flex", alignItems: "center" }}>
-                  <div style={{ flex: 1, fontWeight: 800, fontSize: 27, color: SB }}>По запросу «право» найдено 40 документов</div>
-                  <div style={{ height: 60, padding: "0 28px", background: SB, color: "#fff", display: "flex", alignItems: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.06em", transform: `scale(${1 - press(f, ALL) * 0.05})` }}>ВЫБРАТЬ ВСЕ</div>
+                  <div style={{ flex: 1, fontWeight: 800, fontSize: 27, color: SB }}>{tr("По запросу «право» найдено 40 документов")}</div>
+                  <div style={{ height: 60, padding: "0 28px", background: SB, color: "#fff", display: "flex", alignItems: "center", fontWeight: 900, fontSize: 20, letterSpacing: "0.06em", transform: `scale(${1 - press(f, ALL) * 0.05})` }}>{tr("ВЫБРАТЬ ВСЕ")}</div>
                 </div>
-                <div style={{ marginTop: 10, fontWeight: 600, fontSize: 18, color: "#6f7682" }}>Показаны первые 40 документов. Уточните условия, чтобы увидеть остальные.</div>
+                <div style={{ marginTop: 10, fontWeight: 600, fontSize: 18, color: "#6f7682" }}>{tr("Показаны первые 40 документов. Уточните условия, чтобы увидеть остальные.")}</div>
                 {RESULTS.map(([title, snip], i) => {
                   const e = lin(f, RES + 4 + i * 4, RES + 14 + i * 4);
                   const on = f >= ALL + 4 + i * 3 ? sp(ALL + 4 + i * 3, 10, 260) : 0;
@@ -770,10 +772,10 @@ export const Search: React.FC = () => {
                       <div style={{ width: 34, height: 34, borderRadius: 17, border: `2.5px solid ${on > 0.5 ? "#2f7be6" : "#9aa1ab"}`, background: on > 0.5 ? "#2f7be6" : "#fff", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transform: `scale(${1 + 0.25 * Math.sin(Math.min(1, on) * Math.PI)})` }}>{on > 0.5 ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : null}</div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 800, fontSize: 24, lineHeight: 1.35, color: SB }}>{title}</div>
-                        <div style={{ marginTop: 8, fontWeight: 500, fontSize: 19, lineHeight: 1.6, color: "#2b2b2b" }}>{markWord(snip, "прав")}</div>
+                        <div style={{ marginTop: 8, fontWeight: 500, fontSize: 19, lineHeight: 1.6, color: "#2b2b2b" }}>{markWord(snip, tr("прав"))}</div>
                       </div>
                       <div style={{ display: "flex", alignItems: "flex-start", gap: 18, paddingTop: 2 }}>
-                        <div style={{ fontWeight: 800, fontSize: 19, color: "#2e9d3a", paddingTop: 4 }}>Действует</div>
+                        <div style={{ fontWeight: 800, fontSize: 19, color: "#2e9d3a", paddingTop: 4 }}>{tr("Действует")}</div>
                         <FileIc label="PDF" c="#e5322d" />
                         <div style={{ width: 34, height: 34, borderRadius: 6, background: "#1f4e9c", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 18, fontFamily: "Arial" }}>W</div>
                       </div>
@@ -783,7 +785,7 @@ export const Search: React.FC = () => {
               </div>
             )}
           </div>
-          <TopCap lines={["Найди закон по слову.", "Сразу по всей базе."]} at={LOAD} accent="Сразу по всей базе." />
+          <TopCap lines={[tr("Найди закон по слову."), tr("Сразу по всей базе.")]} at={LOAD} accent={tr("Сразу по всей базе.")} />
           <Top />
         </AbsoluteFill>
       ) : null}
@@ -794,9 +796,9 @@ export const Search: React.FC = () => {
 };
 /** AI: the site's "Объяснение статьи" window (same layout as veoskill.uz): loading, then three blocks written in. */
 const EXPL: [string, string, string, boolean][] = [
-  ["target.svg", "КОРОТКО", "Первая статья определяет главные основы государства. Узбекистан признается независимой страной с выборной властью, подчинением закону и заботой о гражданах, а его короткое и полное названия имеют равную силу.", true],
-  ["document.svg", "ПРОСТЫМИ СЛОВАМИ", "Эта статья закрепляет главные правила жизни страны. Узбекистан полностью независим во внутренних делах и внешней политике, а его руководство избирается гражданами на определенный срок. Государство действует строго по закону, ставит интересы человека на первое место и заботится о нуждающихся. Вы можете использовать названия Узбекистан и Республика Узбекистан как абсолютно равные.", false],
-  ["customer-file.svg", "ПРИМЕР ИЗ ЖИЗНИ", "Дилшод заполняет документы для открытия мастерской в Ташкенте. В одном бланке он написал «Узбекистан», а в другом «Республика Узбекистан». Специалист центра государственных услуг без замечаний принял оба документа: закон гарантирует, что оба названия равнозначны.", false],
+  ["target.svg", tr("КОРОТКО"), tr("Первая статья определяет главные основы государства. Узбекистан признается независимой страной с выборной властью, подчинением закону и заботой о гражданах, а его короткое и полное названия имеют равную силу."), true],
+  ["document.svg", tr("ПРОСТЫМИ СЛОВАМИ"), tr("Эта статья закрепляет главные правила жизни страны. Узбекистан полностью независим во внутренних делах и внешней политике, а его руководство избирается гражданами на определенный срок. Государство действует строго по закону, ставит интересы человека на первое место и заботится о нуждающихся. Вы можете использовать названия Узбекистан и Республика Узбекистан как абсолютно равные."), false],
+  ["customer-file.svg", tr("ПРИМЕР ИЗ ЖИЗНИ"), tr("Дилшод заполняет документы для открытия мастерской в Ташкенте. В одном бланке он написал «Узбекистан», а в другом «Республика Узбекистан». Специалист центра государственных услуг без замечаний принял оба документа: закон гарантирует, что оба названия равнозначны."), false],
 ];
 /** AI mark: a friendly robot head (antenna, eyes that blink, smile); `spin` tilts it a little. */
 export const AiIcon: React.FC<{ size: number; color?: string; spin?: number; blink?: number }> = ({ size, color = "#1cb0f6", spin = 0, blink = 0 }) => {
@@ -820,10 +822,10 @@ export const AiIcon: React.FC<{ size: number; color?: string; spin?: number; bli
 export const blinkAt = (f: number) => { const m = f % 96; return m < 6 ? Math.sin((m / 6) * Math.PI) : 0; };
 /** Before the AI window: the law page, a robot next to every article; hover the robot of Article 1 ("Объяснить статью с помощью ИИ"), click. */
 const PICK_ARTS: [string, string[]][] = [
-  ["1", [ART.ru.p1, ART.ru.p2]],
-  ["2", ["Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами."]],
-  ["3", ["Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику.", "Государственная граница и территория Узбекистана неприкосновенны и неделимы."]],
-  ["4", ["Государственным языком Республики Узбекистан является узбекский язык.", "Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития."]],
+  ["1", [ARTL.p1, ARTL.p2]],
+  ["2", [tr("Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами.")]],
+  ["3", [tr("Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти и управления, проводит свою внутреннюю и внешнюю политику."), tr("Государственная граница и территория Узбекистана неприкосновенны и неделимы.")]],
+  ["4", [tr("Государственным языком Республики Узбекистан является узбекский язык."), tr("Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на ее территории, создает условия для их развития.")]],
 ];
 export const AiPick: React.FC = () => {
   const f = useFrame();
@@ -844,7 +846,7 @@ export const AiPick: React.FC = () => {
             <div key={n} style={{ marginTop: 14 }}>
               <div style={{ height: 48, display: "flex", alignItems: "center", gap: 14 }}>
                 <Heart on={0} />
-                <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>Статья {n}.</div>
+                <div style={{ fontFamily: UI, fontWeight: 900, fontSize: 29, color: "#1a237e" }}>{tr("Статья")} {n}.</div>
                 <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 18 }}>
                   <div style={{ borderRadius: 10, background: i === 0 ? `rgba(28,176,246,${0.14 * glow})` : undefined, padding: 2 }}><AiIcon size={30} color={i === 0 && glow > 0.5 ? "#1cb0f6" : "#4f7fc4"} blink={i === 0 ? blinkAt(f + 30) : 0} /></div>
                   <svg width="30" height="30" viewBox="0 0 24 24" fill="#6f7682"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>
@@ -856,11 +858,11 @@ export const AiPick: React.FC = () => {
         </div>
         {/* tooltip, as on the site */}
         <div style={{ position: "absolute", left: RX - 300, top: RY + 30, width: 340, display: "flex", justifyContent: "flex-end", opacity: tip, transform: `translateY(${(1 - tip) * 6}px)` }}>
-          <div style={{ padding: "8px 14px", borderRadius: 10, background: "#4a4f57", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 18, whiteSpace: "nowrap" }}>Объяснить статью с помощью ИИ</div>
+          <div style={{ padding: "8px 14px", borderRadius: 10, background: "#4a4f57", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 18, whiteSpace: "nowrap" }}>{tr("Объяснить статью с помощью ИИ")}</div>
         </div>
         {f >= 20 ? <Pointer x={px} y={py} down={press(f, CLICK)} op={lin(f, 20, 30)} /> : null}
       </Plane>
-      <TopCap lines={["Нажми на робота", "рядом со статьёй."]} at={6} accent="рядом со статьёй." hold={150} />
+      <TopCap lines={[tr("Нажми на робота"), tr("рядом со статьёй.")]} at={6} accent={tr("рядом со статьёй.")} hold={150} />
       <Top />
     </AbsoluteFill>
   );
@@ -891,7 +893,7 @@ export const AIReal: React.FC = () => {
         <div style={{ position: "absolute", left: MX, top: MY, width: MW, minHeight: 820, borderRadius: 24, background: "#fff", boxShadow: "0 40px 120px rgba(13,22,48,0.35)", padding: "36px 44px 40px", boxSizing: "border-box", fontFamily: UI, color: "#3c3c3c", opacity: Math.min(1, open * 1.5), transform: `translateY(${(1 - open) * 60}px) scale(${0.94 + 0.06 * open})` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-              <div style={{ fontWeight: 800, fontSize: 36, letterSpacing: "-0.01em" }}>Объяснение статьи (Статья 1)</div>
+              <div style={{ fontWeight: 800, fontSize: 36, letterSpacing: "-0.01em" }}>{tr("Объяснение статьи (Статья 1)")}</div>
               <AiIcon size={44} blink={blinkAt(f)} />
             </div>
             <div style={{ display: "flex", gap: 14 }}>
@@ -904,8 +906,8 @@ export const AIReal: React.FC = () => {
               <div style={{ width: 150, height: 150, borderRadius: "50%", background: `radial-gradient(closest-side, rgba(28,176,246,${0.18 + 0.1 * Math.sin(f / 7)}), transparent)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <AiIcon size={110} spin={Math.sin(f / 9) * 6} blink={blinkAt(f + 40)} />
               </div>
-              <div style={{ marginTop: 14, fontWeight: 800, fontSize: 30 }}>Искусственный интеллект разбирает статью{".".repeat(1 + (Math.floor(f / 8) % 3))}</div>
-              <div style={{ marginTop: 8, fontWeight: 600, fontSize: 22, color: "#8a8f98" }}>Ответ генерируется</div>
+              <div style={{ marginTop: 14, fontWeight: 800, fontSize: 30 }}>{tr("Искусственный интеллект разбирает статью")}{".".repeat(1 + (Math.floor(f / 8) % 3))}</div>
+              <div style={{ marginTop: 8, fontWeight: 600, fontSize: 22, color: "#8a8f98" }}>{tr("Ответ генерируется")}</div>
             </div>
           ) : null}
           <div style={{ marginTop: 30, display: "flex", flexDirection: "column", gap: 34 }}>
@@ -939,7 +941,7 @@ export const AIReal: React.FC = () => {
           </div>
         </div>
       </AbsoluteFill>
-      <TopCap lines={["Непонятная статья?", "Объяснит искусственный интеллект."]} at={8} hold={78} accent="искусственный интеллект." />
+      <TopCap lines={[tr("Непонятная статья?"), tr("Объяснит искусственный интеллект.")]} at={8} hold={78} accent={tr("искусственный интеллект.")} />
       <Top />
     </AbsoluteFill>
   );
@@ -951,7 +953,7 @@ const LANGS: [string, string, "ru" | "uz" | "en"][] = [["Русский", "v4/fl
 // languages scrolling inside, the article runs quickly and smoothly through 15 languages
 const FL = (c: string) => staticFile(`flags/${c}.svg`);
 type LDoc = { c: string; n: string; code: string; doc: string; st: string; arts: [string, string][]; rtl?: boolean };
-const LD: LDoc[] = [
+const LD0: LDoc[] = [
   { c: "ru", n: "Русский", code: "RU", doc: "КОНСТИТУЦИЯ РЕСПУБЛИКИ УЗБЕКИСТАН", st: "Документ действует, актуальная редакция", arts: [["Статья 1.", `${ART.ru.p1} ${ART.ru.p2}`], ["Статья 2.", "Государство выражает волю народа и служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами."], ["Статья 3.", "Республика Узбекистан определяет своё административно-территориальное устройство, систему органов государственной власти и управления, проводит внутреннюю и внешнюю политику. Государственная граница и территория Узбекистана неприкосновенны и неделимы."], ["Статья 4.", "Государственным языком Республики Узбекистан является узбекский язык. Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям наций и народностей, проживающих на её территории, и создаёт условия для их развития."], ["Статья 5.", "Республика Узбекистан имеет государственные символы: Флаг, Герб и Гимн, утверждаемые законом."], ["Статья 6.", "Столицей Республики Узбекистан является город Ташкент."], ["Статья 7.", "Народ является единственным источником государственной власти."], ["Статья 8.", "Народ Узбекистана составляют граждане Республики Узбекистан независимо от их национальности."], ["Статья 9.", "Наиболее важные вопросы общественной и государственной жизни выносятся на обсуждение народа и ставятся на всенародное голосование (референдум)."], ["Статья 10.", "От имени народа Узбекистана могут выступать только избранные им Олий Мажлис и Президент Республики."]] },
   { c: "uz", n: "O‘zbekcha", code: "UZ", doc: "O‘ZBEKISTON RESPUBLIKASI KONSTITUTSIYASI", st: "Hujjat amalda, amaldagi tahrir", arts: [["1-modda.", `${ART.uz.p1} ${ART.uz.p2}`], ["2-modda.", "Davlat xalq irodasini ifoda etib, uning manfaatlariga xizmat qiladi. Davlat organlari va mansabdor shaxslar jamiyat va fuqarolar oldida mas’uldirlar."], ["3-modda.", "O‘zbekiston Respublikasi o‘zining ma’muriy-hududiy tuzilishini, davlat hokimiyati va boshqaruv organlari tizimini belgilaydi, ichki va tashqi siyosatini amalga oshiradi. O‘zbekistonning davlat chegarasi va hududi daxlsiz va bo‘linmasdir."], ["4-modda.", "O‘zbekiston Respublikasining davlat tili o‘zbek tilidir. O‘zbekiston Respublikasi o‘z hududida istiqomat qiluvchi millat va elatlarning tillari, urf-odatlari va an’analari hurmat qilinishini ta’minlaydi, ularning rivojlanishi uchun sharoit yaratadi."], ["5-modda.", "O‘zbekiston Respublikasi qonun bilan tasdiqlanadigan davlat ramzlariga ega: Bayroq, Gerb va Madhiya."], ["6-modda.", "O‘zbekiston Respublikasining poytaxti Toshkent shahridir."], ["7-modda.", "Xalq davlat hokimiyatining birdan bir manbaidir."], ["8-modda.", "O‘zbekiston xalqini millatidan qat’i nazar, O‘zbekiston Respublikasining fuqarolari tashkil etadi."], ["9-modda.", "Jamiyat va davlat hayotining eng muhim masalalari xalq muhokamasiga taqdim etiladi, umumiy ovozga (referendumga) qo‘yiladi."], ["10-modda.", "O‘zbekiston xalqi nomidan faqat u saylagan Oliy Majlis va Respublika Prezidenti ish olib borishi mumkin."]] },
   { c: "gb", n: "English", code: "EN", doc: "CONSTITUTION OF THE REPUBLIC OF UZBEKISTAN", st: "Document in force, current version", arts: [["Article 1.", `${ART.en.p1} ${ART.en.p2}`], ["Article 2.", "The State expresses the will of the people and serves their interests. State bodies and officials are accountable to society and citizens."], ["Article 3.", "The Republic of Uzbekistan determines its administrative and territorial structure and the system of state authorities and administration, and conducts its domestic and foreign policy. The state border and territory of Uzbekistan are inviolable and indivisible."], ["Article 4.", "The state language of the Republic of Uzbekistan is Uzbek. The Republic of Uzbekistan ensures respect for the languages, customs and traditions of the nations and peoples living on its territory and creates conditions for their development."], ["Article 5.", "The Republic of Uzbekistan has state symbols approved by law: the Flag, the Emblem and the Anthem."], ["Article 6.", "The capital of the Republic of Uzbekistan is the city of Tashkent."], ["Article 7.", "The people are the sole source of state power."], ["Article 8.", "The people of Uzbekistan are made up of the citizens of the Republic of Uzbekistan, regardless of their nationality."], ["Article 9.", "The most important matters of public and state life are submitted for public discussion and put to a nationwide vote (referendum)."], ["Article 10.", "Only the Oliy Majlis and the President of the Republic, elected by the people, may act on behalf of the people of Uzbekistan."]] },
@@ -961,6 +963,8 @@ const LD: LDoc[] = [
   { c: "cn", n: "中文", code: "ZH", doc: "乌兹别克斯坦共和国宪法", st: "文件现行有效", arts: [["第一条", "乌兹别克斯坦是实行共和政体的主权、民主、法治、社会和世俗国家。“乌兹别克斯坦共和国”和“乌兹别克斯坦”两个名称具有同等意义。"], ["第二条", "国家表达人民的意志，服务于人民的利益。国家机关和公职人员对社会和公民负责。"], ["第三条", "乌兹别克斯坦共和国确定本国的行政区划结构以及国家权力和管理机关体系，实行对内和对外政策。乌兹别克斯坦的国界和领土不可侵犯、不可分割。"], ["第四条", "乌兹别克斯坦共和国的国语是乌兹别克语。乌兹别克斯坦共和国保障尊重居住在其境内的各民族的语言、习俗和传统，并为其发展创造条件。"], ["第五条", "乌兹别克斯坦共和国拥有由法律确认的国家象征：国旗、国徽和国歌。"], ["第六条", "乌兹别克斯坦共和国的首都是塔什干市。"], ["第七条", "人民是国家权力的唯一来源。"], ["第八条", "乌兹别克斯坦人民由乌兹别克斯坦共和国公民组成，不分民族。"], ["第九条", "社会和国家生活中最重要的问题提交人民讨论，并交付全民投票（全民公决）。"], ["第十条", "只有人民选举产生的最高会议和共和国总统才能代表乌兹别克斯坦人民。"]] },
   { c: "sa", n: "العربية", code: "AR", doc: "دستور جمهورية أوزبكستان", st: "الوثيقة سارية المفعول", rtl: true, arts: [["المادة 1.", "أوزبكستان دولة ذات سيادة، ديمقراطية، قانونية، اجتماعية وعلمانية، ذات شكل جمهوري للحكم. وتسميتا «جمهورية أوزبكستان» و«أوزبكستان» متساويتان في المعنى."], ["المادة 2.", "تعبّر الدولة عن إرادة الشعب وتخدم مصالحه. وتكون أجهزة الدولة والمسؤولون مسؤولين أمام المجتمع والمواطنين."], ["المادة 3.", "تحدد جمهورية أوزبكستان تقسيمها الإداري والإقليمي ونظام أجهزة سلطة الدولة والإدارة، وتنتهج سياستها الداخلية والخارجية. حدود أوزبكستان وأراضيها مصونة وغير قابلة للتجزئة."], ["المادة 4.", "اللغة الرسمية لجمهورية أوزبكستان هي اللغة الأوزبكية. وتضمن جمهورية أوزبكستان احترام لغات وعادات وتقاليد الأمم والشعوب المقيمة على أراضيها وتهيئ الظروف لتطويرها."], ["المادة 5.", "لجمهورية أوزبكستان رموز وطنية يقرها القانون: العلم والشعار والنشيد الوطني."], ["المادة 6.", "عاصمة جمهورية أوزبكستان هي مدينة طشقند."], ["المادة 7.", "الشعب هو المصدر الوحيد لسلطة الدولة."], ["المادة 8.", "يتكون شعب أوزبكستان من مواطني جمهورية أوزبكستان بغض النظر عن قوميتهم."], ["المادة 9.", "تُطرح أهم قضايا الحياة العامة وحياة الدولة للنقاش العام وتُعرض على التصويت الشعبي (الاستفتاء)."], ["المادة 10.", "لا يحق التحدث باسم شعب أوزبكستان إلا للمجلس الأعلى ورئيس الجمهورية المنتخبين من قبله."]] },
 ];
+// Uzbek cut: the reader starts on Uzbek (new alphabet), Russian goes second.
+const LD: LDoc[] = LANG === "uz" ? [{ ...LD0[1], n: uzt(LD0[1].n), doc: uzt(LD0[1].doc), st: uzt(LD0[1].st), arts: LD0[1].arts.map(([a, b]) => [uzt(a), uzt(b)] as [string, string]) }, LD0[0], ...LD0.slice(2)] : LD0;
 const MORE_L: [string, string][] = [["kg", "Кыргызча"], ["tj", "Тоҷикӣ"], ["fr", "Français"], ["es", "Español"], ["it", "Italiano"], ["jp", "日本語"], ["kr", "한국어"], ["in", "हिन्दी"], ["pt", "Português"], ["pl", "Polski"], ["ua", "Українська"], ["tm", "Türkmençe"], ["az", "Azərbaycanca"], ["id", "Bahasa"]];
 const L_FIRST = 44, L_STEP = 26; // first switch, then one language every ~0.43 s
 const BAR = "linear-gradient(90deg, #1cb0f6, #3db7f4)";
@@ -984,10 +988,10 @@ export const Langs: React.FC = () => {
         {/* toolbar */}
         <div style={{ height: 88, borderRadius: 22, background: BAR, display: "flex", alignItems: "stretch", color: "#fff", overflow: "hidden" }}>
           <div style={{ width: 470, padding: "0 26px", display: "flex", alignItems: "center", gap: 14, borderRight: "2px solid rgba(255,255,255,0.35)" }}>
-            <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ВЫБЕРИТЕ ЗАКОН</div><div style={{ fontWeight: 900, fontSize: 23, whiteSpace: "nowrap" }}>Конституция Республики</div></div><Chev />
+            <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>{tr("ВЫБЕРИТЕ ЗАКОН")}</div><div style={{ fontWeight: 900, fontSize: 23, whiteSpace: "nowrap" }}>{tr("Конституция Республики")}</div></div><Chev />
           </div>
           <div style={{ width: 300, padding: "0 24px", display: "flex", alignItems: "center", gap: 14, borderRight: "2px solid rgba(255,255,255,0.35)" }}>
-            <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ЧАСТЬ 1 ИЗ 10</div><div style={{ fontWeight: 900, fontSize: 23 }}>СТАТЬИ 1-10</div></div><Chev />
+            <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>{tr("ЧАСТЬ 1 ИЗ 10")}</div><div style={{ fontWeight: 900, fontSize: 23 }}>{tr("СТАТЬИ 1-10")}</div></div><Chev />
           </div>
           <div style={{ width: 150, display: "flex", alignItems: "center", justifyContent: "center", gap: 12, borderRight: "2px solid rgba(255,255,255,0.35)", background: f >= L_FIRST - 4 ? "rgba(255,255,255,0.16)" : "transparent" }}>
             <Img src={FL(d.c)} style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover", border: "2px solid #fff" }} />
@@ -995,17 +999,17 @@ export const Langs: React.FC = () => {
           </div>
           <div style={{ flex: 1, padding: "12px 14px", display: "flex" }}>
             <div style={{ flex: 1, borderRadius: 14, background: "#fff", display: "flex", alignItems: "center", gap: 14, padding: "0 22px", color: "#9aa1ab", fontWeight: 600, fontSize: 22 }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.6" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>Поиск по всей базе законов
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.6" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>{tr("Поиск по всей базе законов")}
             </div>
           </div>
           <div style={{ width: 170, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, borderLeft: "2px solid rgba(255,255,255,0.35)", fontWeight: 900, fontSize: 22, letterSpacing: "0.06em" }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinejoin="round"><path d="M3 4h18l-7 8v7l-4 2v-9z" /></svg>ФИЛЬТР
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinejoin="round"><path d="M3 4h18l-7 8v7l-4 2v-9z" /></svg>{tr("ФИЛЬТР")}
           </div>
         </div>
         {/* breadcrumbs */}
         <div style={{ height: 96, display: "flex", alignItems: "center", gap: 18, padding: "0 8px", fontSize: 26, fontWeight: 700 }}>
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1cb0f6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /></svg>
-          <span style={{ color: "#9aa1ab" }}>›</span><span style={{ color: "#6f7682" }}>Основные законы</span><span style={{ color: "#9aa1ab" }}>›</span><span style={{ color: "#1a237e", fontWeight: 900 }}>Конституция Республики Узбекистан</span>
+          <span style={{ color: "#9aa1ab" }}>›</span><span style={{ color: "#6f7682" }}>{tr("Основные законы")}</span><span style={{ color: "#9aa1ab" }}>›</span><span style={{ color: "#1a237e", fontWeight: 900 }}>{tr("Конституция Республики Узбекистан")}</span>
           <div style={{ marginLeft: "auto", display: "flex", gap: 14 }}>
             {ico(<path d="M12 5v14M5 12h14" />)}
             {ico(<><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" /></>)}
@@ -1018,7 +1022,7 @@ export const Langs: React.FC = () => {
           <div style={{ width: 420, borderRadius: 20, border: "2px solid #e6e9ee", background: "#fff", overflow: "hidden", display: "flex", flexDirection: "column" }}>
             <div style={{ height: 78, background: BAR, display: "flex", alignItems: "center", gap: 16, padding: "0 26px", color: "#fff", fontFamily: HEAD, fontWeight: 900, fontSize: 30, whiteSpace: "nowrap" }}>
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" /></svg>
-              99+ языков
+              {tr("99+ языков")}
             </div>
             <div style={{ flex: 1, overflow: "hidden", padding: "10px 14px", WebkitMaskImage: "linear-gradient(180deg, #000 82%, transparent)", maskImage: "linear-gradient(180deg, #000 82%, transparent)" }}>
               <div style={{ position: "relative", transform: `translateY(${-scroll}px)` }}>
@@ -1060,8 +1064,8 @@ export const Langs: React.FC = () => {
 
 // ================= game: build the phrase from a word bank =================
 const CARD: React.CSSProperties = { position: "absolute", borderRadius: 22, background: "#fff", border: `3px solid ${SWAN}`, boxShadow: `0 6px 0 ${SWAN}`, fontFamily: UI, fontWeight: 800, color: INK, boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40 };
-const BANK = ["всех", "богатых", "Закон", "иногда", "для", "только", "один"];
-const ANSWER = ["Закон", "один", "для", "всех"];
+const BANK = [tr("всех"), tr("богатых"), tr("Закон"), tr("иногда"), tr("для"), tr("только"), tr("один")];
+const ANSWER = [tr("Закон"), tr("один"), tr("для"), tr("всех")];
 export const PhraseBank: React.FC = () => {
   const f = useFrame();
   const { fps } = useVideoConfig();
@@ -1081,8 +1085,8 @@ export const PhraseBank: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: BG, overflow: "hidden" }}>
       <Top />
-      <div style={{ position: "absolute", left: 110, top: 110 }}><Cap text="Собери фразу" at={8} size={76} /></div>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 250, textAlign: "center", fontFamily: HEAD, fontWeight: 600, fontSize: 34, color: "#5d6470", opacity: lin(f, 14, 30) }}>Что гласит закон о равенстве?</div>
+      <div style={{ position: "absolute", left: 110, top: 110 }}><Cap text={tr("Собери фразу")} at={8} size={76} /></div>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 250, textAlign: "center", fontFamily: HEAD, fontWeight: 600, fontSize: 34, color: "#5d6470", opacity: lin(f, 14, 30) }}>{tr("Что гласит закон о равенстве?")}</div>
       {/* answer line */}
       <div style={{ position: "absolute", left: 960 - (totalA + 80) / 2, width: (totalA + 80) * lin(f, 8, 34, 0, 1, OUTE), top: LINE_Y + H + 18, height: 6, borderRadius: 3, background: f >= DONE ? GREEN : "#d6d9de", boxShadow: f >= DONE ? `0 0 ${28 * glow}px rgba(88,204,2,0.7)` : undefined }} />
       {/* bank tray */}
@@ -1120,11 +1124,11 @@ export { RED as _red, GREY as _grey, fit as _fit };
 /** Short contrast insert: on lex.uz the same action does nothing, the page shakes, a red cross with a shadow and the reason. */
 type LexMode = "select" | "hover" | "search" | "collect" | "ai";
 const LEX_TXT: Record<LexMode, [string, string]> = {
-  select: ["Попробуем выделить.", "Нельзя выделить цветом и оставить заметку"],
-  hover: ["Наведём на термин.", "Нет подсказок к терминам"],
-  search: ["Ищем по всей базе.", "Нет подробного фильтра и поиска"],
-  collect: ["Соберём подборку.", "Нельзя собрать статьи и отправить ссылкой"],
-  ai: ["Попросим объяснить.", "Нет объяснения простыми словами"],
+  select: [tr("Попробуем выделить."), tr("Нельзя выделить цветом и оставить заметку")],
+  hover: [tr("Наведём на термин."), tr("Нет подсказок к терминам")],
+  search: [tr("Ищем по всей базе."), tr("Нет подробного фильтра и поиска")],
+  collect: [tr("Соберём подборку."), tr("Нельзя собрать статьи и отправить ссылкой")],
+  ai: [tr("Попросим объяснить."), tr("Нет объяснения простыми словами")],
 };
 export const LexTry: React.FC<{ mode: LexMode }> = ({ mode }) => {
   const f = useFrame();
@@ -1140,7 +1144,7 @@ export const LexTry: React.FC<{ mode: LexMode }> = ({ mode }) => {
   const px = mode === "select" ? interpolate(f, [8, 36, 40, 84, 140], [1300, x0, x0, x1, x1], { ...cl, easing: IOE }) : interpolate(f, [8, 38, 140], [1300, tx, tx], { ...cl, easing: IOE });
   const py = interpolate(f, [8, 36, 140], [900, ty, ty], { ...cl, easing: IOE });
   const NO = 100;
-  const typed = "право".slice(0, Math.max(0, Math.min(5, Math.floor((f - 46) / 6))));
+  const typed = tr("право").slice(0, Math.max(0, Math.min(5, Math.floor((f - 46) / 6))));
   const shake = f >= NO && f < NO + 20 ? Math.sin((f - NO) * 2.2) * 14 * (1 - (f - NO) / 20) : 0;
   const x = sp(NO, 10, 240);
   const [cap, msg] = LEX_TXT[mode];
@@ -1161,7 +1165,7 @@ export const LexTry: React.FC<{ mode: LexMode }> = ({ mode }) => {
           <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 56, color: "#c23a3a", textShadow: "0 6px 24px rgba(255,255,255,0.9), 0 2px 10px rgba(194,58,58,0.25)", opacity: lin(f, NO + 6, NO + 16), transform: `translateY(${(1 - lin(f, NO + 6, NO + 18, 0, 1, OUTE)) * 20}px)` }}>{msg}</div>
         </AbsoluteFill>
       ) : null}
-      <TopLine a="А на lex.uz?" b={cap} at={4} size={66} accentColor="#7c8593" />
+      <TopLine a={tr("А на lex.uz?")} b={cap} at={4} size={66} accentColor="#7c8593" />
     </AbsoluteFill>
   );
 };

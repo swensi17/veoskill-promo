@@ -1,4 +1,5 @@
 import React from "react";
+import { tr } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
 import { NAVY, BLUE, GREEN, GLIP, INK, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Pointer, TopLine } from "./Scenes9";
 import { Confetti } from "./Lesson";
@@ -72,13 +73,13 @@ export const _BGS = ["#ffe2d1", "#d6f0ff", "#e5dcff", "#dff7d0", "#fff1c2", "#ff
 const T = { GEAR: 60, ED: 66, TAB1: 98, H: 126, TAB2: 150, B: 172, OK: 205, ALL: 260, MED: 266, MCLOSE: 396, FIND: 430, FR: 436, ADD1: 470, ADD2: 494, END: 560 };
 // editor geometry
 const EX = 460, EY = 120, EW = 1000, EH = 900, BY = EY + 96; // body origin y
-const TABS = ["Персонаж", "Лицо", "Волосы", "Верх", "Очки", "Фон", "Своё фото"];
+const TABS = [tr("Персонаж"), tr("Лицо"), tr("Волосы"), tr("Верх"), tr("Очки"), tr("Фон"), tr("Своё фото")];
 const TABW = (EW - 60 - 8) / 7;
 const tabX = (i: number) => EX + 34 + i * TABW + TABW / 2, tabY = BY + 280 + 38;
 const cardX = (i: number) => EX + 30 + (i % 2) * 478 + 231, cardY = (i: number) => BY + 430 + Math.floor(i / 2) * 126 + 55;
 const swX = (i: number) => EX + 30 + (i % 8) * 116 + 50, swY = (i: number) => BY + 430 + Math.floor(i / 8) * 104 + 44;
 const BTN = { dice: EX + EW - 201, ok: EX + EW - 131, close: EX + EW - 61, y: EY + 48 };
-const CARDS: [string, string, string][] = [["Классика", "Знакомый аватар с одеждой и принтами", "p1"], ["Приключение", "Яркий персонаж с выразительными глазами", "p5"], ["Забавный", "Милый герой с большими ушами", "p0"], ["Скетч", "Чёрные линии, 48 причёсок и бороды", "p3"]];
+const CARDS: [string, string, string][] = [[tr("Классика"), tr("Знакомый аватар с одеждой и принтами"), "p1"], [tr("Приключение"), tr("Яркий персонаж с выразительными глазами"), "p5"], [tr("Забавный"), tr("Милый герой с большими ушами"), "p0"], [tr("Скетч"), tr("Чёрные линии, 48 причёсок и бороды"), "p3"]];
 const BG2 = ["#e2fbc8", "#dff1ff", "#fbe3d3", "#f7d6ef", "#e6e6e6", "#fdf1b8", "#e5dcff", "#ffffff", "#d3efe6", "#c7e3f6", "#f8d3c8", "#f1e5cb", "#d8d6f2", "#f4c9dc", "#c4dcc0", "#4f617f"];
 
 export const Profile: React.FC = () => {
@@ -102,10 +103,10 @@ export const Profile: React.FC = () => {
   const down = Math.max(...clicks.map(([t]) => press(f, t)));
   const xpFill = lin(f, T.MED + 16, T.MED + 70, 0.32, 1, Easing.bezier(0.3, 0, 0.2, 1));
   const lsFill = lin(f, T.MED + 50, T.MED + 100, 0.2, 1, Easing.bezier(0.3, 0, 0.2, 1));
-  const caps: [number, string, string][] = [[0, "Твоя страница", "в veoskill."], [T.ED, "Создай аватар", "как хочешь."], [T.MED, "Медали", "за каждый шаг."], [T.FR, "Находи друзей", "и учись вместе."]];
+  const caps: [number, string, string][] = [[0, tr("Твоя страница"), tr("в veoskill.")], [T.ED, tr("Создай аватар"), tr("как хочешь.")], [T.MED, tr("Медали"), tr("за каждый шаг.")], [T.FR, tr("Находи друзей"), tr("и учись вместе.")]];
   let ci = 0; caps.forEach(([t], i) => { if (f >= t) ci = i; });
-  const NAV: [string, string][] = [["icons_hub_home.webp", "КАБИНЕТ"], ["stickers_module.webp", "МОДУЛИ"], ["icons_duel_scales.webp", "ЗАКОНЫ"], ["icons_hub_stats.webp", "СТАТИСТИКА"], ["icons_hub_achievements.webp", "ДОСТИЖЕНИЯ"], ["icons_hub_store.webp", "МАГАЗИН"], ["icons_hub_docs.webp", "МАТЕРИАЛЫ"], ["icons_hub_forum.webp", "ФОРУМ"]];
-  const FRIENDS: [string, string, string][] = [["Ясмин", "yasmin", "p5"], ["Аяна Каримова", "ayana_karimova", "p0"], ["Сардор", "sardor", "p2"], ["Тута Джейн", "tuta_jain", "p4"], ["Асад Асадов", "asad", "me1"]];
+  const NAV: [string, string][] = [["icons_hub_home.webp", tr("КАБИНЕТ")], ["stickers_module.webp", tr("МОДУЛИ")], ["icons_duel_scales.webp", tr("ЗАКОНЫ")], ["icons_hub_stats.webp", tr("СТАТИСТИКА")], ["icons_hub_achievements.webp", tr("ДОСТИЖЕНИЯ")], ["icons_hub_store.webp", tr("МАГАЗИН")], ["icons_hub_docs.webp", tr("МАТЕРИАЛЫ")], ["icons_hub_forum.webp", tr("ФОРУМ")]];
+  const FRIENDS: [string, string, string][] = [[tr("Ясмин"), "yasmin", "p5"], [tr("Аяна Каримова"), "ayana_karimova", "p0"], [tr("Сардор"), "sardor", "p2"], [tr("Тута Джейн"), "tuta_jain", "p4"], [tr("Асад Асадов"), "asad", "me1"]];
   return (
     <AbsoluteFill style={{ background: "#fff", fontFamily: UI, overflow: "hidden" }}>
       <AbsoluteFill style={{ opacity: page, transformOrigin: "50% 0", transform: "translateY(110px) scale(0.89)" }}>
@@ -118,23 +119,23 @@ export const Profile: React.FC = () => {
             </div>
           ))}
           <div style={{ position: "absolute", left: 14, top: 760, width: 272, height: 150, borderRadius: 20, background: "linear-gradient(135deg, #1cb0f6, #3db7f4)", color: "#fff", padding: "18px 20px", boxSizing: "border-box" }}>
-            <div style={{ fontWeight: 700, fontSize: 15, opacity: 0.85 }}>Текущий план</div>
+            <div style={{ fontWeight: 700, fontSize: 15, opacity: 0.85 }}>{tr("Текущий план")}</div>
             <div style={{ fontWeight: 900, fontSize: 26 }}>Premium</div>
-            <div style={{ marginTop: 6, fontWeight: 600, fontSize: 14, opacity: 0.9 }}>Полный доступ открыт. Энергия и возможности без лимитов.</div>
+            <div style={{ marginTop: 6, fontWeight: 600, fontSize: 14, opacity: 0.9 }}>{tr("Полный доступ открыт. Энергия и возможности без лимитов.")}</div>
           </div>
         </div>
         {/* header card */}
         <div style={{ position: "absolute", left: 400, top: 20, width: 840, height: 380, borderRadius: 28, background: "linear-gradient(120deg, #f2c4bd, #f7d9cf 60%, #f4cfc7)", overflow: "hidden" }}>
           {[["⇪", 1110 - 400], ["⚙", 1190 - 400]].map(([k, x], i) => <div key={k} style={{ position: "absolute", left: (x as number) - 32, top: 40, width: 64, height: 64, borderRadius: 16, background: "#fff", boxShadow: `0 ${4 - 3 * (i ? press(f, T.GEAR) : 0)}px 0 #e2e2e2`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, color: "#3c3c3c" }}>{k}</div>)}
           <div style={{ position: "absolute", left: 420 - 85, top: 34, transform: `scale(${1 + 0.12 * Math.sin(lin(f, T.OK + 8, T.OK + 30) * Math.PI)})` }}><AvatarImg size={170} src="p3" bg={f >= T.OK ? "#f7d6ef" : "#ffe2d1"} ring /></div>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 224, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 40, color: "#3c3c3c" }}>Нодира <Verified size={38} /></div>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 278, textAlign: "center", fontWeight: 600, fontSize: 19, color: "#7c6f6a" }}><span style={{ color: "#2e9d3a", fontWeight: 800 }}>В сети</span> · С нами с 6 ноября 2026 г.</div>
-          <div style={{ position: "absolute", left: 28, top: 312, display: "flex", gap: 12 }}>{["12 подписки", "48 подписчиков"].map((t) => <div key={t} style={{ padding: "12px 20px", borderRadius: 14, background: "#fff", fontWeight: 900, fontSize: 18, color: BLUE }}>{t}</div>)}</div>
+          <div style={{ position: "absolute", left: 0, right: 0, top: 224, textAlign: "center", fontFamily: HEAD, fontWeight: 900, fontSize: 40, color: "#3c3c3c" }}>{tr("Нодира")} <Verified size={38} /></div>
+          <div style={{ position: "absolute", left: 0, right: 0, top: 278, textAlign: "center", fontWeight: 600, fontSize: 19, color: "#7c6f6a" }}><span style={{ color: "#2e9d3a", fontWeight: 800 }}>{tr("В сети")}</span> {tr("· С нами с 6 ноября 2026 г.")}</div>
+          <div style={{ position: "absolute", left: 28, top: 312, display: "flex", gap: 12 }}>{[tr("12 подписки"), tr("48 подписчиков")].map((t) => <div key={t} style={{ padding: "12px 20px", borderRadius: 14, background: "#fff", fontWeight: 900, fontSize: 18, color: BLUE }}>{t}</div>)}</div>
         </div>
         {/* stats */}
-        <div style={{ position: "absolute", left: 400, top: 430, fontWeight: 800, fontSize: 30, color: INK }}>Статистика</div>
+        <div style={{ position: "absolute", left: 400, top: 430, fontWeight: 800, fontSize: 30, color: INK }}>{tr("Статистика")}</div>
         <div style={{ position: "absolute", left: 400, top: 480, width: 840, height: 190, borderRadius: 20, border: "2px solid #e5e5e5", display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-          {[["real/key-fire.webp", "12", "Серия"], ["site/gem.svg", "1 250", "Всего XP"], ["site/icons_hub_docs.webp", "34", "Уроки"], ["site/stickers_module.webp", "3", "Курсы"]].map(([ic, v, l], i) => (
+          {[["real/key-fire.webp", "12", tr("Серия")], ["site/gem.svg", "1 250", tr("Всего XP")], ["site/icons_hub_docs.webp", "34", tr("Уроки")], ["site/stickers_module.webp", "3", tr("Курсы")]].map(([ic, v, l], i) => (
             <div key={l} style={{ display: "flex", alignItems: "center", gap: 18, padding: "0 28px", borderLeft: i % 2 ? "2px solid #e5e5e5" : undefined, borderTop: i > 1 ? "2px solid #e5e5e5" : undefined }}>
               <Img src={staticFile(ic)} style={{ width: 42, height: 42, objectFit: "contain" }} />
               <div><div style={{ fontWeight: 900, fontSize: 28, color: INK }}>{v}</div><div style={{ fontWeight: 600, fontSize: 17, color: "#7c8593" }}>{l}</div></div>
@@ -142,8 +143,8 @@ export const Profile: React.FC = () => {
           ))}
         </div>
         {/* medals */}
-        <div style={{ position: "absolute", left: 400, top: 696, fontWeight: 800, fontSize: 30, color: INK }}>Медали</div>
-        <div style={{ position: "absolute", left: 1170, top: 702, fontWeight: 900, fontSize: 20, letterSpacing: "0.08em", color: BLUE }}>ВСЕ</div>
+        <div style={{ position: "absolute", left: 400, top: 696, fontWeight: 800, fontSize: 30, color: INK }}>{tr("Медали")}</div>
+        <div style={{ position: "absolute", left: 1170, top: 702, fontWeight: 900, fontSize: 20, letterSpacing: "0.08em", color: BLUE }}>{tr("ВСЕ")}</div>
         <div style={{ position: "absolute", left: 400, top: 746, width: 840, height: 140, borderRadius: 20, border: "2px solid #e5e5e5", display: "flex", alignItems: "center", justifyContent: "space-around" }}>
           {[1, 1, 0, 0, 0, 0].map((o, i) => <Medal key={i} on={o} n={i + 1} size={78} kind={i % 2 ? "ribbon" : "star"} />)}
         </div>
@@ -152,8 +153,8 @@ export const Profile: React.FC = () => {
           {[["site/stickers_module.webp", "3", "#3c3c3c"], ["real/key-fire.webp", "12", "#ff9600"], ["site/gem.svg", "100", BLUE], ["real/heart-red.webp", "∞", "#ff4b4b"]].map(([ic, v, c]) => <div key={ic} style={{ display: "flex", alignItems: "center", gap: 8, color: c }}><Img src={staticFile(ic)} style={{ width: 38, height: 38, objectFit: "contain" }} />{v}</div>)}
         </div>
         <div style={{ position: "absolute", left: 1320, top: 100, width: 400, height: 230, borderRadius: 20, border: "2px solid #e5e5e5", padding: "22px 26px", boxSizing: "border-box" }}>
-          <div style={{ fontWeight: 800, fontSize: 24, color: INK }}>Добавить друзей</div>
-          {[["🔍", "Найти друзей"], ["🦉", "Пригласить друзей"]].map(([ic, t], i) => <div key={t} style={{ marginTop: i ? 10 : 22, height: 60, display: "flex", alignItems: "center", gap: 16, fontWeight: 800, fontSize: 21, color: INK, borderRadius: 14, border: i === 0 && f >= T.FIND - 14 ? `3px solid ${BLUE}` : "3px solid transparent", padding: "0 8px" }}><span style={{ fontSize: 30 }}>{ic}</span>{t}<span style={{ marginLeft: "auto", color: "#9aa1ab" }}>›</span></div>)}
+          <div style={{ fontWeight: 800, fontSize: 24, color: INK }}>{tr("Добавить друзей")}</div>
+          {[["🔍", tr("Найти друзей")], ["🦉", tr("Пригласить друзей")]].map(([ic, t], i) => <div key={t} style={{ marginTop: i ? 10 : 22, height: 60, display: "flex", alignItems: "center", gap: 16, fontWeight: 800, fontSize: 21, color: INK, borderRadius: 14, border: i === 0 && f >= T.FIND - 14 ? `3px solid ${BLUE}` : "3px solid transparent", padding: "0 8px" }}><span style={{ fontSize: 30 }}>{ic}</span>{t}<span style={{ marginLeft: "auto", color: "#9aa1ab" }}>›</span></div>)}
         </div>
 
         {/* avatar editor, laid out like the site */}
@@ -161,7 +162,7 @@ export const Profile: React.FC = () => {
           <>
             <div style={{ position: "absolute", left: -400, top: -400, right: -400, bottom: -400, background: `rgba(40,46,58,${0.45 * ed})` }} />
             <div style={{ position: "absolute", left: EX, top: EY, width: EW, height: EH, borderRadius: 26, background: "#fff", boxShadow: "0 40px 120px rgba(13,22,48,0.35)", opacity: Math.min(1, ed * 1.4), transform: `translateY(${(1 - ed) * 40}px)`, overflow: "hidden" }}>
-              <div style={{ position: "absolute", left: 40, top: 28, fontWeight: 800, fontSize: 32, color: "#3c3c3c" }}>Редактировать</div>
+              <div style={{ position: "absolute", left: 40, top: 28, fontWeight: 800, fontSize: 32, color: "#3c3c3c" }}>{tr("Редактировать")}</div>
               {[["dice", "#fff", "#e3e5e9"], ["ok", GREEN, GLIP], ["close", "#fff", "#e3e5e9"]].map(([k, c, sh]) => { const cx = BTN[k as "dice"] - EX; const d = k === "ok" ? press(f, T.OK) : 0; return (
                 <div key={k} style={{ position: "absolute", left: cx - 29, top: 19, width: 58, height: 58, borderRadius: 16, background: c, border: c === "#fff" ? "3px solid #e3e5e9" : undefined, boxSizing: "border-box", boxShadow: `0 ${4 - 3 * d}px 0 ${sh}`, transform: `translateY(${d * 3}px)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   {k === "dice" ? <svg width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill={BLUE} /><g fill="#fff"><circle cx="8" cy="8" r="1.6" /><circle cx="16" cy="8" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="8" cy="16" r="1.6" /><circle cx="16" cy="16" r="1.6" /></g></svg>
@@ -178,7 +179,7 @@ export const Profile: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <div style={{ position: "absolute", left: 40, top: 96 + 384, fontWeight: 800, fontSize: 26, color: "#3c3c3c" }}>{tab === 0 ? "Тип персонажа" : "Цвет фона"}</div>
+              <div style={{ position: "absolute", left: 40, top: 96 + 384, fontWeight: 800, fontSize: 26, color: "#3c3c3c" }}>{tab === 0 ? tr("Тип персонажа") : tr("Цвет фона")}</div>
               {tab === 0 ? CARDS.map(([t, d, a], i) => (
                 <div key={t} style={{ position: "absolute", left: 30 + (i % 2) * 478, top: 96 + 430 + Math.floor(i / 2) * 126, width: 462, height: 110, borderRadius: 18, border: `3px solid ${i === card ? BLUE : "#e5e5e5"}`, boxSizing: "border-box", display: "flex", alignItems: "center", gap: 16, padding: "0 18px", transform: `scale(${i === card && card > 0 ? 1 + 0.04 * Math.sin(lin(f, card === 1 ? T.TAB1 + 2 : T.H + 2, (card === 1 ? T.TAB1 : T.H) + 14) * Math.PI) : 1})` }}>
                   <Img src={staticFile(`av/${a}.svg`)} style={{ width: 76, height: 76, borderRadius: 16 }} />
@@ -193,8 +194,8 @@ export const Profile: React.FC = () => {
         ) : null}
         {/* medals */}
         {med > 0.001 ? (
-          <Modal o={med} x={460} y={190} w={1000} h={720} title="Медали" closeDown={press(f, T.MCLOSE)}>
-            {[["Опыт", xpFill, `${Math.round(xpFill * 100)} / 100`, "#ffc800", [100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000], xpFill >= 1 ? 2 : 1, T.MED + 70], ["Уроки", lsFill, `${Math.round(lsFill * 5)} / 5`, BLUE, [1, 3, 5, 10, 15, 25, 40, 60, 100], lsFill >= 1 ? 3 : 2, T.MED + 100]].map(([t, fill, lb, c, ns, on, at], k) => (
+          <Modal o={med} x={460} y={190} w={1000} h={720} title={tr("Медали")} closeDown={press(f, T.MCLOSE)}>
+            {[[tr("Опыт"), xpFill, `${Math.round(xpFill * 100)} / 100`, "#ffc800", [100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000], xpFill >= 1 ? 2 : 1, T.MED + 70], [tr("Уроки"), lsFill, `${Math.round(lsFill * 5)} / 5`, BLUE, [1, 3, 5, 10, 15, 25, 40, 60, 100], lsFill >= 1 ? 3 : 2, T.MED + 100]].map(([t, fill, lb, c, ns, on, at], k) => (
               <div key={t as string} style={{ padding: "26px 32px 0", borderTop: k ? "2px solid #eef0f3" : undefined, marginTop: k ? 16 : 0 }}>
                 <div style={{ fontWeight: 900, fontSize: 28, color: INK }}>{t as string}</div>
                 <div style={{ marginTop: 16, height: 40, borderRadius: 20, background: "#eef0f3", position: "relative", overflow: "hidden" }}>
@@ -215,15 +216,15 @@ export const Profile: React.FC = () => {
 
         {/* find friends */}
         {fr > 0.001 ? (
-          <Modal o={fr} x={510} y={170} w={900} h={900} title="Найдите друзей">
-            <div style={{ margin: "20px 32px 0", height: 62, borderRadius: 16, border: "3px solid #e5e5e5", display: "flex", alignItems: "center", gap: 12, padding: "0 20px", fontWeight: 600, fontSize: 22, color: "#9aa1ab" }}>🔍 Имя или имя пользователя</div>
-            <div style={{ margin: "22px 32px 10px", fontWeight: 800, fontSize: 22, color: INK }}>Вы можете их знать</div>
+          <Modal o={fr} x={510} y={170} w={900} h={900} title={tr("Найдите друзей")}>
+            <div style={{ margin: "20px 32px 0", height: 62, borderRadius: 16, border: "3px solid #e5e5e5", display: "flex", alignItems: "center", gap: 12, padding: "0 20px", fontWeight: 600, fontSize: 22, color: "#9aa1ab" }}>{tr("🔍 Имя или имя пользователя")}</div>
+            <div style={{ margin: "22px 32px 10px", fontWeight: 800, fontSize: 22, color: INK }}>{tr("Вы можете их знать")}</div>
             {FRIENDS.map(([n, u, av], i) => { const added = (i === 0 && f >= T.ADD1 + 2) || (i === 2 && f >= T.ADD2 + 2); const e = lin(f, T.FR + 8 + i * 4, T.FR + 20 + i * 4); return (
               <div key={u} style={{ height: 100, display: "flex", alignItems: "center", gap: 20, padding: "0 32px", borderTop: "2px solid #f0f1f4", opacity: e, transform: `translateY(${(1 - e) * 14}px)` }}>
                 <Img src={staticFile(`av/${av}.svg`)} style={{ width: 66, height: 66, borderRadius: 33, background: "#eef1f5" }} />
                 <div style={{ flex: 1 }}><div style={{ fontWeight: 800, fontSize: 24, color: INK }}>{n}</div><div style={{ fontWeight: 600, fontSize: 18, color: "#7c8593" }}>{u}</div></div>
                 <div style={{ width: added ? 150 : 64, height: 60, borderRadius: 14, background: added ? GREEN : BLUE, boxShadow: `0 4px 0 ${added ? GLIP : "#1899d6"}`, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontWeight: 900, fontSize: 18, transform: `scale(${1 + 0.12 * Math.sin(lin(f, i === 0 ? T.ADD1 + 2 : T.ADD2 + 2, (i === 0 ? T.ADD1 : T.ADD2) + 16) * Math.PI)})` }}>
-                  {added ? <><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>ДРУЗЬЯ</> : <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round"><circle cx="10" cy="8" r="4" /><path d="M3 20c0-4 3-6 7-6s7 2 7 6M19 8v6M16 11h6" /></svg>}
+                  {added ? <><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>{tr("ДРУЗЬЯ")}</> : <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round"><circle cx="10" cy="8" r="4" /><path d="M3 20c0-4 3-6 7-6s7 2 7 6M19 8v6M16 11h6" /></svg>}
                 </div>
               </div>); })}
           </Modal>
@@ -243,8 +244,8 @@ export const Premium: React.FC = () => {
   const sp = useSp();
   const CLICK = 150, SCR0 = 186, SCR1 = 236, ROW0 = 246;
   const scroll = lin(f, SCR0, SCR1, 0, 470, IOE);
-  const PLANS: [string, string, string, string, string][] = [["ПОПУЛЯРНОЕ", "#ffc800", "1 месяц", "69 999 сум", "в месяц"], ["ВЫГОДНО", BLUE, "3 месяца", "209 999 сум", "за 3 месяца"], ["МАКСИМУМ", BLUE, "12 месяцев", "839 999 сум", "за 12 месяцев"]];
-  const ROWS: [string, boolean][] = [["Уроки и теория", true], ["Тексты законов Узбекистана", true], ["Безлимитная энергия", false], ["Все модули", false], ["ИИ-помощник без очереди", false], ["Книги veoskill", false]];
+  const PLANS: [string, string, string, string, string][] = [[tr("ПОПУЛЯРНОЕ"), "#ffc800", tr("1 месяц"), tr("69 999 сум"), tr("в месяц")], [tr("ВЫГОДНО"), BLUE, tr("3 месяца"), tr("209 999 сум"), tr("за 3 месяца")], [tr("МАКСИМУМ"), BLUE, tr("12 месяцев"), tr("839 999 сум"), tr("за 12 месяцев")]];
+  const ROWS: [string, boolean][] = [[tr("Уроки и теория"), true], [tr("Тексты законов Узбекистана"), true], [tr("Безлимитная энергия"), false], [tr("Все модули"), false], [tr("ИИ-помощник без очереди"), false], [tr("Книги veoskill"), false]];
   const CW = 520, GX = 40, CX0 = (1920 - 3 * CW - 2 * GX) / 2;
   const btnX = CX0 + 2 * (CW + GX) + CW / 2, btnY = 570 + 440 - 66;
   const pk = [20, CLICK - 14, CLICK + 10, SCR0];
@@ -261,7 +262,7 @@ export const Premium: React.FC = () => {
         {/* night banner, full bleed under the caption; the owls stand on a cloud */}
         <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 560, background: "linear-gradient(180deg, #0b1446 0%, #121d5c 100%)", overflow: "hidden", opacity: lin(f, 0, 14) }}>
           {Array.from({ length: 16 }, (_, i) => <div key={i} style={{ position: "absolute", left: (i * 137 + 40) % 1880, top: 150 + ((i * 71) % 230), color: "#fff", fontSize: 16 + (i % 3) * 8, opacity: 0.35 + 0.6 * Math.abs(Math.sin(f / 12 + i)) }}>✦</div>)}
-          <div style={{ position: "absolute", left: 0, right: 0, top: 150, textAlign: "center", fontFamily: HEAD, fontWeight: 800, fontSize: 40, lineHeight: 1.3, color: "#fff" }}>С Premium все модули, ИИ-помощник<br />и книги veoskill <span style={{ color: "#58e05a" }}>без ограничений</span></div>
+          <div style={{ position: "absolute", left: 0, right: 0, top: 150, textAlign: "center", fontFamily: HEAD, fontWeight: 800, fontSize: 40, lineHeight: 1.3, color: "#fff" }}>{tr("С Premium все модули, ИИ-помощник")}<br />{tr("и книги veoskill")} <span style={{ color: "#58e05a" }}>{tr("без ограничений")}</span></div>
           <div style={{ position: "absolute", right: 70, top: 160, transform: `rotate(-4deg) scale(${sp(6, 11, 180)})` }}><Badge /></div>
           <svg style={{ position: "absolute", left: 0, top: 380 }} width="1920" height="180" viewBox="0 0 1920 180">
             {[0, 1].map((layer) => (
@@ -279,16 +280,16 @@ export const Premium: React.FC = () => {
             <div style={{ position: "absolute", right: 30, top: -22, padding: "6px 18px", borderRadius: 14, background: tc, color: tc === "#ffc800" ? "#5a4300" : "#fff", fontWeight: 900, fontSize: 18, letterSpacing: "0.06em" }}>{tag}</div>
             <Badge s={0.75} />
             <div style={{ marginTop: 18, fontWeight: 900, fontSize: 32, color: INK }}>{t}</div>
-            <div style={{ marginTop: 6, fontWeight: 600, fontSize: 19, lineHeight: 1.4, color: "#6f7682" }}>Все модули, безлимитная энергия, ИИ без очереди и книги veoskill</div>
+            <div style={{ marginTop: 6, fontWeight: 600, fontSize: 19, lineHeight: 1.4, color: "#6f7682" }}>{tr("Все модули, безлимитная энергия, ИИ без очереди и книги veoskill")}</div>
             <div style={{ marginTop: 18, fontFamily: HEAD, fontWeight: 900, fontSize: 46, color: INK }}>{price}</div>
             <div style={{ fontWeight: 600, fontSize: 18, color: "#6f7682" }}>{per}</div>
           </div>); })}
-        {PLANS.map((_, i) => <div key={i} style={{ position: "absolute", left: CX0 + i * (CW + GX) + 36, top: btnY - 34, width: CW - 72, height: 68, borderRadius: 16, background: BLUE, boxShadow: `0 ${5 - 4 * (i === 2 ? press(f, CLICK) : 0)}px 0 #1899d6`, transform: `translateY(${i === 2 ? press(f, CLICK) * 4 : 0}px)`, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 22, letterSpacing: "0.06em", opacity: lin(f, 20 + i * 6, 34 + i * 6) }}>ОФОРМИТЬ</div>)}
+        {PLANS.map((_, i) => <div key={i} style={{ position: "absolute", left: CX0 + i * (CW + GX) + 36, top: btnY - 34, width: CW - 72, height: 68, borderRadius: 16, background: BLUE, boxShadow: `0 ${5 - 4 * (i === 2 ? press(f, CLICK) : 0)}px 0 #1899d6`, transform: `translateY(${i === 2 ? press(f, CLICK) * 4 : 0}px)`, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 22, letterSpacing: "0.06em", opacity: lin(f, 20 + i * 6, 34 + i * 6) }}>{tr("ОФОРМИТЬ")}</div>)}
         {/* what you get */}
         <div style={{ position: "absolute", left: 140, top: 1080, width: 1640, borderRadius: 26, border: "3px solid #e5e5e5", overflow: "hidden" }}>
           <div style={{ height: 90, display: "flex", alignItems: "center", padding: "0 36px", fontWeight: 900, fontSize: 28, color: INK }}>
-            <div style={{ flex: 1 }}>Что вы получите</div>
-            <div style={{ width: 240, textAlign: "center", fontSize: 20, letterSpacing: "0.1em", color: "#6f7682" }}>БАЗОВЫЙ</div>
+            <div style={{ flex: 1 }}>{tr("Что вы получите")}</div>
+            <div style={{ width: 240, textAlign: "center", fontSize: 20, letterSpacing: "0.1em", color: "#6f7682" }}>{tr("БАЗОВЫЙ")}</div>
             <div style={{ width: 240, height: 90, display: "flex", alignItems: "center", justifyContent: "center", background: "#eef8ff" }}><Badge s={0.6} /></div>
           </div>
           {ROWS.map(([t, base], i) => { const at = ROW0 + i * 10; const e = sp(at, 12, 220); return (
@@ -302,7 +303,7 @@ export const Premium: React.FC = () => {
         </div>
         {f >= 20 && f < SCR0 + 6 ? <Pointer x={px} y={py} down={press(f, CLICK)} op={lin(f, 20, 30) * (1 - lin(f, SCR0 - 8, SCR0 + 6))} /> : null}
       </AbsoluteFill>
-      {f < SCR0 ? <TopLine key={0} a="Premium:" b="всё без ограничений." at={4} size={66} dark band="rgba(11,20,70,0)" accentColor="#58e05a" /> : <TopLine key={1} a="Всё сразу," b="без лимитов." at={SCR0} size={66} />}
+      {f < SCR0 ? <TopLine key={0} a="Premium:" b={tr("всё без ограничений.")} at={4} size={66} dark band="rgba(11,20,70,0)" accentColor="#58e05a" /> : <TopLine key={1} a={tr("Всё сразу,")} b={tr("без лимитов.")} at={SCR0} size={66} />}
       {void NAVY}
     </AbsoluteFill>
   );

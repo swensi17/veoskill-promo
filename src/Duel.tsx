@@ -1,4 +1,5 @@
 import React from "react";
+import { tr } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
 import { Confetti } from "./Lesson";
 import { NAVY, BLUE, GREEN, UI, HEAD, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer, TopLine } from "./Scenes9";
@@ -9,8 +10,8 @@ const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const AV = (n: string) => staticFile(`av/${n}.svg`);
 const SEARCH_END = 200, CLICK = 330, REVEAL = 352, RES = 470, END = 720;
 const ANS: [string, string, string, "tri" | "dia" | "cir" | "sq"][] = [
-  ["моралью общества.", "#7d5bb5", "#5e4192", "tri"], ["субъективным правом.", "#e0454f", "#b8303a", "dia"],
-  ["правомочием.", "#b9735e", "#94573f", "cir"], ["объективным правом.", "#34a02a", "#24801c", "sq"],
+  [tr("моралью общества."), "#7d5bb5", "#5e4192", "tri"], [tr("субъективным правом."), "#e0454f", "#b8303a", "dia"],
+  [tr("правомочием."), "#b9735e", "#94573f", "cir"], [tr("объективным правом."), "#34a02a", "#24801c", "sq"],
 ];
 const Shape: React.FC<{ k: string }> = ({ k }) => (
   <svg width="40" height="40" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)">
@@ -45,7 +46,7 @@ export const Duel: React.FC = () => {
   const pk = [SEARCH_END + 10, CLICK - 14, CLICK + 10, RES - 20];
   const px = interpolate(f, pk, [1400, 1250, 1250, 1400], { ...cl, easing: IOE });
   const py = interpolate(f, pk, [1060, 966, 966, 1010], { ...cl, easing: IOE });
-  const cap: [number, string, string] = f < SEARCH_END ? [6, "Соревнуйся", "с другими."] : f < RES ? [SEARCH_END + 6, "Отвечай", "быстрее соперника."] : [RES + 6, "Побеждай", "и расти в лиге."];
+  const cap: [number, string, string] = f < SEARCH_END ? [6, tr("Соревнуйся"), tr("с другими.")] : f < RES ? [SEARCH_END + 6, tr("Отвечай"), tr("быстрее соперника.")] : [RES + 6, tr("Побеждай"), tr("и расти в лиге.")];
   return (
     <AbsoluteFill style={{ background: "#fff", overflow: "hidden", fontFamily: UI }}>
       {/* ===== matchmaking */}
@@ -62,9 +63,9 @@ export const Duel: React.FC = () => {
             <div style={{ fontFamily: HEAD, fontWeight: 900, fontStyle: "italic", fontSize: 130, lineHeight: 1, transform: `scale(${1 + 0.05 * Math.sin(f / 5)}) rotate(-8deg)` }}><span style={{ color: "#e0454f", textShadow: "4px 4px 0 #ffd36a" }}>V</span><span style={{ color: BLUE, textShadow: "4px 4px 0 #ffd36a" }}>S</span></div>
             <div style={{ transform: `scale(${f < found ? 1 : 1 + 0.18 * Math.sin(Math.min(1, pop) * Math.PI)})` }}><Avatar src={AV(opp)} size={300} bg={f < found ? "#e9ecf2" : "#d9d6ff"} /></div>
           </div>
-          <div style={{ position: "absolute", left: 960 + 170, width: 300, top: 650, textAlign: "center", fontWeight: 800, fontSize: 34, color: f < found ? "#9aa1ab" : NAVY }}>{f < found ? "Соперник" : "Наргиза"}</div>
-          <div style={{ position: "absolute", top: 740, width: "100%", textAlign: "center", fontWeight: 900, fontSize: 58, color: f < found ? "#2b2b2b" : "#2e9d3a" }}>{f < found ? "Ищем соперника вашего уровня" : "Соперник найден!"}</div>
-          <div style={{ position: "absolute", top: 830, width: "100%", textAlign: "center", fontWeight: 600, fontSize: 32, color: "#7c8593" }}>{f < found ? "Обычно это занимает несколько секунд." : "Начинаем через 3, 2, 1…"}</div>
+          <div style={{ position: "absolute", left: 960 + 170, width: 300, top: 650, textAlign: "center", fontWeight: 800, fontSize: 34, color: f < found ? "#9aa1ab" : NAVY }}>{f < found ? tr("Соперник") : tr("Наргиза")}</div>
+          <div style={{ position: "absolute", top: 740, width: "100%", textAlign: "center", fontWeight: 900, fontSize: 58, color: f < found ? "#2b2b2b" : "#2e9d3a" }}>{f < found ? tr("Ищем соперника вашего уровня") : tr("Соперник найден!")}</div>
+          <div style={{ position: "absolute", top: 830, width: "100%", textAlign: "center", fontWeight: 600, fontSize: 32, color: "#7c8593" }}>{f < found ? tr("Обычно это занимает несколько секунд.") : tr("Начинаем через 3, 2, 1…")}</div>
         </AbsoluteFill>
       ) : null}
 
@@ -80,14 +81,14 @@ export const Duel: React.FC = () => {
           </div>
           <div style={{ position: "absolute", left: 960 - 50, top: 186, width: 100, height: 100, borderRadius: 50, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 44, color: timer <= 5 ? "#e0454f" : "#1f6fb5", boxShadow: "0 8px 24px rgba(13,22,48,0.15)" }}>{timer}</div>
           <div style={{ position: "absolute", right: 390, top: 186, display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ textAlign: "right", color: "#fff" }}><div style={{ fontWeight: 700, fontSize: 26, opacity: 0.9 }}>Наргиза</div><div style={{ fontWeight: 900, fontSize: 40 }}>0</div></div>
+            <div style={{ textAlign: "right", color: "#fff" }}><div style={{ fontWeight: 700, fontSize: 26, opacity: 0.9 }}>{tr("Наргиза")}</div><div style={{ fontWeight: 900, fontSize: 40 }}>0</div></div>
             <Avatar src={AV("p3")} size={92} bg="#d9d6ff" badge={rev ? "no" : undefined} />
           </div>
           <div style={{ position: "absolute", left: 390, top: 306, width: 1140, height: 400, borderRadius: 26, background: "#fff", overflow: "hidden", boxShadow: "0 20px 60px rgba(13,22,48,0.2)" }}>
-            <div style={{ position: "absolute", left: 70, right: 70, top: 120, fontWeight: 800, fontSize: 52, lineHeight: 1.3, color: "#2b2b2b", textAlign: "center", opacity: lin(f, SEARCH_END + 6, SEARCH_END + 20) }}>Право, закреплённое в законах государства, называется…</div>
+            <div style={{ position: "absolute", left: 70, right: 70, top: 120, fontWeight: 800, fontSize: 52, lineHeight: 1.3, color: "#2b2b2b", textAlign: "center", opacity: lin(f, SEARCH_END + 6, SEARCH_END + 20) }}>{tr("Право, закреплённое в законах государства, называется…")}</div>
             <div style={{ position: "absolute", left: -40, right: -40, top: 145, height: 110, background: GREEN, transform: `rotate(-3deg) scaleX(${band})`, display: "flex", alignItems: "center", justifyContent: "center", gap: 18, color: "#fff", fontWeight: 900, fontSize: 52, opacity: band > 0.01 ? 1 : 0 }}>
               <div style={{ width: 62, height: 62, borderRadius: 31, border: "4px solid #fff", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></div>
-              Верно! +700
+              {tr("Верно! +700")}
             </div>
           </div>
           {ANS.map(([t, c, d, k], i) => {
@@ -110,7 +111,7 @@ export const Duel: React.FC = () => {
             <AbsoluteFill style={{ background: `rgba(30,24,60,${0.45 * Math.min(1, res)})`, alignItems: "center", justifyContent: "center" }}>
               <div style={{ width: 760, padding: "50px 40px 46px", borderRadius: 36, background: "#fff", textAlign: "center", boxShadow: "0 40px 100px rgba(13,22,48,0.35)", transform: `scale(${0.85 + 0.15 * res})`, opacity: Math.min(1, res * 1.4) }}>
                 <Img src={staticFile("av/medal-1.webp")} style={{ width: 150, height: 150, objectFit: "contain", transform: `rotate(${Math.sin(f / 10) * 5}deg)` }} />
-                <div style={{ marginTop: 10, fontFamily: HEAD, fontWeight: 900, fontSize: 76, color: "#2e9d3a" }}>Победа!</div>
+                <div style={{ marginTop: 10, fontFamily: HEAD, fontWeight: 900, fontSize: 76, color: "#2e9d3a" }}>{tr("Победа!")}</div>
                 <div style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "center", gap: 30 }}>
                   <Avatar src={AV("p1")} size={110} bg="#ffd5cc" />
                   <div style={{ fontFamily: HEAD, fontWeight: 900, fontSize: 64, color: NAVY }}>700 : 0</div>

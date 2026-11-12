@@ -1,8 +1,10 @@
 import React from "react";
+import { tr, LANG, uzt } from "./i18n";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile } from "remotion";
 import { SlowCtx } from "./Scenes9";
 import { NAVY, BLUE, GREEN, GLIP, RED, INK, HEAD, UI, OUTE, IOE, lin, press, useSp, useFrame, Cap, Pointer, TopLine } from "./Scenes9";
 import { ART } from "./Laws7";
+const ARTL = LANG === "uz" ? { p1: uzt(ART.uz.p1), p2: uzt(ART.uz.p2) } : ART.ru;
 
 // A whole lesson as on veoskill.uz/exercise: intro list, theory (with the Constitution side panel), find the sound,
 // build the answer from words, match pairs, find the mistake (a wrong pick costs a heart), a chat story.
@@ -78,13 +80,13 @@ export const Lesson: React.FC = () => {
   const prog = interpolate(f, [starts[step], starts[step] + 20], [PROG[Math.max(0, step - 1)], PROG[step]], { ...cl, easing: OUTE }) + lin(f, 1278, 1300, 0, 1 - PROG[6], OUTE);
   // --- clicks (frame, x, y): the cursor arrives 12 frames before and stays 8 after
   const CB = { book: 322, bookX: 364, contB: 384 };
-  const wordsX = { "это": CX, "общие": CX + 116, "правила": CX + 272, "право": CX + 458 };
-  const W = { "право": 150, "это": 100, "правила": 170, "общие": 140 } as Record<string, number>;
+  const wordsX = { [tr("это")]: CX, [tr("общие")]: CX + 116, [tr("правила")]: CX + 272, [tr("право")]: CX + 458 };
+  const W = { [tr("право")]: 150, [tr("это")]: 100, [tr("правила")]: 170, [tr("общие")]: 140 } as Record<string, number>;
   const clicks: [number, number, number][] = [
     [110, MAIN_X, BTN_Y + 42], [186, MAIN_X, BTN_Y + 42], [214, MAIN_X, BTN_Y + 42],
     [S.B + 108, CX + 50, BTN_Y + 42], [CB.book, CX + 50, BTN_Y + 42], [CB.bookX, 1830, 130], [CB.contB, MAIN_X, BTN_Y + 42],
     [430, CX + 300, 420], [520, MAIN_X, BTN_Y + 42],
-    [600, wordsX["право"] + 70, 740], [622, wordsX["это"] + 50, 740], [644, wordsX["правила"] + 80, 740], [666, wordsX["общие"] + 70, 740], [692, MAIN_X, BTN_Y + 42], [745, CX + CW - 150, 978],
+    [600, wordsX[tr("право")] + 70, 740], [622, wordsX[tr("это")] + 50, 740], [644, wordsX[tr("правила")] + 80, 740], [666, wordsX[tr("общие")] + 70, 740], [692, MAIN_X, BTN_Y + 42], [745, CX + CW - 150, 978],
     [790, CX + 215, 450], [810, CX + 665, 450], [840, CX + 215, 580], [860, CX + 665, 710], [890, CX + 215, 710], [910, CX + 665, 580], [940, MAIN_X, BTN_Y + 42],
     [992, CX + 400, 470], [1012, MAIN_X, BTN_Y + 42], [1066, CX + 400, 730], [1086, MAIN_X, BTN_Y + 42],
     [1250, CX + 400, 750], [1275, MAIN_X, BTN_Y + 42],
@@ -106,14 +108,14 @@ export const Lesson: React.FC = () => {
   const lost = f >= 1014 ? 1 : 0;
   const hpop = sp(1014, 9, 260);
   // --- bottom button per step
-  const mainLabel = ["НАЧАТЬ", "ПРОДОЛЖИТЬ", "ПРОВЕРИТЬ", "ПРОВЕРИТЬ", "ПРОВЕРИТЬ", "ПРОВЕРИТЬ", "ПРОВЕРИТЬ"][step];
+  const mainLabel = [tr("НАЧАТЬ"), tr("ПРОДОЛЖИТЬ"), tr("ПРОВЕРИТЬ"), tr("ПРОВЕРИТЬ"), tr("ПРОВЕРИТЬ"), tr("ПРОВЕРИТЬ"), tr("ПРОВЕРИТЬ")][step];
   const mainOn = step <= 1 || (step === 2 && f >= 432) || (step === 3 && f >= 668) || (step === 4 && f >= 912) || (step === 5 && (f >= 994 && f < 1040 || f >= 1068)) || (step === 6 && f >= 1252);
   const mainDown = clicks.filter(([, x, y]) => x === MAIN_X && y === BTN_Y + 42).reduce((m, [t]) => Math.max(m, press(f, t)), 0);
   // --- captions on the left (big, for older viewers)
   const CAPS: [number, string, string?, string?][] = [
-    [S.A, "Урок", "за 5 минут.", "за 5 минут."], [S.B, "Сначала", "теория.", "теория."], [S.B + 108, "Даже в игре", "можно подглядывать в Конституцию.", "можно подглядывать в Конституцию."],
-    [S.C, "Слушай", "и выбирай.", "и выбирай."], [S.D, "Собери ответ", "из слов.", "из слов."], [S.E, "Соедини", "пары.", "пары."],
-    [S.F, "Ошибся?", "Минус сердечко.", "Минус сердечко."], [S.G, "Истории", "из жизни.", "из жизни."],
+    [S.A, tr("Урок"), tr("за 5 минут."), tr("за 5 минут.")], [S.B, tr("Сначала"), tr("теория."), tr("теория.")], [S.B + 108, tr("Даже в игре"), tr("можно подглядывать в Конституцию."), tr("можно подглядывать в Конституцию.")],
+    [S.C, tr("Слушай"), tr("и выбирай."), tr("и выбирай.")], [S.D, tr("Собери ответ"), tr("из слов."), tr("из слов.")], [S.E, tr("Соедини"), tr("пары."), tr("пары.")],
+    [S.F, tr("Ошибся?"), tr("Минус сердечко."), tr("Минус сердечко.")], [S.G, tr("Истории"), tr("из жизни."), tr("из жизни.")],
   ];
   let ci = 0; CAPS.forEach(([t], i) => { if (f >= t) ci = i; });
   const capEnd = ci + 1 < CAPS.length ? CAPS[ci + 1][0] : S.END + 60;
@@ -129,7 +131,7 @@ export const Lesson: React.FC = () => {
       <div style={{ position: "absolute", left: CX + 64, top: 56, width: CW - 160, height: 22, borderRadius: 11, background: "#e5e5e5", overflow: "hidden" }}>
         <div style={{ width: `${Math.min(1, prog) * 100}%`, height: "100%", borderRadius: 11, background: GREEN, position: "relative" }}><div style={{ position: "absolute", left: 10, right: 10, top: 5, height: 5, borderRadius: 3, background: "rgba(255,255,255,0.3)" }} /></div>
       </div>
-      <div style={{ position: "absolute", left: CX + 64 + 150, top: 22, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: GLIP, opacity: lin(f, 696, 706) * (1 - lin(f, 760, 772)) }}>2 РАЗА ПОДРЯД</div>
+      <div style={{ position: "absolute", left: CX + 64 + 150, top: 22, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: GLIP, opacity: lin(f, 696, 706) * (1 - lin(f, 760, 772)) }}>{tr("2 РАЗА ПОДРЯД")}</div>
       <div style={{ position: "absolute", left: CX + CW - 80, top: 40, display: "flex", alignItems: "center", gap: 8 }}>
         <Img src={staticFile("real/heart-red.webp")} style={{ width: 46, height: 46, transform: `scale(${1 + 0.3 * Math.sin(Math.min(1, hpop) * Math.PI) * lost})` }} />
         <div style={{ fontWeight: 900, fontSize: 30, color: RED }}>{5 - lost}</div>
@@ -139,10 +141,10 @@ export const Lesson: React.FC = () => {
       {/* ===== A: what we learn */}
       {(() => { const w = win(S.A, S.B); if (!w.on) return null; return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <div style={{ position: "absolute", left: CX, top: 150, fontWeight: 900, fontSize: 50, color: INK }}>Что будем изучать</div>
-          <div style={{ position: "absolute", left: CX, top: 250, fontWeight: 900, fontSize: 22, letterSpacing: "0.1em", color: BLUE }}>РАЗБЕРЁМ СЕГОДНЯ</div>
+          <div style={{ position: "absolute", left: CX, top: 150, fontWeight: 900, fontSize: 50, color: INK }}>{tr("Что будем изучать")}</div>
+          <div style={{ position: "absolute", left: CX, top: 250, fontWeight: 900, fontSize: 22, letterSpacing: "0.1em", color: BLUE }}>{tr("РАЗБЕРЁМ СЕГОДНЯ")}</div>
           <div style={{ position: "absolute", left: CX, top: 296, width: CW, ...card(0), overflow: "hidden" }}>
-            {["Что такое право?", "Что такое общее правило?", "Что такое ответственность?"].map((t, i) => { const e = sp(14 + i * 10, 14, 180); return (
+            {[tr("Что такое право?"), tr("Что такое общее правило?"), tr("Что такое ответственность?")].map((t, i) => { const e = sp(14 + i * 10, 14, 180); return (
               <div key={t} style={{ height: 100, display: "flex", alignItems: "center", gap: 28, padding: "0 30px", borderTop: i ? "2px solid #e5e5e5" : undefined, opacity: Math.min(1, e * 1.4), transform: `translateX(${(1 - e) * 30}px)` }}>
                 <div style={{ fontFamily: HEAD, fontWeight: 900, fontStyle: "italic", fontSize: 50, color: NAVY, textShadow: `3px 3px 0 ${GREEN}` }}>{i + 1}</div>
                 <div style={{ fontWeight: 600, fontSize: 30, color: INK }}>{t}</div>
@@ -154,14 +156,14 @@ export const Lesson: React.FC = () => {
       {(() => { const w = win(S.B, S.C); if (!w.on) return null; const lf = f - S.B; const r = (a: number) => lin(lf, a, a + 16);
         const scroll = lin(lf, 70, 104, 0, 300, Easing.bezier(0.45, 0, 0.3, 1));
         const BL: [React.ReactNode, string, React.ReactNode, number][] = [
-          [<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18M7 21h10M4 7h16M6 7l-3 7a3 3 0 0 0 6 0zM18 7l-3 7a3 3 0 0 0 6 0z" /></svg>, "ЧТО ТАКОЕ ПРАВО",
-            <div style={{ fontWeight: 600, fontSize: 30, lineHeight: 1.6, color: INK, textAlign: "justify" }}><span style={{ color: "#ce82ff", borderBottom: "3px dotted #ce82ff" }}>Право</span> это правила, которые для всех одинаковые и которые защищает государство.</div>, 10],
+          [<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18M7 21h10M4 7h16M6 7l-3 7a3 3 0 0 0 6 0zM18 7l-3 7a3 3 0 0 0 6 0z" /></svg>, tr("ЧТО ТАКОЕ ПРАВО"),
+            <div style={{ fontWeight: 600, fontSize: 30, lineHeight: 1.6, color: INK, textAlign: "justify" }}><span style={{ color: "#ce82ff", borderBottom: "3px dotted #ce82ff" }}>{tr("Право")}</span> {tr("это правила, которые для всех одинаковые и которые защищает государство.")}</div>, 10],
           [<Img src={staticFile("site/target.svg")} style={{ width: 44, height: 44 }} />, "",
-            <>{["Правила записаны в законах, их можно прочитать.", "Они одинаковые для всех, и для богатых, и для бедных.", "Если правило нарушили, государство может наказать."].map((t, i) => (
+            <>{[tr("Правила записаны в законах, их можно прочитать."), tr("Они одинаковые для всех, и для богатых, и для бедных."), tr("Если правило нарушили, государство может наказать.")].map((t, i) => (
               <div key={t} style={{ marginTop: i ? 18 : 4, display: "flex", gap: 16, alignItems: "baseline", fontWeight: 600, fontSize: 30, color: INK, opacity: r(42 + i * 6), transform: `translateX(${(1 - r(42 + i * 6)) * 20}px)` }}>
                 <div style={{ width: 18, height: 5, borderRadius: 3, background: BLUE, flexShrink: 0, transform: "translateY(-8px)" }} />{t}</div>))}</>, 40],
-          [<Img src={staticFile("site/customer-file.svg")} style={{ width: 44, height: 44 }} />, "ПРИМЕР",
-            <div style={{ fontWeight: 600, fontSize: 30, lineHeight: 1.6, color: INK, textAlign: "justify" }}>Покупатель в Ташкенте может вернуть сломанную вещь по закону, и на базаре, и в интернет-магазине. Продавец не скажет, что у него свои правила.</div>, 68],
+          [<Img src={staticFile("site/customer-file.svg")} style={{ width: 44, height: 44 }} />, tr("ПРИМЕР"),
+            <div style={{ fontWeight: 600, fontSize: 30, lineHeight: 1.6, color: INK, textAlign: "justify" }}>{tr("Покупатель в Ташкенте может вернуть сломанную вещь по закону, и на базаре, и в интернет-магазине. Продавец не скажет, что у него свои правила.")}</div>, 68],
         ];
         return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
@@ -193,8 +195,8 @@ export const Lesson: React.FC = () => {
       {/* ===== C: find the sound */}
       {(() => { const w = win(S.C, S.D); if (!w.on) return null; const lf = f - S.C; const pick = f >= 432 ? 1 : 0; const play = lin(f, 432, 500, 0, 1, Easing.linear); return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <div style={{ position: "absolute", left: CX, top: 140, fontWeight: 900, fontSize: 50, color: INK }}>Найдите звук слова</div>
-          <Bubble owl={OWL_Q} text={<span style={{ color: "#ce82ff", borderBottom: "3px dotted #ce82ff", fontSize: 38 }}>Право</span>} y={224} o={lin(lf, 6, 20)} />
+          <div style={{ position: "absolute", left: CX, top: 140, fontWeight: 900, fontSize: 50, color: INK }}>{tr("Найдите звук слова")}</div>
+          <Bubble owl={OWL_Q} text={<span style={{ color: "#ce82ff", borderBottom: "3px dotted #ce82ff", fontSize: 38 }}>{tr("Право")}</span>} y={224} o={lin(lf, 6, 20)} />
           {[0, 1, 2].map((i) => { const on = i === 0 ? pick : 0; const e = sp(S.C + 12 + i * 6, 14, 180); return (
             <div key={i} style={{ position: "absolute", left: CX, top: 360 + i * 140, width: CW, height: 120, ...card(on, on ? "green" : "plain"), display: "flex", alignItems: "center", gap: 22, padding: "0 30px", opacity: Math.min(1, e * 1.4) }}>
               <Check on={on ? sp(432, 10, 260) : 0} />
@@ -207,11 +209,11 @@ export const Lesson: React.FC = () => {
         </div>); })()}
 
       {/* ===== D: build the answer */}
-      {(() => { const w = win(S.D, S.E); if (!w.on) return null; const lf = f - S.D; const order = ["право", "это", "правила", "общие"]; const at = [600, 622, 644, 666];
+      {(() => { const w = win(S.D, S.E); if (!w.on) return null; const lf = f - S.D; const order = [tr("право"), tr("это"), tr("правила"), tr("общие")]; const at = [600, 622, 644, 666];
         let ax = CX; const ansX: Record<string, number> = {}; order.forEach((wd) => { ansX[wd] = ax; ax += W[wd] + 14; });
         return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <Bubble owl={OWL_Q} text="Что такое право?" y={250} o={lin(lf, 4, 18)} />
+          <Bubble owl={OWL_Q} text={tr("Что такое право?")} y={250} o={lin(lf, 4, 18)} />
           <div style={{ position: "absolute", left: CX, top: 540, width: CW, height: 3, background: "#e5e5e5" }} />
           <div style={{ position: "absolute", left: CX, top: 640, width: CW, height: 3, background: "#e5e5e5" }} />
           {Object.keys(wordsX).map((wd) => (
@@ -223,14 +225,14 @@ export const Lesson: React.FC = () => {
 
       {/* ===== E: match pairs */}
       {(() => { const w = win(S.E, S.F); if (!w.on) return null; const lf = f - S.E;
-        const L = ["Право", "Ответственность", "Общее правило"]; const R = ["Нормы поведения, которые государство устанавливает и отстаивает", "Правило поведения для всех людей в одинаковой ситуации, а не для одного человека", "Последствие нарушения, которое государство применяет по процедуре"];
+        const L = [tr("Право"), tr("Ответственность"), tr("Общее правило")]; const R = [tr("Нормы поведения, которые государство устанавливает и отстаивает"), tr("Правило поведения для всех людей в одинаковой ситуации, а не для одного человека"), tr("Последствие нарушения, которое государство применяет по процедуре")];
         const lSel = [790, 840, 890], rFor = [[810, 0], [860, 2], [910, 1]] as [number, number][];
         const done = (t: number) => f >= t + 2;
         return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <div style={{ position: "absolute", left: CX, top: 150, fontWeight: 900, fontSize: 50, color: INK }}>Соедини пары</div>
-          <div style={{ position: "absolute", left: CX, top: 240, fontWeight: 900, fontSize: 22, letterSpacing: "0.1em", color: BLUE }}>ПАРЫ</div>
-          <div style={{ position: "absolute", left: CX, top: 282, fontWeight: 600, fontSize: 26, color: "#7c8593" }}>Слева понятие, справа его значение.</div>
+          <div style={{ position: "absolute", left: CX, top: 150, fontWeight: 900, fontSize: 50, color: INK }}>{tr("Соедини пары")}</div>
+          <div style={{ position: "absolute", left: CX, top: 240, fontWeight: 900, fontSize: 22, letterSpacing: "0.1em", color: BLUE }}>{tr("ПАРЫ")}</div>
+          <div style={{ position: "absolute", left: CX, top: 282, fontWeight: 600, fontSize: 26, color: "#7c8593" }}>{tr("Слева понятие, справа его значение.")}</div>
           {L.map((t, i) => { const sel = f >= lSel[i] && !done(rFor[i][0]); const ok = done(rFor[i][0]); const e = sp(S.E + 10 + i * 5, 14, 180); return (
             <div key={t} style={{ position: "absolute", left: CX, top: 395 + i * 130, width: 430, height: 110, ...card(0, ok ? "green" : sel ? "blue" : "plain"), display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 28, color: ok ? GLIP : INK, opacity: Math.min(1, e * 1.4) }}>{t}</div>); })}
           {R.map((t, j) => { const pair = rFor.find(([, r]) => r === j)!; const ok = done(pair[0]); const e = sp(S.E + 14 + j * 5, 14, 180); return (
@@ -240,35 +242,35 @@ export const Lesson: React.FC = () => {
 
       {/* ===== F: find the mistake (wrong pick costs a heart) */}
       {(() => { const w = win(S.F, S.G); if (!w.on) return null; const lf = f - S.F;
-        const opts = ["Государство признаёт право и при необходимости его защищает", "Право это общие правила поведения", "Право это совет того, кто громче спорит в чате"];
+        const opts = [tr("Государство признаёт право и при необходимости его защищает"), tr("Право это общие правила поведения"), tr("Право это совет того, кто громче спорит в чате")];
         const sel = f >= 994 && f < 1044 ? 0 : f >= 1068 ? 2 : -1; const wrong = f >= 1014 && f < 1044; const right = f >= 1088;
         return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <Bubble owl={OWL_COOL} owlW={100} text="Где ошибка?" y={170} o={lin(lf, 4, 18)} />
+          <Bubble owl={OWL_COOL} owlW={100} text={tr("Где ошибка?")} y={170} o={lin(lf, 4, 18)} />
           {opts.map((t, i) => { const s = i === sel; const tone = s && wrong ? "red" : s && right ? "green" : s ? "blue" : "plain"; const e = sp(S.F + 10 + i * 6, 14, 180); return (
             <div key={t} style={{ position: "absolute", left: CX, top: 410 + i * 130, width: CW, height: 110, ...card(0, tone as "plain"), display: "flex", alignItems: "center", gap: 22, padding: "0 30px", fontWeight: 600, fontSize: 30, color: INK, opacity: Math.min(1, e * 1.4), transform: s && wrong ? `translateX(${Math.sin(f * 1.6) * 6 * (1 - lin(f, 1014, 1030))}px)` : undefined }}>
               <Check on={s ? 1 : 0} c={tone === "red" ? RED : tone === "green" ? GREEN : BLUE} />
               <div style={{ flex: 1 }}>{t}</div>
-              {s && (wrong || right) ? <div style={{ padding: "6px 16px", border: `3px solid ${right ? GREEN : RED}`, borderRadius: 14, fontWeight: 900, fontSize: 22, letterSpacing: "0.08em", color: right ? GLIP : RED, transform: `rotate(-8deg) scale(${sp(wrong ? 1014 : 1088, 10, 240)})` }}>{right ? "МИФ" : "ПРАВДА"}</div> : null}
+              {s && (wrong || right) ? <div style={{ padding: "6px 16px", border: `3px solid ${right ? GREEN : RED}`, borderRadius: 14, fontWeight: 900, fontSize: 22, letterSpacing: "0.08em", color: right ? GLIP : RED, transform: `rotate(-8deg) scale(${sp(wrong ? 1014 : 1088, 10, 240)})` }}>{right ? tr("МИФ") : tr("ПРАВДА")}</div> : null}
             </div>); })}
         </div>); })()}
 
       {/* ===== G: chat story */}
       {(() => { const w = win(S.G, S.END); if (!w.on) return null; const lf = f - S.G;
-        const opts = ["Советы знакомых, которые каждый выбирает по желанию.", "Общие правила, которые защищает государство.", "Мнение одного человека о том, как жить остальным."];
+        const opts = [tr("Советы знакомых, которые каждый выбирает по желанию."), tr("Общие правила, которые защищает государство."), tr("Мнение одного человека о том, как жить остальным.")];
         const sel = f >= 1252 ? 1 : -1; const ok = f >= 1277;
         const b = (t: number) => lin(lf, t, t + 12);
         return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <div style={{ position: "absolute", left: CX, top: 116, fontWeight: 900, fontSize: 46, color: INK }}>Прочитайте историю</div>
-          <div style={{ position: "absolute", left: CX, top: 190, fontWeight: 600, fontSize: 27, color: INK, opacity: b(6) }}>Утро в махалле Юнусабад. Нодира и Жасур идут к остановке.</div>
-          {[[OWL_READ, "Нодира, ты изучаешь право. Что это такое?", 250, 18], [OWL_COOL, "Право это общие правила, которые признаёт и защищает государство.", 340, 40]].map(([o, t, y, at]) => (
+          <div style={{ position: "absolute", left: CX, top: 116, fontWeight: 900, fontSize: 46, color: INK }}>{tr("Прочитайте историю")}</div>
+          <div style={{ position: "absolute", left: CX, top: 190, fontWeight: 600, fontSize: 27, color: INK, opacity: b(6) }}>{tr("Утро в махалле Юнусабад. Нодира и Жасур идут к остановке.")}</div>
+          {[[OWL_READ, tr("Нодира, ты изучаешь право. Что это такое?"), 250, 18], [OWL_COOL, tr("Право это общие правила, которые признаёт и защищает государство."), 340, 40]].map(([o, t, y, at]) => (
             <div key={t as string} style={{ position: "absolute", left: CX, top: y as number, display: "flex", alignItems: "center", gap: 18, opacity: b(at as number), transform: `translateY(${(1 - b(at as number)) * 14}px)` }}>
               <Img src={o as string} style={{ width: 62, height: 70, objectFit: "contain" }} />
               <div style={{ maxWidth: CW - 90, padding: "14px 22px", borderRadius: 18, background: BLUE, boxShadow: "0 4px 0 #1899d6", color: "#fff", fontWeight: 800, fontSize: 25, lineHeight: 1.35 }}>{t as string}</div>
             </div>
           ))}
-          <div style={{ position: "absolute", left: CX, top: 470, fontWeight: 800, fontSize: 28, color: INK, opacity: b(62) }}>Что такое право по словам Нодиры?</div>
+          <div style={{ position: "absolute", left: CX, top: 470, fontWeight: 800, fontSize: 28, color: INK, opacity: b(62) }}>{tr("Что такое право по словам Нодиры?")}</div>
           {opts.map((t, i) => { const s = i === sel; const e = sp(S.G + 70 + i * 6, 14, 180); return (
             <div key={t} style={{ position: "absolute", left: CX, top: 530 + i * 115, width: CW, height: 100, ...card(0, s ? (ok ? "green" : "blue") : "plain"), display: "flex", alignItems: "center", gap: 22, padding: "0 28px", fontWeight: 600, fontSize: 27, color: s && ok ? GLIP : INK, opacity: Math.min(1, e * 1.4) }}>
               <div style={{ width: 40, height: 40, borderRadius: 10, border: `3px solid ${s ? (ok ? GREEN : BLUE) : "#cfd3d8"}`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 20, color: s ? (ok ? GLIP : BLUE) : "#7c8593", flexShrink: 0 }}>{i + 1}</div>{t}
@@ -282,34 +284,34 @@ export const Lesson: React.FC = () => {
       <div style={{ position: "absolute", left: CX + 116, top: BTN_Y, width: CW - 116, height: BTN_H, borderRadius: 18, background: mainOn ? GREEN : "#e5e5e5", boxShadow: `0 ${5 - 4 * mainDown}px 0 ${mainOn ? GLIP : "#cfcfcf"}`, transform: `translateY(${mainDown * 4}px)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 30, letterSpacing: "0.08em", color: mainOn ? "#fff" : "#afafaf" }}>{mainLabel}</div>
 
       {/* result bands */}
-      {f >= 522 && f < 560 ? <Result o={lin(f, 522, 534, 0, 1, OUTE) * (1 - lin(f, 550, 560))} ok title="Отлично!" sub="+10 XP" btn="ДАЛЕЕ" /> : null}
-      {f >= 694 && f < 760 ? <Result o={lin(f, 694, 706, 0, 1, OUTE) * (1 - lin(f, 750, 760))} ok title="Ура!" sub="+12 XP" btn="ПРОДОЛЖИТЬ" btnDown={press(f, 745)} /> : null}
-      {f >= 942 && f < 960 ? <Result o={lin(f, 942, 950, 0, 1, OUTE) * (1 - lin(f, 954, 960))} ok title="Все пары верно!" sub="+15 XP" btn="ДАЛЕЕ" /> : null}
-      {f >= 1014 && f < 1046 ? <Result o={lin(f, 1014, 1026, 0, 1, OUTE) * (1 - lin(f, 1036, 1046))} ok={false} title="Неверно" sub="Это правда, ищите ошибку" btn="ПОНЯТНО" /> : null}
-      {f >= 1088 && f < 1130 ? <Result o={lin(f, 1088, 1100, 0, 1, OUTE) * (1 - lin(f, 1120, 1130))} ok title="Верно!" sub="+12 XP" btn="ДАЛЕЕ" /> : null}
+      {f >= 522 && f < 560 ? <Result o={lin(f, 522, 534, 0, 1, OUTE) * (1 - lin(f, 550, 560))} ok title={tr("Отлично!")} sub="+10 XP" btn={tr("ДАЛЕЕ")} /> : null}
+      {f >= 694 && f < 760 ? <Result o={lin(f, 694, 706, 0, 1, OUTE) * (1 - lin(f, 750, 760))} ok title={tr("Ура!")} sub="+12 XP" btn={tr("ПРОДОЛЖИТЬ")} btnDown={press(f, 745)} /> : null}
+      {f >= 942 && f < 960 ? <Result o={lin(f, 942, 950, 0, 1, OUTE) * (1 - lin(f, 954, 960))} ok title={tr("Все пары верно!")} sub="+15 XP" btn={tr("ДАЛЕЕ")} /> : null}
+      {f >= 1014 && f < 1046 ? <Result o={lin(f, 1014, 1026, 0, 1, OUTE) * (1 - lin(f, 1036, 1046))} ok={false} title={tr("Неверно")} sub={tr("Это правда, ищите ошибку")} btn={tr("ПОНЯТНО")} /> : null}
+      {f >= 1088 && f < 1130 ? <Result o={lin(f, 1088, 1100, 0, 1, OUTE) * (1 - lin(f, 1120, 1130))} ok title={tr("Верно!")} sub="+12 XP" btn={tr("ДАЛЕЕ")} /> : null}
       {[522, 694, 942, 1088, 1277].map((t) => <Confetti key={t} at={t} />)}
-      {f >= 1277 ? <Result o={lin(f, 1277, 1290, 0, 1, OUTE)} ok title="Ура! Урок пройден" sub="+50 XP" btn="ПРОДОЛЖИТЬ" /> : null}
+      {f >= 1277 ? <Result o={lin(f, 1277, 1290, 0, 1, OUTE)} ok title={tr("Ура! Урок пройден")} sub="+50 XP" btn={tr("ПРОДОЛЖИТЬ")} /> : null}
 
       {/* the Constitution opens from the book button, right inside the lesson */}
       {(() => { const o = lin(f, CB.book + 4, CB.book + 22, 0, 1, OUTE) * (1 - lin(f, CB.bookX + 2, CB.bookX + 16, 0, 1, IOE)); if (o <= 0.001) return null; return (
         <div style={{ position: "absolute", left: 1190, top: 60, width: 700, height: 990, borderRadius: 24, background: "#fff", boxShadow: "0 30px 90px rgba(13,22,48,0.25)", border: "2px solid #eef0f3", transform: `translateX(${(1 - o) * 760}px)`, zIndex: 30, overflow: "hidden" }}>
           <div style={{ height: 96, display: "flex", alignItems: "center", padding: "0 26px", borderBottom: "2px solid #eef0f3" }}>
-            <div style={{ flex: 1, fontWeight: 800, fontSize: 30, color: INK }}>Конституция</div>
+            <div style={{ flex: 1, fontWeight: 800, fontSize: 30, color: INK }}>{tr("Конституция")}</div>
             <div style={{ width: 62, height: 62, borderRadius: 14, background: BLUE, boxShadow: "0 4px 0 #1899d6", display: "flex", alignItems: "center", justifyContent: "center", transform: `translateY(${press(f, CB.bookX) * 3}px)` }}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg></div>
           </div>
           <div style={{ margin: "14px 16px 0", height: 86, borderRadius: 14, background: BLUE, display: "flex", color: "#fff" }}>
-            <div style={{ flex: 1, padding: "14px 20px", borderRight: "2px solid rgba(255,255,255,0.35)" }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ВЫБЕРИТЕ ЗАКОН</div><div style={{ fontWeight: 900, fontSize: 24, whiteSpace: "nowrap" }}>Конституция Республики</div></div>
-            <div style={{ width: 250, padding: "14px 20px" }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>ЧАСТЬ 1 ИЗ 10</div><div style={{ fontWeight: 900, fontSize: 24 }}>СТАТЬЯ 1</div></div>
+            <div style={{ flex: 1, padding: "14px 20px", borderRight: "2px solid rgba(255,255,255,0.35)" }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>{tr("ВЫБЕРИТЕ ЗАКОН")}</div><div style={{ fontWeight: 900, fontSize: 24, whiteSpace: "nowrap" }}>{tr("Конституция Республики")}</div></div>
+            <div style={{ width: 250, padding: "14px 20px" }}><div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em", opacity: 0.85 }}>{tr("ЧАСТЬ 1 ИЗ 10")}</div><div style={{ fontWeight: 900, fontSize: 24 }}>{tr("СТАТЬЯ 1")}</div></div>
           </div>
-          <div style={{ margin: "14px 16px 0", height: 58, borderRadius: 14, border: `3px solid ${BLUE}`, display: "flex", alignItems: "center", gap: 12, padding: "0 18px", color: "#9aa1ab", fontWeight: 600, fontSize: 22 }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>Поиск по тексту закона</div>
+          <div style={{ margin: "14px 16px 0", height: 58, borderRadius: 14, border: `3px solid ${BLUE}`, display: "flex", alignItems: "center", gap: 12, padding: "0 18px", color: "#9aa1ab", fontWeight: 600, fontSize: 22 }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>{tr("Поиск по тексту закона")}</div>
           <div style={{ margin: "20px 16px 0", border: "2px solid #eef0f3", padding: "26px 36px", fontFamily: UI }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "flex-end", fontWeight: 800, fontSize: 20, color: "#2e9d3a" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2e9d3a" /><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>Документ действует
+              <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2e9d3a" /><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>{tr("Документ действует")}
             </div>
-            <div style={{ marginTop: 22, textAlign: "center", fontWeight: 900, fontSize: 28, color: "#1a237e" }}>КОНСТИТУЦИЯ РЕСПУБЛИКИ УЗБЕКИСТАН</div>
+            <div style={{ marginTop: 22, textAlign: "center", fontWeight: 900, fontSize: 28, color: "#1a237e" }}>{tr("КОНСТИТУЦИЯ РЕСПУБЛИКИ УЗБЕКИСТАН")}</div>
             <div style={{ marginTop: 6, textAlign: "center", fontWeight: 600, fontSize: 22, color: "#5d6470" }}>30.04.2023</div>
-            <div style={{ marginTop: 26, fontWeight: 900, fontSize: 28, color: "#1a237e" }}>Статья 1.</div>
-            {[ART.ru.p1, ART.ru.p2, "Государство выражает волю народа, служит его интересам."].map((t, i) => <div key={i} style={{ marginTop: 12, fontWeight: 500, fontSize: 25, lineHeight: 1.5, color: "#2b2b2b", textAlign: "justify", textIndent: 50 }}>{t}</div>)}
+            <div style={{ marginTop: 26, fontWeight: 900, fontSize: 28, color: "#1a237e" }}>{tr("Статья 1.")}</div>
+            {[ARTL.p1, ARTL.p2, tr("Государство выражает волю народа, служит его интересам.")].map((t, i) => <div key={i} style={{ marginTop: 12, fontWeight: 500, fontSize: 25, lineHeight: 1.5, color: "#2b2b2b", textAlign: "justify", textIndent: 50 }}>{t}</div>)}
           </div>
         </div>); })()}
 
@@ -318,8 +320,8 @@ export const Lesson: React.FC = () => {
       {f >= 14 && f < S.END - 20 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, 14, 26) * (1 - lin(f, S.END - 34, S.END - 20))} /></div> : null}
       {zb > 0.01 ? (
         <div style={{ position: "absolute", left: CX - 10, top: BTN_Y - 150, width: 470, padding: "16px 20px", borderRadius: 16, background: "#2b2f36", color: "#fff", fontFamily: UI, fontWeight: 700, fontSize: 22, lineHeight: 1.35, opacity: lin(f, HOV + 6, HOV + 14) * (1 - lin(f, CB.book + 2, CB.book + 8)), transform: `translateY(${(1 - lin(f, HOV + 6, HOV + 16, 0, 1, OUTE)) * 10}px)` }}>
-          <div style={{ fontWeight: 900, fontSize: 24, marginBottom: 4 }}>📘 Конституция</div>
-          {(() => { const ws = "Открой закон прямо во время игры и подсмотри нужную статью.".split(" "); const k = lin(f, HOV + 16, CB.book - 8, 0, ws.length, Easing.linear); return ws.map((w, i) => { const d = k - i; const on = d > 0 ? 1 : 0; const pulse = d > 0 && d < 1.2 ? 1 - d / 1.2 : 0; return <span key={i} style={{ display: "inline-block", marginRight: 6, color: on ? "#fff" : "rgba(255,255,255,0.45)", background: `rgba(28,176,246,${0.55 * pulse})`, borderRadius: 6, padding: "0 2px", transform: `scale(${1 + 0.06 * pulse})` }}>{w}</span>; }); })()}
+          <div style={{ fontWeight: 900, fontSize: 24, marginBottom: 4 }}>{tr("📘 Конституция")}</div>
+          {(() => { const ws = tr("Открой закон прямо во время игры и подсмотри нужную статью.").split(" "); const k = lin(f, HOV + 16, CB.book - 8, 0, ws.length, Easing.linear); return ws.map((w, i) => { const d = k - i; const on = d > 0 ? 1 : 0; const pulse = d > 0 && d < 1.2 ? 1 - d / 1.2 : 0; return <span key={i} style={{ display: "inline-block", marginRight: 6, color: on ? "#fff" : "rgba(255,255,255,0.45)", background: `rgba(28,176,246,${0.55 * pulse})`, borderRadius: 6, padding: "0 2px", transform: `scale(${1 + 0.06 * pulse})` }}>{w}</span>; }); })()}
           <div style={{ position: "absolute", left: 40, bottom: -9, width: 18, height: 18, background: "#2b2f36", transform: "rotate(45deg)" }} />
         </div>) : null}
       </AbsoluteFill>
@@ -355,19 +357,19 @@ export const LessonMore: React.FC = () => {
   const step = f < H_END ? 0 : 1;
   const mainOn = (step === 0 && f >= PICK + 2) || (step === 1 && f >= ANS);
   const mainDown = Math.max(press(f, CHK1), press(f, CHK2));
-  const CAPS: [number, string, string][] = [[0, "Найди", "термин."], [H_END, "Реши казус,", "как на экзамене."]];
+  const CAPS: [number, string, string][] = [[0, tr("Найди"), tr("термин.")], [H_END, tr("Реши казус,"), tr("как на экзамене.")]];
   let ci = 0; CAPS.forEach(([t], i) => { if (f >= t) ci = i; });
   const capEnd = ci + 1 < CAPS.length ? CAPS[ci + 1][0] : END + 60;
-  const TERMS = ["Право", "Ответственность", "Норма", "Договор"];
+  const TERMS = [tr("Право"), tr("Ответственность"), tr("Норма"), tr("Договор")];
   const CASE = [
-    "Гражданин Каримов купил в магазине «Техно-Плюс» смартфон за 6 500 000 сум с гарантией 12 месяцев.",
-    "Через 9 дней телефон перестал включаться.",
-    "Каримов вернулся в магазин с чеком и гарантийным талоном и потребовал заменить товар.",
-    "Продавец отказал: «Телефон упал», хотя следов повреждений на корпусе нет, и предложил платный ремонт за 800 000 сум.",
-    "Каримов направил письменную претензию, но ответа не получил.",
+    tr("Гражданин Каримов купил в магазине «Техно-Плюс» смартфон за 6 500 000 сум с гарантией 12 месяцев."),
+    tr("Через 9 дней телефон перестал включаться."),
+    tr("Каримов вернулся в магазин с чеком и гарантийным талоном и потребовал заменить товар."),
+    tr("Продавец отказал: «Телефон упал», хотя следов повреждений на корпусе нет, и предложил платный ремонт за 800 000 сум."),
+    tr("Каримов направил письменную претензию, но ответа не получил."),
   ];
-  const QS = ["Какие права есть у Каримова?", "Кто должен доказать, что недостаток возник по вине покупателя?", "Что грозит продавцу за отказ?"];
-  const ANSW = ["Недостаток выявлен в гарантийный срок, поэтому Каримов вправе потребовать замену товара, бесплатный ремонт, уменьшение цены или возврат денег.", "Доказать вину покупателя должен продавец, например через экспертизу товара.", "За отказ и просрочку продавец платит неустойку, а Каримов может обратиться в суд и потребовать возмещения убытков."];
+  const QS = [tr("Какие права есть у Каримова?"), tr("Кто должен доказать, что недостаток возник по вине покупателя?"), tr("Что грозит продавцу за отказ?")];
+  const ANSW = [tr("Недостаток выявлен в гарантийный срок, поэтому Каримов вправе потребовать замену товара, бесплатный ремонт, уменьшение цены или возврат денег."), tr("Доказать вину покупателя должен продавец, например через экспертизу товара."), tr("За отказ и просрочку продавец платит неустойку, а Каримов может обратиться в суд и потребовать возмещения убытков.")];
   const open = lin(f, OPEN + 2, OPEN + 30, 0, 1, OUTE);
   const sent = f < READ0 || f > READ1 ? -1 : Math.min(CASE.length + 2, Math.floor(lin(f, READ0, READ1, 0, CASE.length + 3, Easing.linear)));
   return (
@@ -384,10 +386,10 @@ export const LessonMore: React.FC = () => {
 
       {(() => { const w = win(0, H_END); if (!w.on) return null; return (
         <div style={{ position: "absolute", inset: 0, opacity: w.o, transform: `translateX(${w.x}px)` }}>
-          <div style={{ position: "absolute", left: CX, top: 140, fontWeight: 900, fontSize: 50, color: INK }}>Найдите термин</div>
+          <div style={{ position: "absolute", left: CX, top: 140, fontWeight: 900, fontSize: 50, color: INK }}>{tr("Найдите термин")}</div>
           <div style={{ position: "absolute", left: CX, top: 230, display: "flex", gap: 24, alignItems: "center", opacity: lin(f, 6, 20) }}>
             <Img src={OWL_READ} style={{ width: 120, objectFit: "contain" }} />
-            <div style={{ width: CW - 150, padding: "20px 26px", border: "3px solid #e5e5e5", borderRadius: 20, fontWeight: 700, fontSize: 30, lineHeight: 1.4, color: INK }}>Последствие нарушения закона, которое применяет государство. Как это называется?</div>
+            <div style={{ width: CW - 150, padding: "20px 26px", border: "3px solid #e5e5e5", borderRadius: 20, fontWeight: 700, fontSize: 30, lineHeight: 1.4, color: INK }}>{tr("Последствие нарушения закона, которое применяет государство. Как это называется?")}</div>
           </div>
           {TERMS.map((t, i) => { const s = i === 1 && f >= PICK + 2; const ok = s && f >= CHK1 + 2; const e = sp(16 + i * 5, 14, 180); return (
             <div key={t} style={{ position: "absolute", left: CX + (i % 2) * 450, top: 470 + Math.floor(i / 2) * 140, width: 430, height: 110, ...card(0, ok ? "green" : s ? "blue" : "plain"), display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 32, color: ok ? GLIP : s ? "#1899d6" : INK, opacity: Math.min(1, e * 1.4) }}>{t}</div>); })}
@@ -400,28 +402,28 @@ export const LessonMore: React.FC = () => {
           {/* scrolling column between the top bar and the buttons */}
           <div style={{ position: "absolute", left: 0, right: 0, top: 100, height: BTN_Y - 120, overflow: "hidden", WebkitMaskImage: "linear-gradient(180deg, transparent, #000 30px, #000 calc(100% - 30px), transparent)", maskImage: "linear-gradient(180deg, transparent, #000 30px, #000 calc(100% - 30px), transparent)" }}>
             <div style={{ position: "absolute", left: 0, right: 0, top: 10 - scroll }}>
-              <div style={{ position: "absolute", left: CX, top: 0, fontWeight: 900, fontSize: 48, color: INK }}>Решите казус</div>
+              <div style={{ position: "absolute", left: CX, top: 0, fontWeight: 900, fontSize: 48, color: INK }}>{tr("Решите казус")}</div>
               <div style={{ position: "absolute", left: CX, top: 80, width: CW, height: caseH, padding: "22px 30px", borderRadius: 20, background: "#fff", border: "3px solid #ffc800", boxSizing: "border-box", overflow: "hidden", opacity: lin(lf, 6, 20) }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ flex: 1, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: "#d49a00" }}>КАЗУС · ЗАЩИТА ПРАВ ПОТРЕБИТЕЛЕЙ</div>
-                  <div style={{ fontWeight: 800, fontSize: 18, color: "#9aa1ab" }}>уровень: экзамен</div>
+                  <div style={{ flex: 1, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: "#d49a00" }}>{tr("КАЗУС · ЗАЩИТА ПРАВ ПОТРЕБИТЕЛЕЙ")}</div>
+                  <div style={{ fontWeight: 800, fontSize: 18, color: "#9aa1ab" }}>{tr("уровень: экзамен")}</div>
                 </div>
                 <div style={{ marginTop: 12, fontWeight: 600, fontSize: 25, lineHeight: 1.5, color: INK, textAlign: "justify" }}>
                   {CASE.map((t, i) => <span key={i} style={{ background: i === sent ? "rgba(255,200,0,0.32)" : "transparent", borderRadius: 6, boxDecorationBreak: "clone", WebkitBoxDecorationBreak: "clone", padding: "0 2px" }}>{t} </span>)}
                 </div>
-                <div style={{ marginTop: 16, fontWeight: 900, fontSize: 25, color: INK }}>Вопросы:</div>
+                <div style={{ marginTop: 16, fontWeight: 900, fontSize: 25, color: INK }}>{tr("Вопросы:")}</div>
                 {QS.map((q, i) => (
                   <div key={q} style={{ marginTop: 8, display: "flex", gap: 10, alignItems: "baseline", fontWeight: 700, fontSize: 25, lineHeight: 1.4, color: INK, background: sent === CASE.length + i ? "rgba(255,200,0,0.32)" : "transparent", borderRadius: 8, padding: "0 4px" }}>
                     <div style={{ fontWeight: 900, flexShrink: 0 }}>{i + 1})</div>{q}
                   </div>
                 ))}
                 {open < 0.99 ? <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 150, background: "linear-gradient(180deg, rgba(255,255,255,0), #fff 50%)", opacity: 1 - open, display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: 22 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 26px", borderRadius: 14, border: "3px solid #ffc800", boxShadow: "0 4px 0 #e0a800", background: "#fff", fontWeight: 900, fontSize: 22, letterSpacing: "0.04em", color: "#c48a00", transform: `translateY(${press(f, OPEN) * 4}px)` }}>РАСКРЫТЬ КАЗУС <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c48a00" strokeWidth="3" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg></div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 26px", borderRadius: 14, border: "3px solid #ffc800", boxShadow: "0 4px 0 #e0a800", background: "#fff", fontWeight: 900, fontSize: 22, letterSpacing: "0.04em", color: "#c48a00", transform: `translateY(${press(f, OPEN) * 4}px)` }}>{tr("РАСКРЫТЬ КАЗУС")} <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c48a00" strokeWidth="3" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg></div>
                 </div> : null}
               </div>
-              <div style={{ position: "absolute", left: CX, top: 80 + caseH + 28, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: BLUE, opacity: lin(lf, 20, 34) }}>ВАШ ОТВЕТ</div>
+              <div style={{ position: "absolute", left: CX, top: 80 + caseH + 28, fontWeight: 900, fontSize: 20, letterSpacing: "0.1em", color: BLUE, opacity: lin(lf, 20, 34) }}>{tr("ВАШ ОТВЕТ")}</div>
               <div style={{ position: "absolute", left: CX, top: 80 + caseH + 60, width: CW, minHeight: 300, borderRadius: 18, border: `3px solid ${f >= OK2 ? GREEN : f >= ANS ? BLUE : "#e5e5e5"}`, background: f >= OK2 ? "#f1ffe6" : "#fff", boxSizing: "border-box", padding: "18px 24px", opacity: lin(lf, 24, 38) }}>
-                {f < ANS ? <div style={{ fontWeight: 600, fontSize: 24, color: "#afafaf" }}>Напишите решение казуса…</div> : ANSW.map((t, i) => (
+                {f < ANS ? <div style={{ fontWeight: 600, fontSize: 24, color: "#afafaf" }}>{tr("Напишите решение казуса…")}</div> : ANSW.map((t, i) => (
                   <div key={i} style={{ marginTop: i ? 12 : 0, display: "flex", gap: 14, alignItems: "baseline", fontWeight: 600, fontSize: 23, lineHeight: 1.45, color: INK, opacity: lin(f, ANS + i * 14, ANS + i * 14 + 12), transform: `translateY(${(1 - lin(f, ANS + i * 14, ANS + i * 14 + 12)) * 10}px)` }}>
                     <div style={{ fontWeight: 900, flexShrink: 0 }}>{i + 1})</div>{t}
                   </div>
@@ -434,9 +436,9 @@ export const LessonMore: React.FC = () => {
       <div style={{ position: "absolute", left: CX, top: BTN_Y, width: 100, height: BTN_H, borderRadius: 18, background: "#ddf4ff", border: "3px solid #84d8ff", boxShadow: "0 5px 0 #1cb0f6", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Img src={staticFile("site/stickers_module.webp")} style={{ width: 62, height: 62, objectFit: "contain" }} />
       </div>
-      <div style={{ position: "absolute", left: CX + 116, top: BTN_Y, width: CW - 116, height: BTN_H, borderRadius: 18, background: mainOn ? GREEN : "#e5e5e5", boxShadow: `0 ${5 - 4 * mainDown}px 0 ${mainOn ? GLIP : "#cfcfcf"}`, transform: `translateY(${mainDown * 4}px)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 30, letterSpacing: "0.08em", color: mainOn ? "#fff" : "#afafaf" }}>ПРОВЕРИТЬ</div>
-      {f >= CHK1 + 2 && f < H_END ? <Result o={lin(f, CHK1 + 2, CHK1 + 14, 0, 1, OUTE) * (1 - lin(f, H_END - 14, H_END - 4))} ok title="Верно!" sub="+10 XP" btn="ДАЛЕЕ" btnDown={press(f, NEXT)} /> : null}
-      {f >= OK2 ? <Result o={lin(f, OK2, OK2 + 12, 0, 1, OUTE)} ok title="Ура! Казус решён верно" sub="+50 XP" btn="ПРОДОЛЖИТЬ" /> : null}
+      <div style={{ position: "absolute", left: CX + 116, top: BTN_Y, width: CW - 116, height: BTN_H, borderRadius: 18, background: mainOn ? GREEN : "#e5e5e5", boxShadow: `0 ${5 - 4 * mainDown}px 0 ${mainOn ? GLIP : "#cfcfcf"}`, transform: `translateY(${mainDown * 4}px)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 30, letterSpacing: "0.08em", color: mainOn ? "#fff" : "#afafaf" }}>{tr("ПРОВЕРИТЬ")}</div>
+      {f >= CHK1 + 2 && f < H_END ? <Result o={lin(f, CHK1 + 2, CHK1 + 14, 0, 1, OUTE) * (1 - lin(f, H_END - 14, H_END - 4))} ok title={tr("Верно!")} sub="+10 XP" btn={tr("ДАЛЕЕ")} btnDown={press(f, NEXT)} /> : null}
+      {f >= OK2 ? <Result o={lin(f, OK2, OK2 + 12, 0, 1, OUTE)} ok title={tr("Ура! Казус решён верно")} sub="+50 XP" btn={tr("ПРОДОЛЖИТЬ")} /> : null}
       {f >= 10 && !hideCursor && f < END - 20 ? <div style={{ position: "absolute", inset: 0, zIndex: 50 }}><Pointer x={px} y={py} down={down} op={lin(f, 10, 20) * (1 - lin(f, END - 34, END - 20))} /></div> : null}
       </AbsoluteFill>
       <Confetti at={CHK1 + 2} />
