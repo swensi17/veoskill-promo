@@ -134,8 +134,9 @@ for sc, lf in [(N("Collect"), 202)]: at(CH, F(sc, lf), -17)
 for sc, lf in [(N("Collect"), 350)]:
     i = np.argmax(np.abs(WH).max(axis=1)); put(WH, F(sc, lf) / FPS - i / SR + 0.03, -19)
 # Search: ФИЛЬТР, НАЙТИ, ВЫБРАТЬ ВСЕ; modal and results appear
-for sc, lf in [(N("Search"), 40), (N("Search"), 112), (N("Search"), 196)]: at(CL, F(sc, lf), -16)
-pops += [(N("Search"), 46), (N("Search"), 176)]
+# Search over the whole base: "Вся база" click, Tab, results after each word (layout fix, other language)
+for sc, lf in [(N("Search"), 30), (N("Search"), 82)]: at(CL, F(sc, lf), -16)
+pops += [(N("Search"), 2), (N("Search"), 90), (N("Search"), 184), (N("Search"), 268)]
 # AiPick: hover tooltip, click on the robot
 for sc, lf in [(N("AiPick"), 128)]: at(CL, F(sc, lf), -16)
 pops += [(N("AiPick"), 92)]
