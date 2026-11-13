@@ -7,8 +7,9 @@ import { LessonPath } from "./V12Path";
 import { LessonSlow, LessonMore } from "./Lesson";
 import { Duel } from "./Duel";
 import { Forum } from "./Forum";
+import { Search } from "./SearchAll";
 import { Profile, Premium } from "./Profile";
-import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, LexTrySelect, LexTryHover, LexTrySearch, LexTryCollect, LexTryAi, ArticleActions, Collect, Search, AiPick, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
+import { IntroMosaic, Wall, Counter, LawsHome, Reader, Hints, LexTrySelect, LexTryHover, LexTrySearch, LexTryCollect, LexTryAi, ArticleActions, Collect, AiPick, AIReal, AiIcon, blinkAt, Langs, PhraseBank } from "./V11Parts";
 import { BG, NAVY, BLUE, DEEP, GREEN, GLIP, YEL, RED, GREY, SWAN, INK, HEAD, UI, B, OUTE, IOE, lin, press, SlowCtx, useSp, Cap, Pointer, S4b, S7b } from "./Scenes9";
 
 // veoskill v10: Maverick-style reel after review. Lessons as a camera flight over the lesson path, three games
