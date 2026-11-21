@@ -18,6 +18,7 @@ import { V9, V9_FRAMES } from "./V9";
 import { V10, V10_FRAMES } from "./V10";
 import { V11, V11_FRAMES } from "./V11";
 import { LessonPath } from "./V12Path";
+import { VeoLaunch, VEO_LAUNCH_FRAMES } from "./VeoLaunch";
 import { useFonts7 } from "./Kit7";
 const LP: React.FC = () => { useFonts7(); return <LessonPath />; };
 import { LawsWall, LangCube, Minutes, MistakeLoop, SaveRemember, LeagueClimb, Profile } from "./Bits2";
@@ -41,6 +42,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="VeoskillV4" component={V4} durationInFrames={V4_FRAMES} fps={60} width={1920} height={1080} />
       <Composition id="VeoskillV6" component={V6} durationInFrames={V6_FRAMES} fps={60} width={1920} height={1080} />
       <Composition id="VeoskillV11" component={V11} durationInFrames={V11_FRAMES} fps={60} width={1920} height={1080} />
+      <Composition id="VeoLaunch" component={VeoLaunch} durationInFrames={VEO_LAUNCH_FRAMES} fps={60} width={1920} height={1080} />
       <Composition id="TLP" component={LP} durationInFrames={420} fps={60} width={1920} height={1080} />
       <Composition id="VeoskillV10" component={V10} durationInFrames={V10_FRAMES} fps={60} width={1920} height={1080} />
       <Composition id="VeoskillV9" component={V9} durationInFrames={V9_FRAMES} fps={60} width={1920} height={1080} />
